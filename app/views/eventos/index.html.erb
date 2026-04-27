@@ -1,0 +1,41 @@
+<% content_for :title, "Eventos | MotriX" %>
+
+<section class="flex items-end justify-between gap-4">
+  <div>
+    <p class="text-sm font-medium uppercase tracking-[0.2em] text-teal-700">Eventos</p>
+    <h2 class="mt-1 text-3xl font-semibold text-stone-950">Financeiro e historico</h2>
+  </div>
+  <div class="rounded-full bg-white px-4 py-2 text-sm font-medium text-stone-600 ring-1 ring-stone-200">
+    <%= @eventos.size %> eventos
+  </div>
+</section>
+
+<section class="mt-6 space-y-4">
+  <% @eventos.each do |evento| %>
+    <article class="rounded-3xl border border-stone-200 bg-white p-5">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-stone-950"><%= enum_label(evento.tipo_evento) %></h3>
+          <p class="mt-1 text-sm text-stone-500"><%= [evento.cliente&.nome, evento.veiculo&.placa, evento.locacao&.numero_contrato].compact.join(" • ") %></p>
+        </div>
+        <div class="text-right">
+          <span class="rounded-full px-3 py-1 text-xs font-semibold <%= badge_classes(evento.fluxo) %>"><%= enum_label(evento.fluxo) %></span>
+          <p class="mt-2 font-semibold text-stone-950"><%= brl(evento.valor) %></p>
+        </div>
+      </div>
+
+      <div class="mt-4 flex flex-wrap gap-3 text-sm text-stone-600">
+        <span><strong>Data:</strong> <%= l(evento.data_evento) %></span>
+        <% if evento.status.present? %>
+          <span class="rounded-full px-3 py-1 text-xs font-semibold <%= badge_classes(evento.status) %>"><%= enum_label(evento.status) %></span>
+        <% end %>
+        <% if evento.tipo_manutencao.present? %>
+          <span><strong>Tipo:</strong> <%= enum_label(evento.tipo_manutencao) %></span>
+        <% end %>
+        <% if evento.quilometragem.present? %>
+          <span><strong>KM:</strong> <%= evento.quilometragem %></span>
+        <% end %>
+      </div>
+    </article>
+  <% end %>
+</section>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "MotriX" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-stone-100 text-stone-950 antialiased">
+    <header class="border-b border-stone-200 bg-white/90 backdrop-blur">
+      <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-teal-700">MotriX</p>
+            <h1 class="text-xl font-semibold text-stone-950">Operacao de frota e locacoes</h1>
+          </div>
+          <div class="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-white">
+            <%= Current.usuario&.nome || "Sem usuario ativo" %>
+          </div>
+        </div>
+
+        <nav class="flex flex-wrap gap-2">
+          <%= nav_link_to "Dashboard", root_path %>
+          <%= nav_link_to "Clientes", clientes_path %>
+          <%= nav_link_to "Veiculos", veiculos_path %>
+          <%= nav_link_to "Locacoes", locacoes_path %>
+          <%= nav_link_to "Eventos", eventos_path %>
+          <%= nav_link_to "Socios", socios_path %>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <% flash.each do |type, message| %>
+        <div class="mb-4 rounded-2xl border px-4 py-3 text-sm font-medium <%= flash_classes(type) %>">
+          <%= message %>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>

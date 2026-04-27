@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby.exe
+app_root = Dir.pwd
+config_boot = File.expand_path("config/boot", app_root)
+
+unless File.exist?(config_boot)
+  app_root = File.expand_path("..", __dir__)
+  config_boot = File.expand_path("config/boot", app_root)
+end
+
+require config_boot
+require "rake"
+Rake.application.run
