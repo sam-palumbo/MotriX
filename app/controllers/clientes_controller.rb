@@ -48,6 +48,8 @@ class ClientesController < ApplicationController
   end
 
   def cliente_params
-    params.require(:cliente).permit(:cpf, :nome, :telefone, :email, :endereco, :cidade, :estado, :cep, :cnh, :validade_cnh, :status, :observacoes)
+    permitted = params.require(:cliente).permit(:cpf, :nome, :telefone, :email, :endereco, :cidade, :estado, :cep, :cnh, :validade_cnh, :status, :observacoes)
+    permitted[:status] = permitted[:status].to_i if permitted[:status].present?
+    permitted
   end
 end

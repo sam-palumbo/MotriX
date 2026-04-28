@@ -60,6 +60,11 @@ class EventosController < ApplicationController
   end
 
   def evento_params
-    params.require(:evento).permit(:cliente_id, :veiculo_id, :locacao_id, :tipo_evento, :tipo_manutencao, :fluxo, :status, :valor, :periodo_inicio, :periodo_fim, :quilometragem, :responsavel, :descricao, :data_evento)
+    permitted = params.require(:evento).permit(:cliente_id, :veiculo_id, :locacao_id, :tipo_evento, :tipo_manutencao, :fluxo, :status, :valor, :periodo_inicio, :periodo_fim, :quilometragem, :responsavel, :descricao, :data_evento)
+    permitted[:status] = permitted[:status].to_i if permitted[:status].present?
+    permitted[:tipo_evento] = permitted[:tipo_evento].to_i if permitted[:tipo_evento].present?
+    permitted[:tipo_manutencao] = permitted[:tipo_manutencao].to_i if permitted[:tipo_manutencao].present?
+    permitted[:fluxo] = permitted[:fluxo].to_i if permitted[:fluxo].present?
+    permitted
   end
 end

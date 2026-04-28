@@ -56,6 +56,8 @@ class LocacoesController < ApplicationController
   end
 
   def locacao_params
-    params.require(:locacao).permit(:numero_contrato, :cliente_id, :veiculo_id, :data_inicio, :data_prevista_fim, :data_fim, :valor_semanal, :caucao_valor, :caucao_recebida, :caucao_devolvida, :status, :observacoes)
+    permitted = params.require(:locacao).permit(:numero_contrato, :cliente_id, :veiculo_id, :data_inicio, :data_prevista_fim, :data_fim, :valor_semanal, :caucao_valor, :caucao_recebida, :caucao_devolvida, :status, :observacoes)
+    permitted[:status] = permitted[:status].to_i if permitted[:status].present?
+    permitted
   end
 end
