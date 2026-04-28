@@ -16,6 +16,6 @@
 # end
 
 # Portuguese inflection rules
-ActiveSupport::Inflector.inflections(:pt) do |inflect|
+ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular "locacao", "locacoes"
 end
