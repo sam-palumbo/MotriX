@@ -10,7 +10,7 @@ FactoryBot.define do
     cor { Faker::Vehicle.color }
     association :created_by, factory: :usuario
     association :updated_by, factory: :usuario
-    
+
     trait :disponivel do
       status { 0 }
     end

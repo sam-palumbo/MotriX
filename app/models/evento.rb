@@ -46,7 +46,7 @@ class Evento < ApplicationRecord
   end
 
   def entrada?
-    fluxo == 'entrada'
+    fluxo == "entrada"
   end
   validates :tipo_manutencao, presence: true, if: :manutencao?
   validates :status, presence: true, if: :pagamento_semanal?

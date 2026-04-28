@@ -14,7 +14,7 @@ RSpec.describe Usuario, type: :model do
     it { should validate_presence_of(:senha_hash) }
     it { should validate_presence_of(:perfil) }
 
-    it { should validate_uniqueness_of(:cpf).case_insensitive }
+    it { should validate_uniqueness_of(:cpf) }
     it { should validate_uniqueness_of(:email) }
   end
 

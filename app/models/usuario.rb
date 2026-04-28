@@ -27,9 +27,7 @@ class Usuario < ApplicationRecord
     end
   end
 
-  def admin?
-    perfil == 'administrador' || perfil == 0
-  end
+
 
   def ativo?
     ativo == true

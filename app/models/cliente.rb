@@ -18,6 +18,6 @@ class Cliente < ApplicationRecord
   end
 
   def ativo?
-    status == 'ativo'
+    status == "ativo"
   end
 end

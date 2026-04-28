@@ -9,7 +9,7 @@ FactoryBot.define do
     status { 0 } # ativa
     association :created_by, factory: :usuario
     association :updated_by, factory: :usuario
-    
+
     trait :ativa do
       status { 0 }
     end
