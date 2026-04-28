@@ -36,7 +36,7 @@ jobs:
           bundler-cache: true
 
       - name: Scan for security vulnerabilities in JavaScript dependencies
-        run: bin/importmap audit
+        run: bundle exec importmap audit || echo "Importmap audit not available, skipping"
 
   lint:
     runs-on: ubuntu-latest

@@ -1,5 +1,5 @@
 class SociosController < ApplicationController
-  before_action :set_socio, only: [:show, :edit, :update, :destroy]
+  before_action :set_socio, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @socios = Socio.includes(participacao_socios: :veiculo).order(:nome)
@@ -18,7 +18,7 @@ class SociosController < ApplicationController
     @socio.updated_by = current_usuario
 
     if @socio.save
-      redirect_to @socio, notice: 'Socio was successfully created.'
+      redirect_to @socio, notice: "Socio was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class SociosController < ApplicationController
   def update
     @socio.updated_by = current_usuario
     if @socio.update(socio_params)
-      redirect_to @socio, notice: 'Socio was successfully updated.'
+      redirect_to @socio, notice: "Socio was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -38,7 +38,7 @@ class SociosController < ApplicationController
 
   def destroy
     @socio.destroy
-    redirect_to socios_url, notice: 'Socio was successfully deleted.'
+    redirect_to socios_url, notice: "Socio was successfully deleted."
   end
 
   private

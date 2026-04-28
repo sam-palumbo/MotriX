@@ -1,5 +1,5 @@
 class ParticipacaoSociosController < ApplicationController
-  before_action :set_participacao_socio, only: [:show, :edit, :update, :destroy]
+  before_action :set_participacao_socio, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @participacao_socios = ParticipacaoSocio.includes(:socio, :veiculo).order(:socio_id, :veiculo_id)
@@ -20,7 +20,7 @@ class ParticipacaoSociosController < ApplicationController
     @participacao_socio.updated_by = current_usuario
 
     if @participacao_socio.save
-      redirect_to @participacao_socio, notice: 'ParticipacaoSocio was successfully created.'
+      redirect_to @participacao_socio, notice: "ParticipacaoSocio was successfully created."
     else
       @socios = Socio.order(:nome)
       @veiculos = Veiculo.order(:placa)
@@ -36,7 +36,7 @@ class ParticipacaoSociosController < ApplicationController
   def update
     @participacao_socio.updated_by = current_usuario
     if @participacao_socio.update(participacao_socio_params)
-      redirect_to @participacao_socio, notice: 'ParticipacaoSocio was successfully updated.'
+      redirect_to @participacao_socio, notice: "ParticipacaoSocio was successfully updated."
     else
       @socios = Socio.order(:nome)
       @veiculos = Veiculo.order(:placa)
@@ -46,7 +46,7 @@ class ParticipacaoSociosController < ApplicationController
 
   def destroy
     @participacao_socio.destroy
-    redirect_to participacao_socios_url, notice: 'ParticipacaoSocio was successfully deleted.'
+    redirect_to participacao_socios_url, notice: "ParticipacaoSocio was successfully deleted."
   end
 
   private

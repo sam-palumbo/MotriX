@@ -13,6 +13,6 @@ class Veiculo < ApplicationRecord
   validates :placa, :renavam, :chassi, uniqueness: true
 
   def to_s
-    [placa, marca, modelo].compact.join(" - ")
+    [ placa, marca, modelo ].compact.join(" - ")
   end
 end

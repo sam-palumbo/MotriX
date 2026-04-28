@@ -1,5 +1,4 @@
 class PagamentosSemanaisController < ApplicationController
-
   def create
     locacao = Locacao.find(params[:locacao_id])
 

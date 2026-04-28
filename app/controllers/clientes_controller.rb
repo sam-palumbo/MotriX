@@ -1,5 +1,5 @@
 class ClientesController < ApplicationController
-  before_action :set_cliente, only: [:show, :edit, :update, :destroy]
+  before_action :set_cliente, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @clientes = Cliente.order(:nome)
@@ -18,7 +18,7 @@ class ClientesController < ApplicationController
     @cliente.updated_by = current_usuario
 
     if @cliente.save
-      redirect_to @cliente, notice: 'Cliente was successfully created.'
+      redirect_to @cliente, notice: "Cliente was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class ClientesController < ApplicationController
   def update
     @cliente.updated_by = current_usuario
     if @cliente.update(cliente_params)
-      redirect_to @cliente, notice: 'Cliente was successfully updated.'
+      redirect_to @cliente, notice: "Cliente was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -38,7 +38,7 @@ class ClientesController < ApplicationController
 
   def destroy
     @cliente.destroy
-    redirect_to clientes_url, notice: 'Cliente was successfully deleted.'
+    redirect_to clientes_url, notice: "Cliente was successfully deleted."
   end
 
   private

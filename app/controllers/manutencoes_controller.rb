@@ -1,5 +1,4 @@
 class ManutencoesController < ApplicationController
-
   def create
     veiculo = Veiculo.find(params[:veiculo_id])
 

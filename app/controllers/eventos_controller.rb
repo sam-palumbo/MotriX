@@ -1,5 +1,5 @@
 class EventosController < ApplicationController
-  before_action :set_evento, only: [:show, :edit, :update, :destroy]
+  before_action :set_evento, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @eventos = Evento.includes(:cliente, :veiculo, :locacao).order(data_evento: :desc, created_at: :desc)
@@ -21,7 +21,7 @@ class EventosController < ApplicationController
     @evento.updated_by = current_usuario
 
     if @evento.save
-      redirect_to @evento, notice: 'Evento was successfully created.'
+      redirect_to @evento, notice: "Evento was successfully created."
     else
       @clientes = Cliente.order(:nome)
       @veiculos = Veiculo.order(:placa)
@@ -39,7 +39,7 @@ class EventosController < ApplicationController
   def update
     @evento.updated_by = current_usuario
     if @evento.update(evento_params)
-      redirect_to @evento, notice: 'Evento was successfully updated.'
+      redirect_to @evento, notice: "Evento was successfully updated."
     else
       @clientes = Cliente.order(:nome)
       @veiculos = Veiculo.order(:placa)
@@ -50,7 +50,7 @@ class EventosController < ApplicationController
 
   def destroy
     @evento.destroy
-    redirect_to eventos_url, notice: 'Evento was successfully deleted.'
+    redirect_to eventos_url, notice: "Evento was successfully deleted."
   end
 
   private

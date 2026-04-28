@@ -1,5 +1,5 @@
 class VeiculosController < ApplicationController
-  before_action :set_veiculo, only: [:show, :edit, :update, :destroy]
+  before_action :set_veiculo, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @veiculos = Veiculo.order(:placa)
@@ -18,7 +18,7 @@ class VeiculosController < ApplicationController
     @veiculo.updated_by = current_usuario
 
     if @veiculo.save
-      redirect_to @veiculo, notice: 'Veiculo was successfully created.'
+      redirect_to @veiculo, notice: "Veiculo was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class VeiculosController < ApplicationController
   def update
     @veiculo.updated_by = current_usuario
     if @veiculo.update(veiculo_params)
-      redirect_to @veiculo, notice: 'Veiculo was successfully updated.'
+      redirect_to @veiculo, notice: "Veiculo was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -38,7 +38,7 @@ class VeiculosController < ApplicationController
 
   def destroy
     @veiculo.destroy
-    redirect_to veiculos_url, notice: 'Veiculo was successfully deleted.'
+    redirect_to veiculos_url, notice: "Veiculo was successfully deleted."
   end
 
   private

@@ -6,19 +6,19 @@ FactoryBot.define do
     senha_hash { "hashed_password_#{rand(1000)}" }
     perfil { :operador }
     ativo { true }
-    
+
     trait :admin do
       perfil { :admin }
     end
-    
+
     trait :operador do
       perfil { :operador }
     end
-    
+
     trait :socio do
       perfil { :socio }
     end
-    
+
     trait :inativo do
       ativo { false }
     end

@@ -36,6 +36,9 @@ group :development, :test do
   gem "faker", "~> 3.0"
   gem "sqlite3", "~> 2.1"
   gem "shoulda-matchers", "~> 6.0"
+  gem "rubocop", require: false
+  gem "rubocop-rails-omakase", require: false
+  gem "brakeman", require: false
 end
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]

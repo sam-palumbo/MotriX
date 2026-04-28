@@ -1,5 +1,5 @@
 class LocacoesController < ApplicationController
-  before_action :set_locacao, only: [:show, :edit, :update, :destroy]
+  before_action :set_locacao, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @locacoes = Locacao.includes(:cliente, :veiculo).order(data_inicio: :desc)
@@ -20,7 +20,7 @@ class LocacoesController < ApplicationController
     @locacao.updated_by = current_usuario
 
     if @locacao.save
-      redirect_to @locacao, notice: 'Locacao was successfully created.'
+      redirect_to @locacao, notice: "Locacao was successfully created."
     else
       @clientes = Cliente.order(:nome)
       @veiculos = Veiculo.order(:placa)
@@ -36,7 +36,7 @@ class LocacoesController < ApplicationController
   def update
     @locacao.updated_by = current_usuario
     if @locacao.update(locacao_params)
-      redirect_to @locacao, notice: 'Locacao was successfully updated.'
+      redirect_to @locacao, notice: "Locacao was successfully updated."
     else
       @clientes = Cliente.order(:nome)
       @veiculos = Veiculo.order(:placa)
@@ -46,7 +46,7 @@ class LocacoesController < ApplicationController
 
   def destroy
     @locacao.destroy
-    redirect_to locacoes_url, notice: 'Locacao was successfully deleted.'
+    redirect_to locacoes_url, notice: "Locacao was successfully deleted."
   end
 
   private

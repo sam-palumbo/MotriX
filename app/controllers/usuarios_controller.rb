@@ -1,5 +1,5 @@
 class UsuariosController < ApplicationController
-  before_action :set_usuario, only: [:show, :edit, :update, :destroy]
+  before_action :set_usuario, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @usuarios = Usuario.order(:nome)
@@ -16,7 +16,7 @@ class UsuariosController < ApplicationController
     @usuario = Usuario.new(usuario_params)
 
     if @usuario.save
-      redirect_to @usuario, notice: 'Usuario was successfully created.'
+      redirect_to @usuario, notice: "Usuario was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class UsuariosController < ApplicationController
 
   def update
     if @usuario.update(usuario_params)
-      redirect_to @usuario, notice: 'Usuario was successfully updated.'
+      redirect_to @usuario, notice: "Usuario was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -35,7 +35,7 @@ class UsuariosController < ApplicationController
 
   def destroy
     @usuario.destroy
-    redirect_to usuarios_url, notice: 'Usuario was successfully deleted.'
+    redirect_to usuarios_url, notice: "Usuario was successfully deleted."
   end
 
   private
