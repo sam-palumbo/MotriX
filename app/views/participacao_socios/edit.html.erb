@@ -34,7 +34,7 @@
       <div class="fg">
         <%= form.label :veiculo_id, "Veículo", class: "flabel" %>
         <%= form.select :veiculo_id, 
-            options_from_collection_for_select(@veiculos, :id, :placa_modelo, @participacao_socio.veiculo_id), 
+            options_from_collection_for_select(@veiculos, :id, :to_s, @participacao_socio.veiculo_id), 
             { prompt: "Selecione um veículo" }, 
             class: "fselect" %>
       </div>

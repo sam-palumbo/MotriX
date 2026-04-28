@@ -76,7 +76,7 @@
         <div class="li-val" style="color:<%= evento.fluxo == 'entrada' ? 'var(--green)' : 'var(--red)' %>">
           <%= evento.fluxo == 'entrada' ? '+' : '-' %> <%= brl(evento.valor) %>
         </div>
-        <div class="li-date"><%= l(evento.data_evento, format: :short) %></div>
+        <div class="li-date"><%= evento.data_evento.strftime("%d/%m/%Y") %></div>
       </div>
     </div>
   <% end %>

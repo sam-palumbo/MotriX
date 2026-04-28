@@ -12,4 +12,12 @@ class Cliente < ApplicationRecord
   def to_s
     nome
   end
+
+  def status_text
+    status.to_s.humanize
+  end
+
+  def ativo?
+    status == 'ativo'
+  end
 end

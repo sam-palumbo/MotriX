@@ -28,6 +28,26 @@ class Evento < ApplicationRecord
   has_many :anexos, dependent: :nullify
 
   validates :tipo_evento, :fluxo, :valor, :responsavel, :data_evento, presence: true
+
+  def tipo_evento_text
+    tipo_evento.to_s.humanize
+  end
+
+  def fluxo_text
+    fluxo.to_s.humanize
+  end
+
+  def status_text
+    status.to_s.humanize
+  end
+
+  def tipo_manutencao_text
+    tipo_manutencao.to_s.humanize
+  end
+
+  def entrada?
+    fluxo == 'entrada'
+  end
   validates :tipo_manutencao, presence: true, if: :manutencao?
   validates :status, presence: true, if: :pagamento_semanal?
   validates :locacao, presence: true, if: :pagamento_semanal?

@@ -17,6 +17,10 @@ class Locacao < ApplicationRecord
     numero_contrato
   end
 
+  def status_text
+    status.to_s.humanize
+  end
+
   private
 
   def data_prevista_fim_nao_antecede_inicio

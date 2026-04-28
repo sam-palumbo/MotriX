@@ -31,7 +31,7 @@
             <span class="badge <%= locacao.status == 'ativa' ? 'b-green' : locacao.status == 'finalizada' ? 'b-blue' : 'b-red' %>">
               <%= enum_label(locacao.status) %>
             </span>
-            <span class="badge b-gold">📅 <%= l(locacao.data_inicio, format: :short) %></span>
+            <span class="badge b-gold">📅 <%= locacao.data_inicio.strftime("%d/%m/%Y") %></span>
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@
         <div class="vc-client">
           <span style="color:var(--text3)">Período</span>
           <span style="font-weight:600;font-size:11px">
-            <%= l(locacao.data_inicio, format: :short) %> → <%= locacao.data_prevista_fim ? l(locacao.data_prevista_fim, format: :short) : "Indefinido" %>
+            <%= locacao.data_inicio.strftime("%d/%m/%Y") %> → <%= locacao.data_prevista_fim ? locacao.data_prevista_fim.strftime("%d/%m/%Y") : "Indefinido" %>
           </span>
         </div>
       </div>

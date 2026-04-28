@@ -24,34 +24,35 @@
   <div class="card">
     <div class="card-lbl">Dados do Contrato</div>
     <div class="fg">
-      <%= form.label :numero_contrato, "Número do Contrato", class: "flabel" %>
-      <%= form.text_field :numero_contrato, class: "finput", placeholder: "LOC-2024-001" %>
+      <%= form.label :numero_contrato, "Número do Contrato *", class: "flabel" %>
+      <%= form.text_field :numero_contrato, class: "finput", placeholder: "LOC-2024-001", required: true %>
     </div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :cliente_id, "Cliente", class: "flabel" %>
+        <%= form.label :cliente_id, "Cliente *", class: "flabel" %>
         <%= form.select :cliente_id, 
             options_from_collection_for_select(@clientes, :id, :nome, @locacao.cliente_id), 
-            { prompt: "Selecione um cliente" }, 
+            { prompt: "Selecione um cliente", required: true }, 
             class: "fselect" %>
       </div>
       <div class="fg">
-        <%= form.label :veiculo_id, "Veículo", class: "flabel" %>
+        <%= form.label :veiculo_id, "Veículo *", class: "flabel" %>
         <%= form.select :veiculo_id, 
-            options_from_collection_for_select(@veiculos, :id, :placa_modelo, @locacao.veiculo_id), 
-            { prompt: "Selecione um veículo" }, 
+            options_from_collection_for_select(@veiculos, :id, :to_s, @locacao.veiculo_id), 
+            { prompt: "Selecione um veículo", required: true }, 
             class: "fselect" %>
       </div>
     </div>
     <div class="fg">
-      <%= form.label :status, "Status", class: "flabel" %>
+      <%= form.label :status, "Status *", class: "flabel" %>
       <%= form.select :status, 
           options_for_select([
             ["Ativa", 0], 
-            ["Finalizada", 1], 
-            ["Suspensa", 2]
+            ["Encerrada", 1], 
+            ["Inadimplente", 2],
+            ["Cancelada", 3]
           ], @locacao.status || 0), 
-          {}, class: "fselect" %>
+          { required: true }, class: "fselect" %>
     </div>
   </div>
 
@@ -60,12 +61,12 @@
     <div class="card-lbl">Período da Locação</div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :data_inicio, "Data Início", class: "flabel" %>
-        <%= form.date_field :data_inicio, class: "finput", value: Date.current %>
+        <%= form.label :data_inicio, "Data Início *", class: "flabel" %>
+        <%= form.date_field :data_inicio, class: "finput", value: Date.current, required: true %>
       </div>
       <div class="fg">
-        <%= form.label :data_prevista_fim, "Data Prevista Fim", class: "flabel" %>
-        <%= form.date_field :data_prevista_fim, class: "finput" %>
+        <%= form.label :data_prevista_fim, "Data Prevista Fim *", class: "flabel" %>
+        <%= form.date_field :data_prevista_fim, class: "finput", required: true %>
       </div>
     </div>
     <div class="fg">
@@ -79,8 +80,8 @@
     <div class="card-lbl">Valores Financeiros</div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :valor_semanal, "Valor Semanal (R$)", class: "flabel" %>
-        <%= form.number_field :valor_semanal, step: 0.01, class: "finput", placeholder: "330,00" %>
+        <%= form.label :valor_semanal, "Valor Semanal (R$) *", class: "flabel" %>
+        <%= form.number_field :valor_semanal, step: 0.01, class: "finput", placeholder: "330,00", required: true %>
       </div>
       <div class="fg">
         <%= form.label :caucao_valor, "Valor Caução (R$)", class: "flabel" %>

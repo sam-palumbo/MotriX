@@ -25,12 +25,12 @@
     <div class="card-lbl">Dados Pessoais</div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :nome, "Nome Completo", class: "flabel" %>
-        <%= form.text_field :nome, class: "finput", placeholder: "João Silva" %>
+        <%= form.label :nome, "Nome Completo *", class: "flabel" %>
+        <%= form.text_field :nome, class: "finput", placeholder: "João Silva", required: true %>
       </div>
       <div class="fg">
-        <%= form.label :cpf, "CPF", class: "flabel" %>
-        <%= form.text_field :cpf, class: "finput", placeholder: "000.000.000-00" %>
+        <%= form.label :cpf, "CPF *", class: "flabel" %>
+        <%= form.text_field :cpf, class: "finput", placeholder: "000.000.000-00", required: true %>
       </div>
     </div>
     <div class="frow">
@@ -87,13 +87,14 @@
   <div class="card">
     <div class="card-lbl">Configurações</div>
     <div class="fg">
-      <%= form.label :status, "Status", class: "flabel" %>
+      <%= form.label :status, "Status *", class: "flabel" %>
       <%= form.select :status, 
           options_for_select([
             ["Ativo", 0], 
-            ["Inativo", 1]
+            ["Bloqueado", 1],
+            ["Inativo", 2]
           ], @cliente.status || 0), 
-          {}, class: "fselect" %>
+          { required: true }, class: "fselect" %>
     </div>
     <div class="fg">
       <%= form.label :observacoes, "Observações", class: "flabel" %>

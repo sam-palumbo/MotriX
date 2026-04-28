@@ -25,26 +25,29 @@
     <div class="card-lbl">Informações do Evento</div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :tipo_evento, "Tipo do Evento", class: "flabel" %>
+        <%= form.label :tipo_evento, "Tipo do Evento *", class: "flabel" %>
         <%= form.select :tipo_evento, 
             options_for_select([
               ["Pagamento Semanal", 0], 
               ["Manutenção", 1], 
-              ["Multa", 2], 
-              ["Outro", 3]
+              ["Gasto Empresa", 2], 
+              ["Retirada", 3],
+              ["Devolução", 4],
+              ["Aquisição Veículo", 5],
+              ["Saída Frota", 6]
             ], @evento.tipo_evento), 
-            { prompt: "Selecione um tipo" }, 
-            class: "fselect" %>
+            { prompt: "Selecione um tipo", required: true }, 
+            class: "sselect" %>
       </div>
       <div class="fg">
-        <%= form.label :fluxo, "Fluxo Financeiro", class: "flabel" %>
+        <%= form.label :fluxo, "Fluxo Financeiro *", class: "flabel" %>
         <%= form.select :fluxo, 
             options_for_select([
               ["Entrada", 0], 
               ["Saída", 1]
             ], @evento.fluxo), 
-            { prompt: "Selecione o fluxo" }, 
-            class: "fselect" %>
+            { prompt: "Selecione o fluxo", required: true }, 
+            class: "sselect" %>
       </div>
     </div>
     <div class="frow">
@@ -60,8 +63,8 @@
             class: "fselect" %>
       </div>
       <div class="fg">
-        <%= form.label :valor, "Valor (R$)", class: "flabel" %>
-        <%= form.number_field :valor, step: 0.01, class: "finput", placeholder: "0,00" %>
+        <%= form.label :valor, "Valor (R$) *", class: "flabel" %>
+        <%= form.number_field :valor, step: 0.01, class: "finput", placeholder: "0,00", required: true %>
       </div>
     </div>
   </div>
@@ -71,12 +74,12 @@
     <div class="card-lbl">Data e Responsável</div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :data_evento, "Data do Evento", class: "flabel" %>
-        <%= form.date_field :data_evento, class: "finput", value: Date.current %>
+        <%= form.label :data_evento, "Data do Evento *", class: "flabel" %>
+        <%= form.date_field :data_evento, class: "finput", value: Date.current, required: true %>
       </div>
       <div class="fg">
-        <%= form.label :responsavel, "Responsável", class: "flabel" %>
-        <%= form.text_field :responsavel, class: "finput", value: Current.usuario&.nome, placeholder: "Nome do responsável" %>
+        <%= form.label :responsavel, "Responsável *", class: "flabel" %>
+        <%= form.text_field :responsavel, class: "finput", value: Current.usuario&.nome, placeholder: "Nome do responsável", required: true %>
       </div>
     </div>
   </div>
@@ -95,8 +98,8 @@
       <div class="fg">
         <%= form.label :veiculo_id, "Veículo", class: "flabel" %>
         <%= form.select :veiculo_id, 
-            options_from_collection_for_select(@veiculos, :id, :placa_modelo, @evento.veiculo_id), 
-            { prompt: "Selecione um veículo (opcional)" }, 
+            options_from_collection_for_select(@veiculos, :id, :to_s, @evento.veiculo_id), 
+            { prompt: "Selecione um veículo" }, 
             class: "fselect" %>
       </div>
     </div>

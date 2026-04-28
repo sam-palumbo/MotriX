@@ -15,4 +15,8 @@ class Veiculo < ApplicationRecord
   def to_s
     [ placa, marca, modelo ].compact.join(" - ")
   end
+
+  def status_text
+    status.to_s.humanize
+  end
 end

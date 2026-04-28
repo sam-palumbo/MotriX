@@ -25,17 +25,17 @@
     <div class="card-lbl">Identificação</div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :placa, "Placa", class: "flabel" %>
-        <%= form.text_field :placa, class: "finput", style: "text-transform:uppercase" %>
+        <%= form.label :placa, "Placa *", class: "flabel" %>
+        <%= form.text_field :placa, class: "finput", style: "text-transform:uppercase", required: true %>
       </div>
       <div class="fg">
-        <%= form.label :renavam, "RENAVAM", class: "flabel" %>
-        <%= form.text_field :renavam, class: "finput" %>
+        <%= form.label :renavam, "RENAVAM *", class: "flabel" %>
+        <%= form.text_field :renavam, class: "finput", required: true %>
       </div>
     </div>
     <div class="fg">
-      <%= form.label :chassi, "Chassi", class: "flabel" %>
-      <%= form.text_field :chassi, class: "finput" %>
+      <%= form.label :chassi, "Chassi *", class: "flabel" %>
+      <%= form.text_field :chassi, class: "finput", required: true %>
     </div>
   </div>
 
@@ -63,7 +63,7 @@
       </div>
     </div>
     <div class="fg">
-      <%= form.label :status, "Status", class: "flabel" %>
+      <%= form.label :status, "Status *", class: "flabel" %>
       <%= form.select :status, 
           options_for_select([
             ["Disponível", 0], 
@@ -71,7 +71,7 @@
             ["Em Manutenção", 2], 
             ["Inativo", 3]
           ], @veiculo.status), 
-          {}, class: "fselect" %>
+          { required: true }, class: "fselect" %>
     </div>
   </div>
 
