@@ -1,5 +1,4 @@
 class PagamentosSemanaisController < ApplicationController
-  before_action :ensure_database_connected
 
   def create
     locacao = Locacao.find(params[:locacao_id])

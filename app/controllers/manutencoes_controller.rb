@@ -1,5 +1,4 @@
 class ManutencoesController < ApplicationController
-  before_action :ensure_database_connected
 
   def create
     veiculo = Veiculo.find(params[:veiculo_id])
