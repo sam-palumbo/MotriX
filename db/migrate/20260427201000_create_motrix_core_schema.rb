@@ -84,7 +84,7 @@ class CreateMotrixCoreSchema < ActiveRecord::Migration[8.0]
     create_table :eventos, id: :uuid do |t|
       t.references :cliente, type: :uuid, foreign_key: true, null: true
       t.references :veiculo, type: :uuid, foreign_key: true, null: true
-      t.references :locacao, type: :uuid, foreign_key: true, null: true
+      t.references :locacao, type: :uuid, foreign_key: { to_table: :locacoes }, null: true
       t.integer :tipo_evento, null: false
       t.integer :tipo_manutencao
       t.integer :fluxo, null: false
