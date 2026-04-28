@@ -22,6 +22,12 @@ require 'rspec/rails'
 #
 # Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 
+# Configure FactoryBot
+require 'factory_bot_rails'
+
+# Configure Shoulda Matchers
+require 'shoulda/matchers'
+
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
@@ -62,4 +68,15 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # Configure FactoryBot
+  config.include FactoryBot::Syntax::Methods
+
+  # Configure Shoulda Matchers
+  Shoulda::Matchers.configure do |shoulda_config|
+    shoulda_config.integrate do |with|
+      with.test_framework :rspec
+      with.library :rails
+    end
+  end
 end

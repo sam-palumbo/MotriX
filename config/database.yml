@@ -8,11 +8,12 @@ default: &default
   password: <%= ENV["DB_PASSWORD"] %>
 
 development:
-  url: <%= ENV["DATABASE_URL"] %>
+  adapter: sqlite3
+  database: db/development.sqlite3
 
 test:
-  <<: *default
-  database: <%= ENV.fetch("DB_TEST_NAME", "motrix_test") %>
+  adapter: sqlite3
+  database: db/test.sqlite3
 
 production:
   url: <%= ENV["DATABASE_URL"] %>

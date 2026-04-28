@@ -5,6 +5,7 @@ require "rails/all"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+require "dotenv-rails" if Rails.env.development? || Rails.env.test?
 
 module Motrix
   class Application < Rails::Application
@@ -24,6 +25,9 @@ module Motrix
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
+
+    # Use Ruby format for schema dumping for SQLite compatibility
+    config.active_record.schema_format = :ruby if Rails.env.test?
 
     # Configuration for the application, engines, and railties goes here.
     #

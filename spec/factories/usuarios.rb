@@ -1,22 +1,22 @@
 FactoryBot.define do
   factory :usuario do
-    cpf { Faker::CPF.numeric }
+    sequence(:cpf) { |n| Faker::Number.number(digits: 11).to_s + n.to_s }
     nome { Faker::Name.name }
     email { Faker::Internet.email }
     senha_hash { "hashed_password_#{rand(1000)}" }
-    perfil { 1 } # operador
+    perfil { :operador }
     ativo { true }
     
     trait :admin do
-      perfil { 0 }
+      perfil { :admin }
     end
     
     trait :operador do
-      perfil { 1 }
+      perfil { :operador }
     end
     
     trait :socio do
-      perfil { 2 }
+      perfil { :socio }
     end
     
     trait :inativo do

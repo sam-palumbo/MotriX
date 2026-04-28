@@ -218,7 +218,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_27_201000) do
   add_foreign_key "clientes", "usuarios", column: "created_by_id"
   add_foreign_key "clientes", "usuarios", column: "updated_by_id"
   add_foreign_key "eventos", "clientes"
-  add_foreign_key "eventos", "locacoes", column: "locacao_id"
+  add_foreign_key "eventos", "locacoes"
   add_foreign_key "eventos", "usuarios", column: "created_by_id"
   add_foreign_key "eventos", "usuarios", column: "updated_by_id"
   add_foreign_key "eventos", "veiculos"

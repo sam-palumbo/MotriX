@@ -16,11 +16,11 @@ class Usuario < ApplicationRecord
 
   def perfil_text
     case perfil
-    when 0
+    when 'admin', 0
       'Administrador'
-    when 1
+    when 'operador', 1
       'Operador'
-    when 2
+    when 'socio', 2
       'Sócio'
     else
       'Desconhecido'

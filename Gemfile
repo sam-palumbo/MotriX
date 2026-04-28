@@ -34,6 +34,8 @@ group :development, :test do
   gem "rspec-rails", "~> 6.0"
   gem "factory_bot_rails", "~> 6.2"
   gem "faker", "~> 3.0"
+  gem "sqlite3", "~> 2.1"
+  gem "shoulda-matchers", "~> 6.0"
 end
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]

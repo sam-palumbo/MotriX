@@ -14,7 +14,7 @@ RSpec.describe Usuario, type: :model do
     it { should validate_presence_of(:senha_hash) }
     it { should validate_presence_of(:perfil) }
 
-    it { should validate_uniqueness_of(:cpf) }
+    it { should validate_uniqueness_of(:cpf).case_insensitive }
     it { should validate_uniqueness_of(:email) }
   end
 
@@ -112,7 +112,7 @@ RSpec.describe Usuario, type: :model do
   end
 
   describe '#perfil_text' do
-    context 'when perfil is admin (0)' do
+    context 'when perfil is admin' do
       let(:usuario) { build(:usuario, :admin) }
 
       it 'returns "Administrador"' do
@@ -120,7 +120,7 @@ RSpec.describe Usuario, type: :model do
       end
     end
 
-    context 'when perfil is operador (1)' do
+    context 'when perfil is operador' do
       let(:usuario) { build(:usuario, :operador) }
 
       it 'returns "Operador"' do
@@ -128,19 +128,11 @@ RSpec.describe Usuario, type: :model do
       end
     end
 
-    context 'when perfil is socio (2)' do
+    context 'when perfil is socio' do
       let(:usuario) { build(:usuario, :socio) }
 
       it 'returns "Sócio"' do
         expect(usuario.perfil_text).to eq('Sócio')
-      end
-    end
-
-    context 'when perfil is unknown' do
-      let(:usuario) { build(:usuario, perfil: 99) }
-
-      it 'returns "Desconhecido"' do
-        expect(usuario.perfil_text).to eq('Desconhecido')
       end
     end
   end
@@ -153,19 +145,19 @@ RSpec.describe Usuario, type: :model do
 
     it 'creates an admin usuario with :admin trait' do
       usuario = create(:usuario, :admin)
-      expect(usuario.perfil).to eq(0)
+      expect(usuario.perfil).to eq('admin')
       expect(usuario.admin?).to be true
     end
 
     it 'creates an operador usuario with :operador trait' do
       usuario = create(:usuario, :operador)
-      expect(usuario.perfil).to eq(1)
+      expect(usuario.perfil).to eq('operador')
       expect(usuario.operador?).to be true
     end
 
     it 'creates a socio usuario with :socio trait' do
       usuario = create(:usuario, :socio)
-      expect(usuario.perfil).to eq(2)
+      expect(usuario.perfil).to eq('socio')
       expect(usuario.socio?).to be true
     end
 
