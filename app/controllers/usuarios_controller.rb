@@ -45,6 +45,8 @@ class UsuariosController < ApplicationController
   end
 
   def usuario_params
-    params.require(:usuario).permit(:cpf, :nome, :email, :senha_hash, :perfil, :ativo, :created_by_id, :updated_by_id)
+    permitted = params.require(:usuario).permit(:cpf, :nome, :email, :senha_hash, :perfil, :ativo, :created_by_id, :updated_by_id)
+    permitted[:perfil] = permitted[:perfil].to_i if permitted[:perfil].present?
+    permitted
   end
 end

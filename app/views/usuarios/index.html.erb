@@ -45,7 +45,7 @@
 
 <div id="usuarios-list">
   <% @usuarios.each do |usuario| %>
-    <div class="li" onclick="window.location.href='<%= usuario_path(usuario) %>'" data-search-text="<%= usuario.nome.downcase %> <%= usuario.email %> <%= usuario.cpf %> <%= usuario.telefone %>">
+    <div class="li" onclick="window.location.href='<%= usuario_path(usuario) %>'" data-search-text="<%= usuario.nome.downcase %> <%= usuario.email %> <%= usuario.cpf %>">
       <div class="li-icon" style="background:<%= usuario.ativo? ? 'rgba(61,186,110,.1)' : 'rgba(224,80,80,.1)' %>">
         <%= usuario.ativo? ? '✅' : '🔴' %>
       </div>
@@ -58,10 +58,7 @@
           <span class="badge <%= usuario.perfil == 0 ? 'b-blue' : 'b-gray' %>">
             <%= usuario.perfil == 0 ? 'Administrador' : 'Operador' %>
           </span>
-          <% if usuario.telefone.present? %>
-            <span class="badge b-gray">📱 <%= usuario.telefone %></span>
-          <% end %>
-        </div>
+                  </div>
       </div>
       <div class="li-right">
         <span class="badge <%= usuario.ativo? ? 'b-green' : 'b-red' %>">

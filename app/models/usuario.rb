@@ -13,4 +13,17 @@ class Usuario < ApplicationRecord
   def to_s
     nome
   end
+
+  def perfil_text
+    case perfil
+    when 0
+      'Administrador'
+    when 1
+      'Operador'
+    when 2
+      'Sócio'
+    else
+      'Desconhecido'
+    end
+  end
 end
