@@ -12,6 +12,7 @@ module Motrix
     config.load_defaults 8.0
     config.time_zone = "Brasilia"
     config.i18n.default_locale = :"pt-BR"
+    config.active_support.inflector_locale = :"pt-BR"
     config.generators do |generator|
       generator.orm :active_record, primary_key_type: :uuid
       generator.helper false
