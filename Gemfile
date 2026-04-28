@@ -30,5 +30,11 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 # Load environment variables from .env file
 gem "dotenv-rails", group: :development
 
+group :development, :test do
+  gem "rspec-rails", "~> 6.0"
+  gem "factory_bot_rails", "~> 6.2"
+  gem "faker", "~> 3.0"
+end
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
