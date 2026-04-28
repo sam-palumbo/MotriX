@@ -1,91 +1,85 @@
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white shadow-sm rounded-lg">
-    <div class="px-6 py-4 border-b border-gray-200">
-      <div class="flex items-center justify-between">
-        <h1 class="text-xl font-semibold text-gray-900">Detalhes da Participação</h1>
-        <div class="flex space-x-2">
-          <%= link_to "Editar", edit_participacao_socio_path(@participacao_socio), class: "px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-          <%= link_to "Voltar", participacao_socios_path, class: "px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-        </div>
+<div class="sec-head">
+  <div>
+    <div class="sec-title">Detalhes da Participação</div>
+    <div class="sec-sub">Informações da participação</div>
+  </div>
+  <div class="btn-row">
+    <%= link_to "Editar", edit_participacao_socio_path(@participacao_socio), class: "btn btn-ghost" %>
+    <%= link_to "Voltar", participacao_socios_path, class: "btn btn-ghost" %>
+  </div>
+</div>
+
+<!-- Sócio -->
+<div class="card">
+  <div class="card-lbl">Sócio</div>
+  <div class="frow">
+    <div class="fg">
+      <div class="fvalue">
+        <div><%= @participacao_socio.socio.nome %></div>
+        <div class="text-sm text-gray-600"><%= @participacao_socio.socio.cpf %></div>
+        <div class="text-sm text-gray-600"><%= @participacao_socio.socio.telefone %></div>
+        <div class="text-sm text-gray-600"><%= @participacao_socio.socio.email %></div>
       </div>
     </div>
-    
-    <div class="px-6 py-4">
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div class="space-y-4">
-          <div>
-            <h3 class="text-sm font-medium text-gray-500">Sócio</h3>
-            <div class="mt-2">
-              <div class="text-sm font-medium text-gray-900"><%= @participacao_socio.socio.nome %></div>
-              <div class="text-sm text-gray-600"><%= @participacao_socio.socio.cpf %></div>
-              <div class="text-sm text-gray-600"><%= @participacao_socio.socio.telefone %></div>
-              <div class="text-sm text-gray-600"><%= @participacao_socio.socio.email %></div>
-            </div>
-          </div>
+  </div>
+</div>
 
-          <div>
-            <h3 class="text-sm font-medium text-gray-500">Participação</h3>
-            <div class="mt-2 space-y-2">
-              <div class="flex justify-between">
-                <span class="text-sm text-gray-600">Percentual:</span>
-                <span class="text-sm font-medium text-gray-900"><%= @participacao_socio.percentual_participacao.to_f %>%</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-sm text-gray-600">Valor Investido:</span>
-                <span class="text-sm font-medium text-gray-900">R$ <%= number_to_currency(@participacao_socio.valor_investido, unit: "", separator: ",", delimiter: ".") %></span>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- Participação -->
+<div class="card">
+  <div class="card-lbl">Participação</div>
+  <div class="frow">
+    <div class="fg">
+      <div class="flabel">Percentual</div>
+      <div class="fvalue"><%= @participacao_socio.percentual_participacao.to_f %>%</div>
+    </div>
+    <div class="fg">
+      <div class="flabel">Valor Investido</div>
+      <div class="fvalue">R$ <%= number_to_currency(@participacao_socio.valor_investido, unit: "", separator: ",", delimiter: ".") %></div>
+    </div>
+  </div>
+</div>
 
-        <div class="space-y-4">
-          <div>
-            <h3 class="text-sm font-medium text-gray-500">Veículo</h3>
-            <div class="mt-2">
-              <div class="text-sm font-medium text-gray-900"><%= @participacao_socio.veiculo.placa %> - <%= @participacao_socio.veiculo.modelo %></div>
-              <div class="text-sm text-gray-600"><%= @participacao_socio.veiculo.marca %> <%= @participacao_socio.veiculo.ano %></div>
-              <div class="text-sm text-gray-600">Cor: <%= @participacao_socio.veiculo.cor %></div>
-              <div class="text-sm text-gray-600">KM Atual: <%= @participacao_socio.veiculo.km_atual %> km</div>
-            </div>
-          </div>
-
-          <div>
-            <h3 class="text-sm font-medium text-gray-500">Valores do Veículo</h3>
-            <div class="mt-2 space-y-2">
-              <div class="flex justify-between">
-                <span class="text-sm text-gray-600">Valor Compra:</span>
-                <span class="text-sm font-medium text-gray-900">R$ <%= number_to_currency(@participacao_socio.veiculo.valor_compra, unit: "", separator: ",", delimiter: ".") %></span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-sm text-gray-600">Valor Semanal:</span>
-                <span class="text-sm font-medium text-gray-900">R$ <%= number_to_currency(@participacao_socio.veiculo.valor_semanal, unit: "", separator: ",", delimiter: ".") %></span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-sm text-gray-600">Status:</span>
-                <span class="px-2 py-1 text-xs font-medium rounded-full 
-                  <%= case @participacao_socio.veiculo.status 
-                      when 0 then 'bg-green-100 text-green-800'
-                      when 1 then 'bg-blue-100 text-blue-800'
-                      when 2 then 'bg-yellow-100 text-yellow-800'
-                      when 3 then 'bg-red-100 text-red-800'
-                      end %>">
-                  <%= @participacao_socio.veiculo.status_text %>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- Veículo -->
+<div class="card">
+  <div class="card-lbl">Veículo</div>
+  <div class="frow">
+    <div class="fg">
+      <div class="fvalue">
+        <div><%= @participacao_socio.veiculo.placa %> - <%= @participacao_socio.veiculo.modelo %></div>
+        <div class="text-sm text-gray-600"><%= @participacao_socio.veiculo.marca %> <%= @participacao_socio.veiculo.ano %></div>
+        <div class="text-sm text-gray-600">Cor: <%= @participacao_socio.veiculo.cor %></div>
+        <div class="text-sm text-gray-600">KM Atual: <%= @participacao_socio.veiculo.km_atual %> km</div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <div class="mt-6 pt-6 border-t border-gray-200">
-        <div class="flex justify-between items-center text-sm text-gray-500">
-          <div>
-            Criado em: <%= @participacao_socio.created_at.strftime("%d/%m/%Y %H:%M") %>
-          </div>
-          <div>
-            Atualizado em: <%= @participacao_socio.updated_at.strftime("%d/%m/%Y %H:%M") %>
-          </div>
-        </div>
+<!-- Valores do Veículo -->
+<div class="card">
+  <div class="card-lbl">Valores do Veículo</div>
+  <div class="frow">
+    <div class="fg">
+      <div class="flabel">Valor Compra</div>
+      <div class="fvalue">R$ <%= number_to_currency(@participacao_socio.veiculo.valor_compra, unit: "", separator: ",", delimiter: ".") %></div>
+    </div>
+    <div class="fg">
+      <div class="flabel">Valor Semanal</div>
+      <div class="fvalue">R$ <%= number_to_currency(@participacao_socio.veiculo.valor_semanal, unit: "", separator: ",", delimiter: ".") %></div>
+    </div>
+  </div>
+  <div class="frow">
+    <div class="fg">
+      <div class="flabel">Status</div>
+      <div class="flex items-center gap-2">
+        <span class="badge 
+          <%= case @participacao_socio.veiculo.status 
+              when 0 then 'b-green'
+              when 1 then 'b-blue'
+              when 2 then 'b-yellow'
+              when 3 then 'b-red'
+              end %>">
+          <%= @participacao_socio.veiculo.status_text %>
+        </span>
       </div>
     </div>
   </div>
