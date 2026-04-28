@@ -3,11 +3,13 @@ Rails.application.routes.draw do
 
   root "dashboard#index"
 
-  resources :clientes, only: :index
-  resources :veiculos, only: :index
-  resources :locacoes, only: :index
-  resources :eventos, only: :index
-  resources :socios, only: :index
+  resources :clientes
+  resources :veiculos
+  resources :locacoes
+  resources :eventos
+  resources :socios
+  resources :usuarios
+  resources :participacao_socios
 
   resource :pagamento_semanal, only: :create
   resource :manutencao, only: :create

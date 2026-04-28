@@ -5,8 +5,11 @@
     <p class="text-sm font-medium uppercase tracking-[0.2em] text-teal-700">Frota</p>
     <h2 class="mt-1 text-3xl font-semibold text-stone-950">Veiculos</h2>
   </div>
-  <div class="rounded-full bg-white px-4 py-2 text-sm font-medium text-stone-600 ring-1 ring-stone-200">
-    <%= @veiculos.size %> veiculos
+  <div class="flex items-center gap-3">
+    <div class="rounded-full bg-white px-4 py-2 text-sm font-medium text-stone-600 ring-1 ring-stone-200">
+      <%= @veiculos.size %> veiculos
+    </div>
+    <%= link_to "Novo Veículo", new_veiculo_path, class: "rounded-full bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 transition-colors" %>
   </div>
 </section>
 

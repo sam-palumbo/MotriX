@@ -1,0 +1,151 @@
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white shadow-sm rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="flex items-center justify-between">
+        <h1 class="text-xl font-semibold text-gray-900">Detalhes do Evento</h1>
+        <div class="flex space-x-2">
+          <%= link_to "Editar", edit_evento_path(@evento), class: "px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          <%= link_to "Voltar", eventos_path, class: "px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="px-6 py-4">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">Informações do Evento</h3>
+            <div class="mt-2 space-y-2">
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Tipo Evento:</span>
+                <span class="text-sm font-medium text-gray-900"><%= @evento.tipo_evento_text %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Fluxo:</span>
+                <span class="px-2 py-1 text-xs font-medium rounded-full <%= @evento.entrada? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                  <%= @evento.fluxo_text %>
+                </span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Status:</span>
+                <span class="px-2 py-1 text-xs font-medium rounded-full 
+                  <%= case @evento.status 
+                      when 0 then 'bg-yellow-100 text-yellow-800'
+                      when 1 then 'bg-green-100 text-green-800'
+                      when 2 then 'bg-red-100 text-red-800'
+                      end %>">
+                  <%= @evento.status_text %>
+                </span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Valor:</span>
+                <span class="text-sm font-medium text-gray-900">R$ <%= number_to_currency(@evento.valor, unit: "", separator: ",", delimiter: ".") %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Data Evento:</span>
+                <span class="text-sm font-medium text-gray-900"><%= @evento.data_evento.strftime("%d/%m/%Y") %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Responsável:</span>
+                <span class="text-sm font-medium text-gray-900"><%= @evento.responsavel %></span>
+              </div>
+            </div>
+          </div>
+
+          <% if @evento.tipo_manutencao.present? %>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500">Manutenção</h3>
+              <div class="mt-2 space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">Tipo Manutenção:</span>
+                  <span class="text-sm font-medium text-gray-900"><%= @evento.tipo_manutencao_text %></span>
+                </div>
+                <% if @evento.quilometragem.present? %>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Quilometragem:</span>
+                    <span class="text-sm font-medium text-gray-900"><%= @evento.quilometragem %> km</span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="space-y-4">
+          <% if @evento.cliente.present? %>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500">Cliente</h3>
+              <div class="mt-2">
+                <div class="text-sm font-medium text-gray-900"><%= @evento.cliente.nome %></div>
+                <div class="text-sm text-gray-600"><%= @evento.cliente.cpf %></div>
+                <div class="text-sm text-gray-600"><%= @evento.cliente.telefone %></div>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @evento.veiculo.present? %>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500">Veículo</h3>
+              <div class="mt-2">
+                <div class="text-sm font-medium text-gray-900"><%= @evento.veiculo.placa %> - <%= @evento.veiculo.modelo %></div>
+                <div class="text-sm text-gray-600"><%= @evento.veiculo.marca %> <%= @evento.veiculo.ano %></div>
+                <div class="text-sm text-gray-600">KM Atual: <%= @evento.veiculo.km_atual %> km</div>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @evento.locacao.present? %>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500">Locação</h3>
+              <div class="mt-2">
+                <div class="text-sm font-medium text-gray-900"><%= @evento.locacao.numero_contrato %></div>
+                <div class="text-sm text-gray-600">Cliente: <%= @evento.locacao.cliente.nome %></div>
+                <div class="text-sm text-gray-600">Veículo: <%= @evento.locacao.veiculo.placa %></div>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @evento.periodo_inicio.present? || @evento.periodo_fim.present? %>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500">Período</h3>
+              <div class="mt-2 space-y-2">
+                <% if @evento.periodo_inicio.present? %>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Início:</span>
+                    <span class="text-sm font-medium text-gray-900"><%= @evento.periodo_inicio.strftime("%d/%m/%Y") %></span>
+                  </div>
+                <% end %>
+                <% if @evento.periodo_fim.present? %>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Fim:</span>
+                    <span class="text-sm font-medium text-gray-900"><%= @evento.periodo_fim.strftime("%d/%m/%Y") %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @evento.descricao.present? %>
+        <div class="mt-6">
+          <h3 class="text-sm font-medium text-gray-500">Descrição</h3>
+          <div class="mt-2">
+            <p class="text-sm text-gray-900"><%= @evento.descricao %></p>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <div class="flex justify-between items-center text-sm text-gray-500">
+          <div>
+            Criado em: <%= @evento.created_at.strftime("%d/%m/%Y %H:%M") %>
+          </div>
+          <div>
+            Atualizado em: <%= @evento.updated_at.strftime("%d/%m/%Y %H:%M") %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
