@@ -5,7 +5,7 @@
     <div class="sec-title">Locações</div>
     <div class="sec-sub"><%= @locacoes.size %> contratos ativos</div>
   </div>
-  <%= link_to "Nova Locação", new_locacao_path, class: "btn btn-gold btn-sm" %>
+  <%= link_to "Nova Locação", "#", onclick: "AppModal.load('#{new_locacao_path}', 'Nova Locação', 'Criar contrato de locação'); return false;", class: "btn btn-gold btn-sm" %>
 </div>
 
 <!-- Tabs -->

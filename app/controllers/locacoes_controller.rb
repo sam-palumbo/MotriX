@@ -12,6 +12,10 @@ class LocacoesController < ApplicationController
     @locacao = Locacao.new
     @clientes = Cliente.order(:nome)
     @veiculos = Veiculo.order(:placa)
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def create
@@ -19,28 +23,40 @@ class LocacoesController < ApplicationController
     @locacao.created_by = Current.usuario
     @locacao.updated_by = Current.usuario
 
-    if @locacao.save
-      redirect_to @locacao, notice: "Locacao was successfully created."
-    else
-      @clientes = Cliente.order(:nome)
-      @veiculos = Veiculo.order(:placa)
-      render :new, status: :unprocessable_entity
+    respond_to do |format|
+      if @locacao.save
+        format.html { redirect_to @locacao, notice: "Locacao was successfully created." }
+        format.turbo_stream
+      else
+        @clientes = Cliente.order(:nome)
+        @veiculos = Veiculo.order(:placa)
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream
+      end
     end
   end
 
   def edit
     @clientes = Cliente.order(:nome)
     @veiculos = Veiculo.order(:placa)
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def update
     @locacao.updated_by = Current.usuario
-    if @locacao.update(locacao_params)
-      redirect_to @locacao, notice: "Locacao was successfully updated."
-    else
-      @clientes = Cliente.order(:nome)
-      @veiculos = Veiculo.order(:placa)
-      render :edit, status: :unprocessable_entity
+    respond_to do |format|
+      if @locacao.update(locacao_params)
+        format.html { redirect_to @locacao, notice: "Locacao was successfully updated." }
+        format.turbo_stream
+      else
+        @clientes = Cliente.order(:nome)
+        @veiculos = Veiculo.order(:placa)
+        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream
+      end
     end
   end
 

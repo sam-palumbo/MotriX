@@ -49,6 +49,9 @@
       <%= yield %>
     </div>
 
+    <!-- MODAL COMPONENT -->
+    <%= render 'shared/modal' %>
+
     <!-- BOTTOM NAV -->
     <nav class="nav">
       <a href="<%= root_path %>" class="ni <%= current_page?(root_path) ? 'active' : '' %>">

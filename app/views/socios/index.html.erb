@@ -5,7 +5,7 @@
     <div class="sec-title">Sócios</div>
     <div class="sec-sub"><%= @socios.size %> sócios na frota</div>
   </div>
-  <%= link_to "Novo Sócio", new_socio_path, class: "btn btn-gold btn-sm" %>
+  <%= link_to "Novo Sócio", "#", onclick: "AppModal.load('#{new_socio_path}', 'Novo Sócio', 'Adicionar sócio à frota'); return false;", class: "btn btn-gold btn-sm" %>
 </div>
 
 <!-- Quick Stats -->

@@ -13,6 +13,10 @@ class EventosController < ApplicationController
     @clientes = Cliente.order(:nome)
     @veiculos = Veiculo.order(:placa)
     @locacoes = Locacao.order(:numero_contrato)
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def create
@@ -20,10 +24,17 @@ class EventosController < ApplicationController
     @evento.created_by = Current.usuario
     @evento.updated_by = Current.usuario
 
-    if @evento.save
-      redirect_to @evento, notice: "Evento was successfully created."
-    else
-      render :new, status: :unprocessable_entity
+    respond_to do |format|
+      if @evento.save
+        format.html { redirect_to @evento, notice: "Evento was successfully created." }
+        format.turbo_stream
+      else
+        @clientes = Cliente.order(:nome)
+        @veiculos = Veiculo.order(:placa)
+        @locacoes = Locacao.order(:numero_contrato)
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream
+      end
     end
   end
 
@@ -31,17 +42,25 @@ class EventosController < ApplicationController
     @clientes = Cliente.order(:nome)
     @veiculos = Veiculo.order(:placa)
     @locacoes = Locacao.order(:numero_contrato)
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def update
     @evento.updated_by = Current.usuario
-    if @evento.update(evento_params)
-      redirect_to @evento, notice: "Evento was successfully updated."
-    else
-      @clientes = Cliente.order(:nome)
-      @veiculos = Veiculo.order(:placa)
-      @locacoes = Locacao.order(:numero_contrato)
-      render :edit, status: :unprocessable_entity
+    respond_to do |format|
+      if @evento.update(evento_params)
+        format.html { redirect_to @evento, notice: "Evento was successfully updated." }
+        format.turbo_stream
+      else
+        @clientes = Cliente.order(:nome)
+        @veiculos = Veiculo.order(:placa)
+        @locacoes = Locacao.order(:numero_contrato)
+        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream
+      end
     end
   end
 

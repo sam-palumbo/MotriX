@@ -5,7 +5,7 @@
     <div class="sec-title">Clientes</div>
     <div class="sec-sub"><%= @clientes.size %> clientes cadastrados</div>
   </div>
-  <%= link_to "Novo Cliente", new_cliente_path, class: "btn btn-gold btn-sm" %>
+  <%= link_to "Novo Cliente", "#", onclick: "AppModal.load('#{new_cliente_path}', 'Novo Cliente', 'Adicionar cliente à base'); return false;", class: "btn btn-gold btn-sm" %>
 </div>
 
 <!-- Search/Filter -->

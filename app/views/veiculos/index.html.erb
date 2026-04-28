@@ -5,7 +5,7 @@
     <div class="sec-title">Frota</div>
     <div class="sec-sub"><%= @veiculos.size %> veículos cadastrados</div>
   </div>
-  <%= link_to "Novo Veículo", new_veiculo_path, class: "btn btn-gold btn-sm" %>
+  <%= link_to "Novo Veículo", "#", onclick: "AppModal.load('#{new_veiculo_path}', 'Novo Veículo', 'Adicionar moto à frota'); return false;", class: "btn btn-gold btn-sm" %>
 </div>
 
 <!-- Tabs -->

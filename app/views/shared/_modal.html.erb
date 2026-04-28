@@ -1,0 +1,212 @@
+<div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+  <div id="modal-container" class="modal-container" onclick="event.stopPropagation()">
+    <!-- Modal content will be injected here -->
+  </div>
+</div>
+
+<script>
+  window.AppModal = {
+    open: function(contentHtml) {
+      const overlay = document.getElementById('modal-overlay');
+      const container = document.getElementById('modal-container');
+      
+      container.innerHTML = contentHtml;
+      
+      // Setup the form hijack if a form exists
+      this.setupForm();
+
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      setTimeout(() => {
+        const firstInput = container.querySelector('input:not([type="hidden"]), select, textarea');
+        if (firstInput) firstInput.focus();
+      }, 100);
+    },
+
+    close: function() {
+      const overlay = document.getElementById('modal-overlay');
+      const container = document.getElementById('modal-container');
+      
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      
+      setTimeout(() => {
+        if (!overlay.classList.contains('active')) {
+          container.innerHTML = '';
+        }
+      }, 300); // Wait for transition
+    },
+
+    load: function(url, title, subtitle) {
+      fetch(url, { headers: { 'Accept': 'text/html' } })
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          
+          // The forms in this app usually use form_with and wrap it in a max-w-2xl class
+          const formElement = doc.querySelector('form.max-w-2xl') || doc.querySelector('form');
+          
+          if (!formElement) {
+            console.error("Form not found in response.");
+            return;
+          }
+
+          // Force form to be remote
+          formElement.setAttribute('data-turbo', 'false');
+
+          // Extract btn-row to convert it to modal-footer
+          const btnRow = formElement.querySelector('.btn-row');
+          let footerHtml = '';
+          if (btnRow) {
+            footerHtml = `<div class="modal-footer">${btnRow.outerHTML}</div>`;
+            btnRow.remove();
+          }
+
+          const modalHtml = `
+            <div class="modal-header">
+              <div>
+                <h3>${title}</h3>
+                <p>${subtitle}</p>
+              </div>
+              <button type="button" class="modal-close" onclick="AppModal.close()">×</button>
+            </div>
+            ${formElement.outerHTML.replace('</form>', `${footerHtml}</form>`)}
+          `;
+          
+          // Convert the inner form's body to modal-body
+          const finalHtml = modalHtml.replace(/<form([^>]*)>/i, '<form$1><div class="modal-body">').replace(/<\/form>/i, '</div></form>');
+
+          // Actually, let's restructure safely:
+          // We put <div class="modal-body"> inside the form wrapping everything EXCEPT the footer.
+          // Wait, string replacement is tricky. Let's build it safely via DOM manipulation.
+          
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = `
+            <div class="modal-header">
+              <div>
+                <h3>${title}</h3>
+                <p>${subtitle}</p>
+              </div>
+              <button type="button" class="modal-close" onclick="AppModal.close()">×</button>
+            </div>
+          `;
+          
+          const formClone = formElement.cloneNode(true);
+          formClone.className = "modal-form"; // clean up class
+          
+          const modalBody = document.createElement('div');
+          modalBody.className = "modal-body";
+          
+          // Move all children of form into modalBody
+          while (formClone.firstChild) {
+            modalBody.appendChild(formClone.firstChild);
+          }
+          
+          formClone.appendChild(modalBody);
+          
+          if (footerHtml) {
+            const footerDiv = document.createElement('div');
+            footerDiv.innerHTML = footerHtml;
+            formClone.appendChild(footerDiv.firstElementChild);
+          }
+          
+          tempDiv.appendChild(formClone);
+          
+          this.open(tempDiv.innerHTML);
+        })
+        .catch(err => {
+          console.error("Failed to load modal:", err);
+          alert("Erro ao carregar o formulário. Tente novamente.");
+        });
+    },
+
+    setupForm: function() {
+      const container = document.getElementById('modal-container');
+      const form = container.querySelector('form');
+      if (!form) return;
+
+      // Add CSRF
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+      if (csrfToken && !form.querySelector('input[name="authenticity_token"]')) {
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'authenticity_token';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+      }
+
+      // Handle cancel button cleanly
+      const cancelBtn = form.querySelector('.btn-ghost');
+      if (cancelBtn) {
+        cancelBtn.onclick = function(e) {
+          e.preventDefault();
+          AppModal.close();
+        };
+      }
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        
+        const submitBtn = form.querySelector('input[type="submit"], button[type="submit"]');
+        const origText = submitBtn.value || submitBtn.innerText;
+        submitBtn.disabled = true;
+        if (submitBtn.value) submitBtn.value = "Salvando...";
+        else submitBtn.innerText = "Salvando...";
+
+        fetch(form.action, {
+          method: form.method || 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            AppModal.close();
+            location.reload(); // Quick refresh to show new data
+          } else {
+            return response.text().then(html => {
+              // Replace form contents with form errors
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(html, 'text/html');
+              const newForm = doc.querySelector('form.max-w-2xl') || doc.querySelector('form');
+              
+              if (newForm) {
+                 const currentFormBody = form.querySelector('.modal-body');
+                 currentFormBody.innerHTML = newForm.innerHTML;
+                 
+                 // Remove any re-nested btn-rows if they snuck in
+                 const innerBtnRow = currentFormBody.querySelector('.btn-row');
+                 if (innerBtnRow) innerBtnRow.remove();
+
+                 AppModal.setupForm(); // re-setup handlers
+              }
+            });
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Erro ao salvar. Tente novamente.");
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          if (submitBtn.value) submitBtn.value = origText;
+          else submitBtn.innerText = origText;
+        });
+      });
+    }
+  };
+
+  // Aliases for inline onclicks
+  window.openModal = function(content) { AppModal.open(content); };
+  window.closeModal = function() { AppModal.close(); };
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') AppModal.close();
+  });
+</script>

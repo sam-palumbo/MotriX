@@ -10,6 +10,10 @@ class ClientesController < ApplicationController
 
   def new
     @cliente = Cliente.new
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def create
@@ -17,22 +21,34 @@ class ClientesController < ApplicationController
     @cliente.created_by = Current.usuario
     @cliente.updated_by = Current.usuario
 
-    if @cliente.save
-      redirect_to @cliente, notice: "Cliente was successfully created."
-    else
-      render :new, status: :unprocessable_entity
+    respond_to do |format|
+      if @cliente.save
+        format.html { redirect_to @cliente, notice: "Cliente was successfully created." }
+        format.turbo_stream
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream
+      end
     end
   end
 
   def edit
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def update
     @cliente.updated_by = Current.usuario
-    if @cliente.update(cliente_params)
-      redirect_to @cliente, notice: "Cliente was successfully updated."
-    else
-      render :edit, status: :unprocessable_entity
+    respond_to do |format|
+      if @cliente.update(cliente_params)
+        format.html { redirect_to @cliente, notice: "Cliente was successfully updated." }
+        format.turbo_stream
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream
+      end
     end
   end
 

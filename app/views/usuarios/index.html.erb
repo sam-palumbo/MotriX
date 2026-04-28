@@ -5,7 +5,7 @@
     <div class="sec-title">Usuários</div>
     <div class="sec-sub"><%= @usuarios.size %> usuários cadastrados</div>
   </div>
-  <%= link_to "Novo Usuário", new_usuario_path, class: "btn btn-gold btn-sm" %>
+  <%= link_to "Novo Usuário", "#", onclick: "AppModal.load('#{new_usuario_path}', 'Novo Usuário', 'Criar conta de acesso'); return false;", class: "btn btn-gold btn-sm" %>
 </div>
 
 <!-- Quick Stats -->

@@ -5,7 +5,7 @@
     <div class="sec-title">Participações</div>
     <div class="sec-sub"><%= @participacao_socios.size %> participações ativas</div>
   </div>
-  <%= link_to "Nova Participação", new_participacao_socio_path, class: "btn btn-gold btn-sm" %>
+  <%= link_to "Nova Participação", "#", onclick: "AppModal.load('#{new_participacao_socio_path}', 'Nova Participação', 'Adicionar investimento de sócio'); return false;", class: "btn btn-gold btn-sm" %>
 </div>
 
 <!-- Quick Stats -->

@@ -5,7 +5,7 @@
     <div class="sec-title">Eventos</div>
     <div class="sec-sub"><%= @eventos.size %> eventos registrados</div>
   </div>
-  <%= link_to "Novo Evento", new_evento_path, class: "btn btn-gold btn-sm" %>
+  <%= link_to "Novo Evento", "#", onclick: "AppModal.load('#{new_evento_path}', 'Novo Evento', 'Registrar evento financeiro ou operacional'); return false;", class: "btn btn-gold btn-sm" %>
 </div>
 
 <!-- Quick Stats -->
