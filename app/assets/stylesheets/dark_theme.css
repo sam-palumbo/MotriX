@@ -71,6 +71,10 @@ body {
   gap: 9px;
 }
 
+.t-logo img {
+  filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.3));
+}
+
 .t-badge {
   width: 32px;
   height: 32px;

@@ -8,9 +8,9 @@
   <%= csp_meta_tag %>
   <%= yield :head %>
 
-  <link rel="icon" href="/icon.png" type="image/png">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/icon.png">
+  <link rel="icon" href="<%= asset_path 'favicon.svg' %>" type="image/svg+xml">
+  <link rel="icon" href="<%= asset_path 'logo.svg' %>" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="<%= asset_path 'logo.svg' %>">
 
   <%= stylesheet_link_tag "dark_theme", "data-turbo-track": "reload" %>
   <%= javascript_importmap_tags %>
@@ -21,7 +21,7 @@
     <!-- TOPBAR -->
     <div class="topbar">
       <div class="t-logo">
-        <div class="t-badge">MX</div>
+        <%= image_tag "logo.svg", alt: "MotriX Logo", style: "height:40px;width:auto;margin-right:12px" %>
         <div>
           <div class="t-name">MotriX</div>
           <div class="t-sub">Gestão de Frota</div>
