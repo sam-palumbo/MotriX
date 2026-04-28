@@ -80,6 +80,10 @@ GEM
     connection_pool (3.0.2)
     crass (1.0.6)
     date (3.5.1)
+    dotenv (3.2.0)
+    dotenv-rails (3.2.0)
+      dotenv (= 3.2.0)
+      railties (>= 6.1)
     drb (2.2.3)
     erb (6.0.4)
     erubi (1.13.1)
@@ -216,6 +220,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  dotenv-rails
   importmap-rails
   irb (= 1.14.3)
   jbuilder

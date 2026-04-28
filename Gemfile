@@ -27,5 +27,8 @@ gem "rdoc", "= 6.14.0"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
+# Load environment variables from .env file
+gem "dotenv-rails", group: :development
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
