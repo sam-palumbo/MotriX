@@ -1,42 +1,96 @@
 <% content_for :title, "Usuários | MotriX" %>
 
-<section class="flex items-end justify-between gap-4">
+<div class="sec-head">
   <div>
-    <p class="text-sm font-medium uppercase tracking-[0.2em] text-teal-700">Usuários</p>
-    <h2 class="mt-1 text-3xl font-semibold text-stone-950">Gestão de usuários</h2>
+    <div class="sec-title">Usuários</div>
+    <div class="sec-sub"><%= @usuarios.size %> usuários cadastrados</div>
   </div>
-  <div class="flex items-center gap-3">
-    <div class="rounded-full bg-white px-4 py-2 text-sm font-medium text-stone-600 ring-1 ring-stone-200">
-      <%= @usuarios.size %> usuários
-    </div>
-    <%= link_to "Novo Usuário", new_usuario_path, class: "rounded-full bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 transition-colors" %>
-  </div>
-</section>
+  <%= link_to "Novo Usuário", new_usuario_path, class: "btn btn-gold btn-sm" %>
+</div>
 
-<section class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+<!-- Quick Stats -->
+<div class="kgrid">
+  <div class="kcard">
+    <div class="knum" style="color:var(--green)">
+      <%= @usuarios.where(ativo: true).count %>
+    </div>
+    <div class="kdesc">Ativos</div>
+  </div>
+  <div class="kcard">
+    <div class="knum" style="color:var(--red)">
+      <%= @usuarios.where(ativo: false).count %>
+    </div>
+    <div class="kdesc">Inativos</div>
+  </div>
+  <div class="kcard">
+    <div class="knum" style="color:var(--blue)">
+      <%= @usuarios.where(perfil: 0).count %>
+    </div>
+    <div class="kdesc">Administradores</div>
+  </div>
+  <div class="kcard">
+    <div class="knum" style="font-size:20px">
+      <%= @usuarios.where(perfil: 1).count %>
+    </div>
+    <div class="kdesc">Operadores</div>
+  </div>
+</div>
+
+<!-- Search/Filter -->
+<div class="card">
+  <div class="fg">
+    <input type="text" class="finput" placeholder="🔍 Buscar usuário por nome, email ou CPF..." id="usuario-search">
+  </div>
+</div>
+
+<div id="usuarios-list">
   <% @usuarios.each do |usuario| %>
-    <article class="rounded-3xl border border-stone-200 bg-white p-5">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <h3 class="text-lg font-semibold text-stone-950"><%= usuario.nome %></h3>
-          <p class="mt-1 text-sm text-stone-500"><%= usuario.cpf %></p>
+    <div class="li" onclick="window.location.href='<%= usuario_path(usuario) %>'" data-search-text="<%= usuario.nome.downcase %> <%= usuario.email %> <%= usuario.cpf %> <%= usuario.telefone %>">
+      <div class="li-icon" style="background:<%= usuario.ativo? ? 'rgba(61,186,110,.1)' : 'rgba(224,80,80,.1)' %>">
+        <%= usuario.ativo? ? '✅' : '🔴' %>
+      </div>
+      <div class="li-body">
+        <div class="li-title"><%= usuario.nome %></div>
+        <div class="li-sub">
+          <%= usuario.email %>
         </div>
-        <div class="flex flex-col items-end gap-2">
-          <span class="rounded-full px-3 py-1 text-xs font-semibold <%= usuario.ativo? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-            <%= usuario.ativo? ? 'Ativo' : 'Inativo' %>
+        <div class="mt4">
+          <span class="badge <%= usuario.perfil == 0 ? 'b-blue' : 'b-gray' %>">
+            <%= usuario.perfil == 0 ? 'Administrador' : 'Operador' %>
           </span>
-          <span class="rounded-full px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800">
-            <%= usuario.perfil_text %>
-          </span>
+          <% if usuario.telefone.present? %>
+            <span class="badge b-gray">📱 <%= usuario.telefone %></span>
+          <% end %>
         </div>
       </div>
-      <div class="mt-4 space-y-2 text-sm text-stone-600">
-        <p><strong>Email:</strong> <%= usuario.email %></p>
-        <p><strong>Telefone:</strong> <%= usuario.telefone.presence || "-" %></p>
+      <div class="li-right">
+        <span class="badge <%= usuario.ativo? ? 'b-green' : 'b-red' %>">
+          <%= usuario.ativo? ? 'Ativo' : 'Inativo' %>
+        </span>
       </div>
-      <div class="mt-4 flex justify-end">
-        <%= link_to "Ver Detalhes", usuario_path(usuario), class: "text-sm font-medium text-teal-700 hover:text-teal-800" %>
-      </div>
-    </article>
+    </div>
   <% end %>
-</section>
+  
+  <% if @usuarios.empty? %>
+    <div class="empty">
+      <div class="empty-ico">👤</div>
+      <div style="font-size:13px">Nenhum usuário cadastrado</div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+document.getElementById('usuario-search').addEventListener('input', function(e) {
+  const searchTerm = e.target.value.toLowerCase();
+  const usuarios = document.querySelectorAll('#usuarios-list .li');
+  
+  usuarios.forEach(usuario => {
+    const searchText = usuario.dataset.searchText;
+    if (searchText.includes(searchTerm)) {
+      usuario.style.display = 'flex';
+    } else {
+      usuario.style.display = 'none';
+    }
+  });
+});
+</script>

@@ -1,39 +1,96 @@
-<% content_for :title, "Socios | MotriX" %>
+<% content_for :title, "Sócios | MotriX" %>
 
-<section class="flex items-end justify-between gap-4">
+<div class="sec-head">
   <div>
-    <p class="text-sm font-medium uppercase tracking-[0.2em] text-teal-700">Socios</p>
-    <h2 class="mt-1 text-3xl font-semibold text-stone-950">Participacoes na frota</h2>
+    <div class="sec-title">Sócios</div>
+    <div class="sec-sub"><%= @socios.size %> sócios na frota</div>
   </div>
-  <div class="flex items-center gap-3">
-    <div class="rounded-full bg-white px-4 py-2 text-sm font-medium text-stone-600 ring-1 ring-stone-200">
-      <%= @socios.size %> socios
-    </div>
-    <%= link_to "Novo Sócio", new_socio_path, class: "rounded-full bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 transition-colors" %>
-  </div>
-</section>
+  <%= link_to "Novo Sócio", new_socio_path, class: "btn btn-gold btn-sm" %>
+</div>
 
-<section class="mt-6 grid gap-4 lg:grid-cols-2">
+<!-- Quick Stats -->
+<div class="kgrid">
+  <div class="kcard">
+    <div class="knum" style="color:var(--gold)">
+      <%= @socios.count %>
+    </div>
+    <div class="kdesc">Sócios</div>
+  </div>
+  <div class="kcard">
+    <div class="knum" style="font-size:20px">
+      <%= @socios.joins(:participacao_socios).distinct.count %>
+    </div>
+    <div class="kdesc">Com participações</div>
+  </div>
+  <div class="kcard">
+    <div class="knum" style="color:var(--green)">
+      <%= brl(ParticipacaoSocio.sum(:valor_investido)) %>
+    </div>
+    <div class="kdesc">Total investido</div>
+  </div>
+  <div class="kcard">
+    <div class="knum" style="font-size:20px">
+      <%= ParticipacaoSocio.sum(:percentual_participacao).to_f %>%
+    </div>
+    <div class="kdesc">Participação total</div>
+  </div>
+</div>
+
+<div id="socios-list">
   <% @socios.each do |socio| %>
-    <article class="rounded-3xl border border-stone-200 bg-white p-5">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <h3 class="text-lg font-semibold text-stone-950"><%= socio.nome %></h3>
-          <p class="mt-1 text-sm text-stone-500"><%= socio.cpf %></p>
+    <div class="vcard" onclick="window.location.href='<%= socio_path(socio) %>'">
+      <div class="vc-head">
+        <div class="vc-plate" style="background:var(--gold)">
+          👤
+        </div>
+        <div class="flex1" style="padding-left:4px">
+          <div style="font-size:14px;font-weight:600;line-height:1.4">
+            <%= socio.nome %>
+          </div>
+          <div style="margin-top:4px">
+            <span class="badge b-gray">
+              <%= socio.cpf.present? ? socio.cpf.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.\2.\3-\4') : "Sem CPF" %>
+            </span>
+          </div>
         </div>
       </div>
-
-      <div class="mt-4 space-y-3">
-        <% socio.participacao_socios.each do |participacao| %>
-          <div class="rounded-2xl bg-stone-100 p-4 text-sm text-stone-700">
-            <div class="flex items-center justify-between gap-3">
-              <span class="font-medium text-stone-950"><%= participacao.veiculo.placa %></span>
-              <span><%= participacao.percentual_participacao.to_f %>%</span>
-            </div>
-            <p class="mt-2">Investimento: <strong><%= brl(participacao.valor_investido) %></strong></p>
+      <div class="vc-body">
+        <% if socio.participacao_socios.any? %>
+          <div class="vc-stats">
+            <% socio.participacao_socios.limit(3).each do |participacao| %>
+              <div class="vc-stat">
+                <div class="vc-sn" style="font-size:11px"><%= participacao.veiculo.placa %></div>
+                <div class="vc-sl"><%= participacao.percentual_participacao.to_f %>%</div>
+              </div>
+            <% end %>
+            <% if socio.participacao_socios.count > 3 %>
+              <div class="vc-stat">
+                <div class="vc-sn" style="font-size:10px">+<%= socio.participacao_socios.count - 3 %></div>
+                <div class="vc-sl">mais</div>
+              </div>
+            <% end %>
+          </div>
+          
+          <div class="vc-client">
+            <span style="color:var(--text3)">Investimento</span>
+            <span style="font-weight:600">
+              <%= brl(socio.participacao_socios.sum(:valor_investido)) %> • <%= socio.participacao_socios.sum(:percentual_participacao).to_f %>%
+            </span>
+          </div>
+        <% else %>
+          <div class="vc-client">
+            <span style="color:var(--text3)">Participações</span>
+            <span style="font-weight:600">Nenhuma participacao registrada</span>
           </div>
         <% end %>
       </div>
-    </article>
+    </div>
   <% end %>
-</section>
+  
+  <% if @socios.empty? %>
+    <div class="empty">
+      <div class="empty-ico">👥</div>
+      <div style="font-size:13px">Nenhum sócio cadastrado</div>
+    </div>
+  <% end %>
+</div>

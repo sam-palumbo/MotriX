@@ -82,6 +82,35 @@
         </svg>
         <span class="ni-lbl">Clientes</span>
       </a>
+      <a href="<%= eventos_path %>" class="ni <%= current_page?(eventos_path) ? 'active' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 2v20M2 12h20"/>
+          <path d="M8 12h.01M16 12h.01M12 8v.01M12 16v.01"/>
+        </svg>
+        <span class="ni-lbl">Eventos</span>
+      </a>
+      <a href="<%= socios_path %>" class="ni <%= current_page?(socios_path) ? 'active' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="8.5" cy="7" r="4"/>
+          <path d="M20 8v6M23 11h-6"/>
+        </svg>
+        <span class="ni-lbl">Sócios</span>
+      </a>
+      <a href="<%= participacao_socios_path %>" class="ni <%= current_page?(participacao_socios_path) ? 'active' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        <span class="ni-lbl">Participações</span>
+      </a>
+      <a href="<%= usuarios_path %>" class="ni <%= current_page?(usuarios_path) ? 'active' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span class="ni-lbl">Usuários</span>
+      </a>
     </nav>
   </div>
 

@@ -1,34 +1,66 @@
 <% content_for :title, "Clientes | MotriX" %>
 
-<section class="flex items-end justify-between gap-4">
+<div class="sec-head">
   <div>
-    <p class="text-sm font-medium uppercase tracking-[0.2em] text-teal-700">Clientes</p>
-    <h2 class="mt-1 text-3xl font-semibold text-stone-950">Base de clientes</h2>
+    <div class="sec-title">Clientes</div>
+    <div class="sec-sub"><%= @clientes.size %> clientes cadastrados</div>
   </div>
-  <div class="flex items-center gap-3">
-    <div class="rounded-full bg-white px-4 py-2 text-sm font-medium text-stone-600 ring-1 ring-stone-200">
-      <%= @clientes.size %> registros
-    </div>
-    <%= link_to "Novo Cliente", new_cliente_path, class: "rounded-full bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 transition-colors" %>
-  </div>
-</section>
+  <%= link_to "Novo Cliente", new_cliente_path, class: "btn btn-gold btn-sm" %>
+</div>
 
-<section class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+<!-- Search/Filter -->
+<div class="card">
+  <div class="fg">
+    <input type="text" class="finput" placeholder="🔍 Buscar cliente por nome, CPF ou telefone..." id="cliente-search">
+  </div>
+</div>
+
+<div id="clientes-list">
   <% @clientes.each do |cliente| %>
-    <article class="rounded-3xl border border-stone-200 bg-white p-5">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <h3 class="text-lg font-semibold text-stone-950"><%= cliente.nome %></h3>
-          <p class="mt-1 text-sm text-stone-500"><%= cliente.cpf %></p>
+    <div class="li" onclick="window.location.href='<%= cliente_path(cliente) %>'" data-search-text="<%= cliente.nome.downcase %> <%= cliente.cpf %> <%= cliente.telefone %> <%= cliente.email %>">
+      <div class="li-icon" style="background:rgba(80,144,240,.1)">👤</div>
+      <div class="li-body">
+        <div class="li-title"><%= cliente.nome %></div>
+        <div class="li-sub">
+          <%= cliente.cpf.present? ? cliente.cpf.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.\2.\3-\4') : "Sem CPF" %>
         </div>
-        <span class="rounded-full px-3 py-1 text-xs font-semibold <%= badge_classes(cliente.status) %>"><%= enum_label(cliente.status) %></span>
+        <div class="mt4">
+          <% if cliente.telefone.present? %>
+            <span class="badge b-blue">📱 <%= cliente.telefone %></span>
+          <% end %>
+          <% if cliente.cidade.present? %>
+            <span class="badge b-gray">📍 <%= cliente.cidade %>/<%= cliente.estado %></span>
+          <% end %>
+        </div>
       </div>
-      <div class="mt-4 space-y-2 text-sm text-stone-600">
-        <p><strong>Telefone:</strong> <%= cliente.telefone.presence || "-" %></p>
-        <p><strong>Email:</strong> <%= cliente.email.presence || "-" %></p>
-        <p><strong>Cidade:</strong> <%= [cliente.cidade, cliente.estado].compact.join(" / ").presence || "-" %></p>
-        <p><strong>CNH:</strong> <%= cliente.cnh.presence || "-" %></p>
+      <div class="li-right">
+        <span class="badge <%= cliente.status == 'ativo' ? 'b-green' : 'b-orange' %>">
+          <%= enum_label(cliente.status) %>
+        </span>
       </div>
-    </article>
+    </div>
   <% end %>
-</section>
+  
+  <% if @clientes.empty? %>
+    <div class="empty">
+      <div class="empty-ico">👥</div>
+      <div style="font-size:13px">Nenhum cliente cadastrado</div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+document.getElementById('cliente-search').addEventListener('input', function(e) {
+  const searchTerm = e.target.value.toLowerCase();
+  const clientes = document.querySelectorAll('#clientes-list .li');
+  
+  clientes.forEach(cliente => {
+    const searchText = cliente.dataset.searchText;
+    if (searchText.includes(searchTerm)) {
+      cliente.style.display = 'flex';
+    } else {
+      cliente.style.display = 'none';
+    }
+  });
+});
+</script>

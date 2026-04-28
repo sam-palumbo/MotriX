@@ -1,42 +1,118 @@
-<% content_for :title, "Participações de Sócios | MotriX" %>
+<% content_for :title, "Participações | MotriX" %>
 
-<section class="flex items-end justify-between gap-4">
+<div class="sec-head">
   <div>
-    <p class="text-sm font-medium uppercase tracking-[0.2em] text-teal-700">Participações</p>
-    <h2 class="mt-1 text-3xl font-semibold text-stone-950">Participações de sócios na frota</h2>
+    <div class="sec-title">Participações</div>
+    <div class="sec-sub"><%= @participacao_socios.size %> participações ativas</div>
   </div>
-  <div class="flex items-center gap-3">
-    <div class="rounded-full bg-white px-4 py-2 text-sm font-medium text-stone-600 ring-1 ring-stone-200">
-      <%= @participacao_socios.size %> participações
+  <%= link_to "Nova Participação", new_participacao_socio_path, class: "btn btn-gold btn-sm" %>
+</div>
+
+<!-- Quick Stats -->
+<div class="kgrid">
+  <div class="kcard">
+    <div class="knum" style="color:var(--gold)">
+      <%= @participacao_socios.count %>
     </div>
-    <%= link_to "Nova Participação", new_participacao_socio_path, class: "rounded-full bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 transition-colors" %>
+    <div class="kdesc">Total</div>
   </div>
-</section>
+  <div class="kcard">
+    <div class="knum" style="color:var(--green)">
+      <%= brl(@participacao_socios.sum(:valor_investido)) %>
+    </div>
+    <div class="kdesc">Investido</div>
+  </div>
+  <div class="kcard">
+    <div class="knum" style="font-size:20px">
+      <%= @participacao_socios.sum(:percentual_participacao).to_f %>%
+    </div>
+    <div class="kdesc">Participação</div>
+  </div>
+  <div class="kcard">
+    <div class="knum" style="color:var(--blue)">
+      <%= @participacao_socios.joins(:veiculo).where(veiculos: { status: :disponivel }).count %>
+    </div>
+    <div class="kdesc">Disponíveis</div>
+  </div>
+</div>
 
-<section class="mt-6 space-y-4">
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" onclick="filterParticipacoes('todos', this)">Todas</button>
+  <button class="tab" onclick="filterParticipacoes('disponivel', this)">Disponíveis</button>
+  <button class="tab" onclick="filterParticipacoes('locado', this)">Locados</button>
+  <button class="tab" onclick="filterParticipacoes('manutencao', this)">Manutenção</button>
+</div>
+
+<div id="participacoes-list">
   <% @participacao_socios.each do |participacao| %>
-    <article class="rounded-3xl border border-stone-200 bg-white p-5">
-      <div class="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h3 class="text-lg font-semibold text-stone-950"><%= participacao.socio.nome %></h3>
-          <p class="mt-1 text-sm text-stone-500"><%= participacao.socio.cpf %></p>
+    <div class="vcard" data-status="<%= participacao.veiculo.status %>" onclick="window.location.href='<%= participacao_socio_path(participacao) %>'">
+      <div class="vc-head">
+        <div class="vc-plate"><%= participacao.veiculo.placa %></div>
+        <div class="flex1" style="padding-left:4px">
+          <div style="font-size:12px;font-weight:600;line-height:1.4">
+            <%= participacao.socio.nome %> • <%= participacao.veiculo.modelo %>
+          </div>
+          <div style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap">
+            <span class="badge b-gold">
+              <%= participacao.percentual_participacao.to_f %>%
+            </span>
+            <span class="badge <%= participacao.veiculo.status == 'disponivel' ? 'b-green' : participacao.veiculo.status == 'locado' ? 'b-blue' : 'b-orange' %>">
+              <%= participacao.veiculo.status_text %>
+            </span>
+          </div>
         </div>
-        <div class="text-right">
-          <p class="text-lg font-semibold text-stone-950"><%= participacao.percentual_participacao.to_f %>%</p>
-          <p class="text-sm text-stone-600">Investimento: <%= number_to_currency(participacao.valor_investido, unit: "R$ ", separator: ",", delimiter: ".") %></p>
+      </div>
+      <div class="vc-body">
+        <div class="vc-stats">
+          <div class="vc-stat">
+            <div class="vc-sn" style="color:var(--green)"><%= brl(participacao.valor_investido) %></div>
+            <div class="vc-sl">investido</div>
+          </div>
+          <div class="vc-stat">
+            <div class="vc-sn" style="font-size:11px"><%= brl(participacao.veiculo.valor_semanal) %></div>
+            <div class="vc-sl">/semana</div>
+          </div>
+          <div class="vc-stat">
+            <div class="vc-sn" style="color:var(--gold)">
+              <%= brl(participacao.veiculo.valor_semanal * participacao.percentual_participacao.to_f / 100) %>
+            </div>
+            <div class="vc-sl">/semana</div>
+          </div>
+        </div>
+        
+        <div class="vc-client">
+          <span style="color:var(--text3)">Retorno mensal estimado</span>
+          <span style="font-weight:600">
+            <%= brl(participacao.veiculo.valor_semanal * 4 * participacao.percentual_participacao.to_f / 100) %>
+          </span>
         </div>
       </div>
-
-      <div class="mt-4 grid gap-3 text-sm text-stone-600 sm:grid-cols-2">
-        <p><strong>Veículo:</strong> <%= participacao.veiculo.placa %> - <%= participacao.veiculo.modelo %></p>
-        <p><strong>Ano:</strong> <%= participacao.veiculo.ano %></p>
-        <p><strong>Valor Semanal:</strong> <%= number_to_currency(participacao.veiculo.valor_semanal, unit: "R$ ", separator: ",", delimiter: ".") %></p>
-        <p><strong>Status:</strong> <%= participacao.veiculo.status_text %></p>
-      </div>
-
-      <div class="mt-4 flex justify-end">
-        <%= link_to "Ver Detalhes", participacao_socio_path(participacao), class: "text-sm font-medium text-teal-700 hover:text-teal-800" %>
-      </div>
-    </article>
+    </div>
   <% end %>
-</section>
+  
+  <% if @participacao_socios.empty? %>
+    <div class="empty">
+      <div class="empty-ico">⏱️</div>
+      <div style="font-size:13px">Nenhuma participação cadastrada</div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+function filterParticipacoes(status, element) {
+  // Update active tab
+  document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+  element.classList.add('active');
+  
+  // Filter participacoes
+  const participacoes = document.querySelectorAll('.vcard');
+  participacoes.forEach(participacao => {
+    if (status === 'todos') {
+      participacao.style.display = 'block';
+    } else {
+      participacao.style.display = participacao.dataset.status === status ? 'block' : 'none';
+    }
+  });
+}
+</script>
