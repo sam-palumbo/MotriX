@@ -14,8 +14,8 @@ class VeiculosController < ApplicationController
 
   def create
     @veiculo = Veiculo.new(veiculo_params)
-    @veiculo.created_by = current_usuario
-    @veiculo.updated_by = current_usuario
+    @veiculo.created_by = Current.usuario
+    @veiculo.updated_by = Current.usuario
 
     if @veiculo.save
       redirect_to @veiculo, notice: "Veiculo was successfully created."
@@ -28,7 +28,7 @@ class VeiculosController < ApplicationController
   end
 
   def update
-    @veiculo.updated_by = current_usuario
+    @veiculo.updated_by = Current.usuario
     if @veiculo.update(veiculo_params)
       redirect_to @veiculo, notice: "Veiculo was successfully updated."
     else

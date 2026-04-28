@@ -16,8 +16,8 @@ class LocacoesController < ApplicationController
 
   def create
     @locacao = Locacao.new(locacao_params)
-    @locacao.created_by = current_usuario
-    @locacao.updated_by = current_usuario
+    @locacao.created_by = Current.usuario
+    @locacao.updated_by = Current.usuario
 
     if @locacao.save
       redirect_to @locacao, notice: "Locacao was successfully created."
@@ -34,7 +34,7 @@ class LocacoesController < ApplicationController
   end
 
   def update
-    @locacao.updated_by = current_usuario
+    @locacao.updated_by = Current.usuario
     if @locacao.update(locacao_params)
       redirect_to @locacao, notice: "Locacao was successfully updated."
     else

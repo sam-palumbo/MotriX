@@ -14,8 +14,8 @@ class ClientesController < ApplicationController
 
   def create
     @cliente = Cliente.new(cliente_params)
-    @cliente.created_by = current_usuario
-    @cliente.updated_by = current_usuario
+    @cliente.created_by = Current.usuario
+    @cliente.updated_by = Current.usuario
 
     if @cliente.save
       redirect_to @cliente, notice: "Cliente was successfully created."
@@ -28,7 +28,7 @@ class ClientesController < ApplicationController
   end
 
   def update
-    @cliente.updated_by = current_usuario
+    @cliente.updated_by = Current.usuario
     if @cliente.update(cliente_params)
       redirect_to @cliente, notice: "Cliente was successfully updated."
     else

@@ -14,8 +14,8 @@ class SociosController < ApplicationController
 
   def create
     @socio = Socio.new(socio_params)
-    @socio.created_by = current_usuario
-    @socio.updated_by = current_usuario
+    @socio.created_by = Current.usuario
+    @socio.updated_by = Current.usuario
 
     if @socio.save
       redirect_to @socio, notice: "Socio was successfully created."
@@ -28,7 +28,7 @@ class SociosController < ApplicationController
   end
 
   def update
-    @socio.updated_by = current_usuario
+    @socio.updated_by = Current.usuario
     if @socio.update(socio_params)
       redirect_to @socio, notice: "Socio was successfully updated."
     else

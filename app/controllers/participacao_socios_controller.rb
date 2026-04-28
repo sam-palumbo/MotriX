@@ -16,14 +16,12 @@ class ParticipacaoSociosController < ApplicationController
 
   def create
     @participacao_socio = ParticipacaoSocio.new(participacao_socio_params)
-    @participacao_socio.created_by = current_usuario
-    @participacao_socio.updated_by = current_usuario
+    @participacao_socio.created_by = Current.usuario
+    @participacao_socio.updated_by = Current.usuario
 
     if @participacao_socio.save
       redirect_to @participacao_socio, notice: "ParticipacaoSocio was successfully created."
     else
-      @socios = Socio.order(:nome)
-      @veiculos = Veiculo.order(:placa)
       render :new, status: :unprocessable_entity
     end
   end
@@ -34,7 +32,7 @@ class ParticipacaoSociosController < ApplicationController
   end
 
   def update
-    @participacao_socio.updated_by = current_usuario
+    @participacao_socio.updated_by = Current.usuario
     if @participacao_socio.update(participacao_socio_params)
       redirect_to @participacao_socio, notice: "ParticipacaoSocio was successfully updated."
     else

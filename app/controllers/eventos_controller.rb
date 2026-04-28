@@ -17,15 +17,12 @@ class EventosController < ApplicationController
 
   def create
     @evento = Evento.new(evento_params)
-    @evento.created_by = current_usuario
-    @evento.updated_by = current_usuario
+    @evento.created_by = Current.usuario
+    @evento.updated_by = Current.usuario
 
     if @evento.save
       redirect_to @evento, notice: "Evento was successfully created."
     else
-      @clientes = Cliente.order(:nome)
-      @veiculos = Veiculo.order(:placa)
-      @locacoes = Locacao.order(:numero_contrato)
       render :new, status: :unprocessable_entity
     end
   end
@@ -37,7 +34,7 @@ class EventosController < ApplicationController
   end
 
   def update
-    @evento.updated_by = current_usuario
+    @evento.updated_by = Current.usuario
     if @evento.update(evento_params)
       redirect_to @evento, notice: "Evento was successfully updated."
     else
