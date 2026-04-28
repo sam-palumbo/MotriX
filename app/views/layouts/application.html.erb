@@ -1,57 +1,104 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= content_for(:title) || "MotriX" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-    <%= yield :head %>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title><%= content_for(:title) || "MotriX" %></title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= yield :head %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+  <link rel="icon" href="/icon.png" type="image/png">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.png">
 
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-  </head>
+  <%= stylesheet_link_tag "dark_theme", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
 
-  <body class="min-h-screen bg-stone-100 text-stone-950 antialiased">
-    <header class="border-b border-stone-200 bg-white/90 backdrop-blur">
-      <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between gap-4">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-teal-700">MotriX</p>
-            <h1 class="text-xl font-semibold text-stone-950">Operacao de frota e locacoes</h1>
-          </div>
-          <div class="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-white">
-            <%= Current.usuario&.nome || "Sem usuario ativo" %>
-          </div>
+<body>
+  <div class="shell">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="t-logo">
+        <div class="t-badge">MX</div>
+        <div>
+          <div class="t-name">MotriX</div>
+          <div class="t-sub">Gestão de Frota</div>
         </div>
-
-        <nav class="flex flex-wrap gap-2">
-          <%= nav_link_to "Dashboard", root_path %>
-          <%= nav_link_to "Clientes", clientes_path %>
-          <%= nav_link_to "Veiculos", veiculos_path %>
-          <%= nav_link_to "Locacoes", locacoes_path %>
-          <%= nav_link_to "Eventos", eventos_path %>
-          <%= nav_link_to "Socios", socios_path %>
-          <%= nav_link_to "Participações", participacao_socios_path %>
-          <%= nav_link_to "Usuários", usuarios_path %>
-        </nav>
       </div>
-    </header>
+      <div style="text-align:right">
+        <div class="t-date" id="tDate"></div>
+        <div id="t-user" style="font-size:10px;color:var(--green);margin-top:2px;font-family:'DM Mono',monospace">
+          ● <%= Current.usuario&.nome || "Sem usuário ativo" %>
+        </div>
+      </div>
+    </div>
 
-    <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div class="scroller">
       <% flash.each do |type, message| %>
-        <div class="mb-4 rounded-2xl border px-4 py-3 text-sm font-medium <%= flash_classes(type) %>">
-          <%= message %>
+        <div class="alert a-<%= flash_alert_class(type) %>">
+          <div class="a-icon"><%= flash_icon(type) %></div>
+          <div>
+            <div class="a-title"><%= flash_title(type) %></div>
+            <div class="a-sub"><%= message %></div>
+          </div>
         </div>
       <% end %>
 
       <%= yield %>
-    </main>
-  </body>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="nav">
+      <a href="<%= root_path %>" class="ni <%= current_page?(root_path) ? 'active' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="7" height="9" rx="1.5"/>
+          <rect x="14" y="3" width="7" height="5" rx="1.5"/>
+          <rect x="14" y="12" width="7" height="9" rx="1.5"/>
+          <rect x="3" y="16" width="7" height="5" rx="1.5"/>
+        </svg>
+        <span class="ni-lbl">Início</span>
+      </a>
+      <a href="<%= veiculos_path %>" class="ni <%= current_page?(veiculos_path) ? 'active' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 7v5l3.5 2"/>
+        </svg>
+        <span class="ni-lbl">Frota</span>
+      </a>
+      <a href="<%= locacoes_path %>" class="ni <%= current_page?(locacoes_path) ? 'active' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 8v8M8 12h8"/>
+        </svg>
+        <span class="ni-lbl">Locações</span>
+      </a>
+      <a href="<%= clientes_path %>" class="ni <%= current_page?(clientes_path) ? 'active' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <span class="ni-lbl">Clientes</span>
+      </a>
+    </nav>
+  </div>
+
+  <script>
+    // Update date/time
+    function updateDateTime() {
+      const now = new Date();
+      const dateEl = document.getElementById('tDate');
+      if (dateEl) {
+        dateEl.innerHTML = 
+          now.toLocaleDateString('pt-BR', {weekday: 'short', day: '2-digit', month: 'short'}).replace(',', '') +
+          '<br>' + now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+      }
+    }
+    
+    updateDateTime();
+    setInterval(updateDateTime, 60000); // Update every minute
+  </script>
+</body>
 </html>

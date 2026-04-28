@@ -40,4 +40,49 @@ module ApplicationHelper
       "bg-stone-200 text-stone-700"
     end
   end
+
+  def flash_alert_class(kind)
+    case kind.to_sym
+    when :notice
+      "green"
+    when :alert
+      "red"
+    when :warning
+      "orange"
+    when :info
+      "blue"
+    else
+      "yellow"
+    end
+  end
+
+  def flash_icon(kind)
+    case kind.to_sym
+    when :notice
+      "✓"
+    when :alert
+      "⚠"
+    when :warning
+      "⚡"
+    when :info
+      "ℹ"
+    else
+      "📢"
+    end
+  end
+
+  def flash_title(kind)
+    case kind.to_sym
+    when :notice
+      "Sucesso"
+    when :alert
+      "Erro"
+    when :warning
+      "Aviso"
+    when :info
+      "Informação"
+    else
+      "Notificação"
+    end
+  end
 end

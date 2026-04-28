@@ -1,282 +1,185 @@
 <% content_for :title, "Dashboard | MotriX" %>
 
 <% unless database_connected? %>
-  <section class="grid gap-4 lg:grid-cols-[2fr_1fr]">
-    <div class="rounded-3xl bg-stone-900 p-6 text-white">
-      <p class="text-sm font-medium uppercase tracking-[0.25em] text-teal-300">Setup</p>
-      <h2 class="mt-2 text-3xl font-semibold">MotriX esta pronto para conectar no PostgreSQL.</h2>
-      <p class="mt-4 max-w-2xl text-sm leading-6 text-stone-300">
-        O app ja esta configurado para Rails 8, Hotwire, Tailwind, PostgreSQL, Supabase e deploy no Render.
-        Falta apenas apontar as variaveis de banco para criar a estrutura.
-      </p>
+  <div class="sec-head">
+    <div>
+      <div class="sec-title">Configuração</div>
+      <div class="sec-sub">MotriX está pronto para conectar no PostgreSQL</div>
     </div>
+  </div>
 
-    <div class="rounded-3xl border border-stone-200 bg-white p-6">
-      <h3 class="text-base font-semibold text-stone-950">Passos rapidos</h3>
-      <ol class="mt-4 space-y-3 text-sm text-stone-600">
-        <li>1. Configure `DB_HOST`, `DB_NAME`, `DB_USERNAME` e `DB_PASSWORD`.</li>
-        <li>2. Rode `bundle exec rake db:create db:migrate db:seed`.</li>
-        <li>3. Em producao, use `DATABASE_URL` do Supabase no Render.</li>
-      </ol>
+  <div class="card">
+    <div class="card-lbl">Setup</div>
+    <div class="card-val">O app já está configurado para Rails 8, Hotwire, Tailwind, PostgreSQL, Supabase e deploy no Render.</div>
+    <div class="mt12" style="font-size:13px;color:var(--text2)">
+      Falta apenas apontar as variáveis de banco para criar a estrutura.
     </div>
-  </section>
+  </div>
 
-  <section class="mt-6 grid gap-4 md:grid-cols-2">
-    <div class="rounded-3xl border border-stone-200 bg-white p-6">
-      <h3 class="text-base font-semibold text-stone-950">Ambiente local</h3>
-      <div class="mt-4 space-y-2 rounded-2xl bg-stone-950 p-4 text-sm text-stone-100">
-        <p>`DB_HOST=127.0.0.1`</p>
-        <p>`DB_PORT=5432`</p>
-        <p>`DB_NAME=motrix_development`</p>
-        <p>`DB_USERNAME=postgres`</p>
-        <p>`DB_PASSWORD=...`</p>
-      </div>
+  <div class="kgrid">
+    <div class="kcard">
+      <div class="knum" style="font-size:16px">1</div>
+      <div class="kdesc">Configure variáveis</div>
     </div>
-
-    <div class="rounded-3xl border border-stone-200 bg-white p-6">
-      <h3 class="text-base font-semibold text-stone-950">Supabase + Render</h3>
-      <div class="mt-4 space-y-2 rounded-2xl bg-stone-950 p-4 text-sm text-stone-100">
-        <p>`DATABASE_URL=postgresql://...`</p>
-        <p>`SUPABASE_URL=https://...supabase.co`</p>
-        <p>`SUPABASE_ANON_KEY=...`</p>
-        <p>`SUPABASE_SERVICE_ROLE_KEY=...`</p>
-        <p>`RAILS_MASTER_KEY=...`</p>
-      </div>
+    <div class="kcard">
+      <div class="knum" style="font-size:16px">2</div>
+      <div class="kdesc">Rode migrations</div>
     </div>
-  </section>
+    <div class="kcard">
+      <div class="knum" style="font-size:16px">3</div>
+      <div class="kdesc">Configure DATABASE_URL</div>
+    </div>
+  </div>
 <% else %>
-  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-    <div class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-stone-200">
-      <p class="text-sm text-stone-500">Clientes ativos e historicos</p>
-      <p class="mt-3 text-3xl font-semibold text-stone-950"><%= @clientes_count %></p>
+  <div class="sec-head">
+    <div>
+      <div class="sec-title">Dashboard</div>
+      <div class="sec-sub">Visão geral da operação</div>
     </div>
-    <div class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-stone-200">
-      <p class="text-sm text-stone-500">Veiculos cadastrados</p>
-      <p class="mt-3 text-3xl font-semibold text-stone-950"><%= @veiculos_count %></p>
-      <p class="mt-2 text-sm text-emerald-700"><%= @veiculos_disponiveis_count %> disponiveis</p>
-    </div>
-    <div class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-stone-200">
-      <p class="text-sm text-stone-500">Locacoes abertas</p>
-      <p class="mt-3 text-3xl font-semibold text-stone-950"><%= @locacoes_ativas_count %></p>
-    </div>
-    <div class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-stone-200">
-      <p class="text-sm text-stone-500">Saldo dos ultimos 30 dias</p>
-      <p class="mt-3 text-3xl font-semibold text-stone-950"><%= brl(@receita_periodo - @despesas_periodo) %></p>
-      <p class="mt-2 text-sm text-stone-500">Entradas <%= brl(@receita_periodo) %> • Saidas <%= brl(@despesas_periodo) %></p>
-    </div>
-  </section>
+  </div>
 
-  <section class="mt-6 grid gap-6 xl:grid-cols-2">
-    <div class="rounded-3xl border border-stone-200 bg-white p-6">
-      <div class="flex items-center justify-between gap-4">
+  <!-- KPIs -->
+  <div class="kgrid">
+    <div class="kcard">
+      <div class="knum" style="color:var(--gold)"><%= @clientes_count %></div>
+      <div class="kdesc">Clientes</div>
+    </div>
+    <div class="kcard">
+      <div class="knum" style="color:var(--green)"><%= @veiculos_count %></div>
+      <div class="kdesc">Veículos</div>
+    </div>
+    <div class="kcard">
+      <div class="knum" style="color:var(--blue)"><%= @locacoes_ativas_count %></div>
+      <div class="kdesc">Locações ativas</div>
+    </div>
+    <div class="kcard">
+      <div class="knum" style="color:var(--orange)"><%= @veiculos_em_manutencao.count %></div>
+      <div class="kdesc">Em manutenção</div>
+    </div>
+  </div>
+
+  <!-- Financeiro -->
+  <div class="kgrid">
+    <div class="kcard">
+      <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Receita últimos 30 dias</div>
+      <div class="knum mt4" style="font-size:20px;color:var(--green)"><%= brl(@receita_periodo) %></div>
+    </div>
+    <div class="kcard">
+      <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Despesas últimos 30 dias</div>
+      <div class="knum mt4" style="font-size:20px;color:var(--red)"><%= brl(@despesas_periodo) %></div>
+    </div>
+    <div class="kcard wide">
+      <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <h2 class="text-lg font-semibold text-stone-950">Pagamento semanal</h2>
-          <p class="mt-1 text-sm text-stone-500">Cria um evento de entrada e ajusta o status da locacao.</p>
+          <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Saldo líquido</div>
+          <div class="knum mt4" style="font-size:17px;color:<%= (@receita_periodo - @despesas_periodo) >= 0 ? 'var(--green)' : 'var(--red)' %>"><%= brl(@receita_periodo - @despesas_periodo) %></div>
+        </div>
+        <div style="text-align:right">
+          <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Margem</div>
+          <div class="knum mt4" style="font-size:17px;color:var(--gold)">
+            <%= @receita_periodo > 0 ? number_to_percentage(((@receita_periodo - @despesas_periodo) / @receita_periodo * 100), precision: 1) : "0%" %>
+          </div>
         </div>
       </div>
+      <div class="pbar mt8">
+        <div class="pbar-fill" style="width:<%= @receita_periodo > 0 ? [(@receita_periodo - @despesas_periodo) / @receita_periodo * 100, 0].max : 0 %>%;background:var(--gold)"></div>
+      </div>
+    </div>
+  </div>
 
-      <%= form_with url: pagamento_semanal_path, class: "mt-6 space-y-4" do |form| %>
-        <div>
-          <%= form.label :locacao_id, "Contrato", class: "mb-2 block text-sm font-medium text-stone-700" %>
-          <%= form.select :locacao_id, @locacoes_para_pagamento.map { |locacao| ["#{locacao.numero_contrato} - #{locacao.cliente.nome}", locacao.id] }, { prompt: "Selecione uma locacao" } %>
-        </div>
+  <!-- Formulários -->
+  <div class="sec-lbl mt8">Registrar</div>
+  
+  <div class="kgrid">
+    <div class="kcard" style="cursor:pointer" onclick="window.location.href='<%= pagamento_semanal_path %>'">
+      <div class="li-icon" style="background:rgba(61,186,110,.1);margin-bottom:12px">💰</div>
+      <div class="knum" style="font-size:16px">Pagamento</div>
+      <div class="kdesc">Registrar semana de locação</div>
+    </div>
+    <div class="kcard" style="cursor:pointer" onclick="window.location.href='<%= manutencao_path %>'">
+      <div class="li-icon" style="background:rgba(224,120,48,.1);margin-bottom:12px">🔧</div>
+      <div class="knum" style="font-size:16px">Manutenção</div>
+      <div class="kdesc">Serviço ou reparo</div>
+    </div>
+  </div>
 
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <%= form.label :valor, "Valor", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.number_field :valor, step: "0.01", min: 0, value: 420 %>
-          </div>
-          <div>
-            <%= form.label :status, "Status", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.select :status, Evento.statuses.keys.map { |key| [enum_label(key), key] }, selected: "pago" %>
-          </div>
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <%= form.label :periodo_inicio, "Periodo inicial", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.date_field :periodo_inicio, value: Date.current.beginning_of_week %>
-          </div>
-          <div>
-            <%= form.label :periodo_fim, "Periodo final", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.date_field :periodo_fim, value: Date.current.end_of_week %>
-          </div>
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <%= form.label :data_evento, "Data do evento", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.date_field :data_evento, value: Date.current %>
-          </div>
-          <div>
-            <%= form.label :responsavel, "Responsavel", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.text_field :responsavel, value: Current.usuario&.nome %>
+  <!-- Locações Ativas -->
+  <div class="sec-lbl">🔥 Locações Ativas (<%= @locacoes_ativas.count %>)</div>
+  <div id="locacoes-ativas">
+    <% @locacoes_ativas.each do |locacao| %>
+      <div class="li" onclick="window.location.href='<%= locacao_path(locacao) %>'">
+        <div class="li-icon" style="background:var(--bg3)">📋</div>
+        <div class="li-body">
+          <div class="li-title"><%= locacao.numero_contrato %></div>
+          <div class="li-sub"><%= locacao.cliente.nome %> • <%= locacao.veiculo.placa %></div>
+          <div class="mt4">
+            <span class="badge <%= locacao.status == 'ativa' ? 'b-green' : 'b-orange' %>">
+              <%= enum_label(locacao.status) %>
+            </span>
           </div>
         </div>
-
-        <div>
-          <%= form.label :descricao, "Observacoes", class: "mb-2 block text-sm font-medium text-stone-700" %>
-          <%= form.text_area :descricao, rows: 3, placeholder: "Ex.: Pagamento referente a semana 18." %>
+        <div class="li-right">
+          <div class="li-val"><%= brl(locacao.valor_semanal) %></div>
+          <div class="li-date">/semana</div>
         </div>
+      </div>
+    <% end %>
+    
+    <% if @locacoes_ativas.empty? %>
+      <div class="empty">
+        <div class="empty-ico">📋</div>
+        <div style="font-size:13px">Nenhuma locação ativa no momento</div>
+      </div>
+    <% end %>
+  </div>
 
-        <%= form.submit "Registrar pagamento", class: "w-full rounded-2xl bg-teal-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-teal-800" %>
+  <!-- Veículos em Manutenção -->
+  <% if @veiculos_em_manutencao.any? %>
+    <div class="sec-lbl">🔧 Em Manutenção (<%= @veiculos_em_manutencao.count %>)</div>
+    <div id="veiculos-manutencao">
+      <% @veiculos_em_manutencao.each do |veiculo| %>
+        <div class="li" onclick="window.location.href='<%= veiculo_path(veiculo) %>'">
+          <div class="li-icon" style="background:rgba(224,120,48,.1)">🔧</div>
+          <div class="li-body">
+            <div class="li-title"><%= veiculo.placa %></div>
+            <div class="li-sub"><%= veiculo.marca %> <%= veiculo.modelo %></div>
+          </div>
+          <div class="li-right">
+            <div class="badge b-orange">Manutenção</div>
+          </div>
+        </div>
       <% end %>
     </div>
+  <% end %>
 
-    <div class="rounded-3xl border border-stone-200 bg-white p-6">
-      <div>
-        <h2 class="text-lg font-semibold text-stone-950">Manutencao</h2>
-        <p class="mt-1 text-sm text-stone-500">Cria um evento de saida, atualiza km e muda o veiculo para manutencao.</p>
-      </div>
-
-      <%= form_with url: manutencao_path, class: "mt-6 space-y-4" do |form| %>
-        <div>
-          <%= form.label :veiculo_id, "Veiculo", class: "mb-2 block text-sm font-medium text-stone-700" %>
-          <%= form.select :veiculo_id, @veiculos_para_manutencao.map { |veiculo| ["#{veiculo.placa} - #{veiculo.marca} #{veiculo.modelo}", veiculo.id] }, { prompt: "Selecione um veiculo" } %>
+  <!-- Eventos Recentes -->
+  <div class="sec-lbl">📊 Eventos Recentes</div>
+  <div id="eventos-recentes">
+    <% @eventos_recentes.each do |evento| %>
+      <div class="li" onclick="window.location.href='<%= evento_path(evento) %>'">
+        <div class="li-icon" style="background:<%= evento.fluxo == 'entrada' ? 'rgba(61,186,110,.1)' : 'rgba(224,80,80,.1)' %>">
+          <%= evento.fluxo == 'entrada' ? '💰' : '💸' %>
         </div>
-
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <%= form.label :tipo_manutencao, "Tipo", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.select :tipo_manutencao, Evento.tipo_manutencaos.keys.map { |key| [enum_label(key), key] }, selected: "revisao" %>
-          </div>
-          <div>
-            <%= form.label :valor, "Valor", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.number_field :valor, step: "0.01", min: 0, value: 180 %>
+        <div class="li-body">
+          <div class="li-title"><%= enum_label(evento.tipo_evento) %></div>
+          <div class="li-sub">
+            <%= [evento.cliente&.nome, evento.veiculo&.placa, evento.locacao&.numero_contrato].compact.join(" • ") %>
           </div>
         </div>
-
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <%= form.label :quilometragem, "Quilometragem", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.number_field :quilometragem, min: 0 %>
+        <div class="li-right">
+          <div class="li-val" style="color:<%= evento.fluxo == 'entrada' ? 'var(--green)' : 'var(--red)' %>">
+            <%= evento.fluxo == 'entrada' ? '+' : '-' %> <%= brl(evento.valor) %>
           </div>
-          <div>
-            <%= form.label :data_evento, "Data do evento", class: "mb-2 block text-sm font-medium text-stone-700" %>
-            <%= form.date_field :data_evento, value: Date.current %>
-          </div>
-        </div>
-
-        <div>
-          <%= form.label :responsavel, "Responsavel", class: "mb-2 block text-sm font-medium text-stone-700" %>
-          <%= form.text_field :responsavel, value: Current.usuario&.nome %>
-        </div>
-
-        <div>
-          <%= form.label :descricao, "Descricao", class: "mb-2 block text-sm font-medium text-stone-700" %>
-          <%= form.text_area :descricao, rows: 3, placeholder: "Ex.: Troca de oleo e revisao geral." %>
-        </div>
-
-        <%= form.submit "Registrar manutencao", class: "w-full rounded-2xl bg-stone-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-stone-700" %>
-      <% end %>
-    </div>
-  </section>
-
-  <section class="mt-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-    <div class="rounded-3xl border border-stone-200 bg-white p-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-stone-950">Locacoes ativas</h2>
-        <%= link_to "Ver todas", locacoes_path, class: "text-sm font-medium text-teal-700 hover:text-teal-900" %>
-      </div>
-
-      <div class="mt-5 space-y-4">
-        <% @locacoes_ativas.each do |locacao| %>
-          <article class="rounded-2xl border border-stone-200 p-4">
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <p class="text-base font-semibold text-stone-950"><%= locacao.numero_contrato %></p>
-                <p class="mt-1 text-sm text-stone-500"><%= locacao.cliente.nome %> • <%= locacao.veiculo.placa %></p>
-              </div>
-              <span class="rounded-full px-3 py-1 text-xs font-semibold <%= badge_classes(locacao.status) %>"><%= enum_label(locacao.status) %></span>
-            </div>
-            <div class="mt-3 flex flex-wrap gap-3 text-sm text-stone-600">
-              <span>Inicio <strong><%= l(locacao.data_inicio) %></strong></span>
-              <span>Prev. fim <strong><%= l(locacao.data_prevista_fim) %></strong></span>
-              <span>Semanal <strong><%= brl(locacao.valor_semanal) %></strong></span>
-            </div>
-          </article>
-        <% end %>
-      </div>
-    </div>
-
-    <div class="space-y-6">
-      <div class="rounded-3xl border border-stone-200 bg-white p-6">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-semibold text-stone-950">Veiculos em manutencao</h2>
-          <%= link_to "Ver frota", veiculos_path, class: "text-sm font-medium text-teal-700 hover:text-teal-900" %>
-        </div>
-
-        <div class="mt-5 space-y-3">
-          <% @veiculos_em_manutencao.each do |veiculo| %>
-            <div class="rounded-2xl border border-stone-200 p-4">
-              <p class="font-semibold text-stone-950"><%= veiculo.placa %></p>
-              <p class="mt-1 text-sm text-stone-500"><%= [veiculo.marca, veiculo.modelo, veiculo.cor].compact.join(" • ") %></p>
-            </div>
-          <% end %>
-
-          <% if @veiculos_em_manutencao.empty? %>
-            <p class="rounded-2xl bg-stone-100 p-4 text-sm text-stone-500">Nenhum veiculo em manutencao neste momento.</p>
-          <% end %>
+          <div class="li-date"><%= l(evento.data_evento, format: :short) %></div>
         </div>
       </div>
-
-      <div class="rounded-3xl border border-stone-200 bg-white p-6">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-semibold text-stone-950">Socios e participacoes</h2>
-          <%= link_to "Ver socios", socios_path, class: "text-sm font-medium text-teal-700 hover:text-teal-900" %>
-        </div>
-
-        <div class="mt-5 space-y-4">
-          <% @socios.each do |socio| %>
-            <div class="rounded-2xl border border-stone-200 p-4">
-              <p class="font-semibold text-stone-950"><%= socio.nome %></p>
-              <div class="mt-3 space-y-2 text-sm text-stone-600">
-                <% socio.participacao_socios.each do |participacao| %>
-                  <div class="flex items-center justify-between gap-3">
-                    <span><%= participacao.veiculo.placa %></span>
-                    <span><%= participacao.percentual_participacao.to_f %>%</span>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        </div>
+    <% end %>
+    
+    <% if @eventos_recentes.empty? %>
+      <div class="empty">
+        <div class="empty-ico">📊</div>
+        <div style="font-size:13px">Nenhum evento registrado recentemente</div>
       </div>
-    </div>
-  </section>
-
-  <section class="mt-6 rounded-3xl border border-stone-200 bg-white p-6">
-    <div class="flex items-center justify-between">
-      <h2 class="text-lg font-semibold text-stone-950">Eventos recentes</h2>
-      <%= link_to "Ver eventos", eventos_path, class: "text-sm font-medium text-teal-700 hover:text-teal-900" %>
-    </div>
-
-    <div class="mt-5 space-y-4">
-      <% @eventos_recentes.each do |evento| %>
-        <article class="rounded-2xl border border-stone-200 p-4">
-          <div class="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p class="font-semibold text-stone-950"><%= enum_label(evento.tipo_evento) %></p>
-              <p class="mt-1 text-sm text-stone-500">
-                <%= [evento.cliente&.nome, evento.veiculo&.placa, evento.locacao&.numero_contrato].compact.join(" • ") %>
-              </p>
-            </div>
-            <div class="text-right">
-              <span class="rounded-full px-3 py-1 text-xs font-semibold <%= badge_classes(evento.fluxo) %>"><%= enum_label(evento.fluxo) %></span>
-              <p class="mt-2 text-sm font-semibold text-stone-950"><%= brl(evento.valor) %></p>
-            </div>
-          </div>
-          <div class="mt-3 flex flex-wrap gap-3 text-sm text-stone-600">
-            <span><%= l(evento.data_evento) %></span>
-            <% if evento.status.present? %>
-              <span class="rounded-full px-3 py-1 text-xs font-semibold <%= badge_classes(evento.status) %>"><%= enum_label(evento.status) %></span>
-            <% end %>
-            <% if evento.tipo_manutencao.present? %>
-              <span><%= enum_label(evento.tipo_manutencao) %></span>
-            <% end %>
-          </div>
-        </article>
-      <% end %>
-    </div>
-  </section>
+    <% end %>
+  </div>
 <% end %>
