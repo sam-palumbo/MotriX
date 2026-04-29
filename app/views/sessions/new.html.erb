@@ -1,0 +1,54 @@
+<div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: var(--bg); position: relative; overflow: hidden;">
+  
+  <!-- Subtle glowing background effect -->
+  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(232, 197, 71, 0.05) 0%, rgba(12, 12, 14, 0) 70%); border-radius: 50%; pointer-events: none;"></div>
+
+  <div style="width: 100%; max-width: 360px; position: relative; z-index: 10;">
+    
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 32px;">
+      <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 16px; background: var(--bg2); border: 1px solid var(--border2); margin-bottom: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.02) inset;">
+        <svg xmlns="http://www.w3.org/2000/svg" style="width: 32px; height: 32px; color: var(--gold);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <h2 style="font-size: 28px; font-weight: 700; letter-spacing: -0.5px; color: var(--text);">MotriX</h2>
+      <p style="font-size: 13px; color: var(--text3); font-family: 'DM Mono', monospace; margin-top: 4px;">Acesso restrito ao sistema</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="card" style="margin: 0; padding: 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.5);">
+      <%= form_with(url: login_path, data: { turbo: false }) do |f| %>
+        
+        <% if flash[:alert] %>
+          <div class="alert a-red" style="margin: 0 0 20px 0; padding: 12px;">
+            <div class="a-icon">⚠</div>
+            <div>
+              <div class="a-title">Erro de Autenticação</div>
+              <div class="a-sub"><%= flash[:alert] %></div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="fg">
+          <%= f.label :email, "E-mail Institucional", class: "flabel" %>
+          <%= f.email_field :email, class: "finput", placeholder: "admin@motrix.local", required: true, autofocus: true, autocomplete: "email", style: "background: var(--bg);" %>
+        </div>
+
+        <div class="fg" style="margin-bottom: 24px;">
+          <%= f.label :password, "Senha de Acesso", class: "flabel" %>
+          <%= f.password_field :password, class: "finput", placeholder: "••••••••", required: true, autocomplete: "current-password", style: "background: var(--bg);" %>
+        </div>
+
+        <%= f.submit "Entrar no Sistema", class: "btn btn-gold" %>
+      <% end %>
+    </div>
+    
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 32px;">
+      <p style="font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace;">
+        &copy; <%= Date.current.year %> MotriX Fleet Management.
+      </p>
+    </div>
+  </div>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_27_201000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_28_232600) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -167,7 +167,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_27_201000) do
     t.string "cpf", null: false
     t.string "nome", null: false
     t.string "email", null: false
-    t.string "senha_hash", null: false
+    t.string "password_digest", null: false
     t.integer "perfil", default: 1, null: false
     t.boolean "ativo", default: true, null: false
     t.uuid "created_by_id"

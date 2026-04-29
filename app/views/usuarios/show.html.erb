@@ -37,7 +37,7 @@
     <div class="fg">
       <div class="flabel">Perfil</div>
       <div class="flex items-center gap-2">
-        <span class="badge <%= @usuario.admin? ? 'b-blue' : 'b-gray' %>">
+        <span class="badge <%= @usuario.perfil_admin? ? 'b-blue' : 'b-gray' %>">
           <%= @usuario.perfil_text %>
         </span>
       </div>

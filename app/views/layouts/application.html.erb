@@ -17,8 +17,9 @@
 </head>
 
 <body>
-  <div class="shell">
-    <!-- TOPBAR -->
+  <% if Current.usuario %>
+    <div class="shell">
+      <!-- TOPBAR -->
     <div class="topbar">
       <div class="t-logo">
         <%= image_tag "logo.svg", alt: "MotriX Logo", style: "height:40px;width:auto;margin-right:12px" %>
@@ -29,8 +30,11 @@
       </div>
       <div style="text-align:right">
         <div class="t-date" id="tDate"></div>
-        <div id="t-user" style="font-size:10px;color:var(--green);margin-top:2px;font-family:'DM Mono',monospace">
-          ● <%= Current.usuario&.nome || "Sem usuário ativo" %>
+        <div class="flex items-center gap-3 justify-end mt-1">
+          <div id="t-user" style="font-size:10px;color:var(--green);font-family:'DM Mono',monospace">
+            ● <%= Current.usuario&.nome || "Sem usuário ativo" %>
+          </div>
+          <%= button_to "Sair", logout_path, method: :delete, class: "text-[10px] text-stone-400 hover:text-white underline" %>
         </div>
       </div>
     </div>
@@ -114,8 +118,22 @@
         </svg>
         <span class="ni-lbl">Usuários</span>
       </a>
-    </nav>
-  </div>
+      </nav>
+    </div>
+  <% else %>
+    <% flash.each do |type, message| %>
+      <div class="fixed top-4 right-4 z-50">
+        <div class="alert a-<%= flash_alert_class(type) %>">
+          <div class="a-icon"><%= flash_icon(type) %></div>
+          <div>
+            <div class="a-title"><%= flash_title(type) %></div>
+            <div class="a-sub"><%= message %></div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <%= yield %>
+  <% end %>
 
   <script>
     // Update date/time

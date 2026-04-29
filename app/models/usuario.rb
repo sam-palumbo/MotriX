@@ -1,11 +1,15 @@
 class Usuario < ApplicationRecord
   tracked_by_users optional: true
 
-  enum :perfil, { admin: 0, operador: 1, socio: 2 }
+  unless respond_to?(:perfils)
+    enum :perfil, { admin: 0, operador: 1, socio: 2 }, prefix: true
+  end
 
   has_many :auditoria_logs, dependent: :restrict_with_exception
 
-  validates :cpf, :nome, :email, :senha_hash, :perfil, presence: true
+  has_secure_password
+
+  validates :cpf, :nome, :email, :perfil, presence: true
   validates :cpf, :email, uniqueness: true
 
   scope :ativos, -> { where(ativo: true) }

@@ -14,7 +14,8 @@ admin = Usuario.create!(
   cpf: "11122233344",
   nome: "Administrador MotriX",
   email: "admin@motrix.local",
-  senha_hash: "trocar-esta-senha",
+  password: "trocar-esta-senha",
+  password_confirmation: "trocar-esta-senha",
   perfil: :admin,
   ativo: true
 )
@@ -23,7 +24,8 @@ operador = Usuario.create!(
   cpf: "55566677788",
   nome: "Operador MotriX",
   email: "operador@motrix.local",
-  senha_hash: "trocar-esta-senha",
+  password: "trocar-esta-senha",
+  password_confirmation: "trocar-esta-senha",
   perfil: :operador,
   ativo: true,
   created_by: admin,

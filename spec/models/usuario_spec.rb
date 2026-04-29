@@ -11,7 +11,7 @@ RSpec.describe Usuario, type: :model do
     it { should validate_presence_of(:cpf) }
     it { should validate_presence_of(:nome) }
     it { should validate_presence_of(:email) }
-    it { should validate_presence_of(:senha_hash) }
+    it { should validate_presence_of(:password) }
     it { should validate_presence_of(:perfil) }
 
     it { should validate_uniqueness_of(:cpf) }
@@ -45,48 +45,48 @@ RSpec.describe Usuario, type: :model do
       context 'when perfil is admin' do
         let(:usuario) { build(:usuario, :admin) }
 
-        it 'returns true for admin?' do
-          expect(usuario.admin?).to be true
+        it 'returns true for perfil_admin?' do
+          expect(usuario.perfil_admin?).to be true
         end
 
-        it 'returns false for operador?' do
-          expect(usuario.operador?).to be false
+        it 'returns false for perfil_operador?' do
+          expect(usuario.perfil_operador?).to be false
         end
 
-        it 'returns false for socio?' do
-          expect(usuario.socio?).to be false
+        it 'returns false for perfil_socio?' do
+          expect(usuario.perfil_socio?).to be false
         end
       end
 
       context 'when perfil is operador' do
         let(:usuario) { build(:usuario, :operador) }
 
-        it 'returns false for admin?' do
-          expect(usuario.admin?).to be false
+        it 'returns false for perfil_admin?' do
+          expect(usuario.perfil_admin?).to be false
         end
 
-        it 'returns true for operador?' do
-          expect(usuario.operador?).to be true
+        it 'returns true for perfil_operador?' do
+          expect(usuario.perfil_operador?).to be true
         end
 
-        it 'returns false for socio?' do
-          expect(usuario.socio?).to be false
+        it 'returns false for perfil_socio?' do
+          expect(usuario.perfil_socio?).to be false
         end
       end
 
       context 'when perfil is socio' do
         let(:usuario) { build(:usuario, :socio) }
 
-        it 'returns false for admin?' do
-          expect(usuario.admin?).to be false
+        it 'returns false for perfil_admin?' do
+          expect(usuario.perfil_admin?).to be false
         end
 
-        it 'returns false for operador?' do
-          expect(usuario.operador?).to be false
+        it 'returns false for perfil_operador?' do
+          expect(usuario.perfil_operador?).to be false
         end
 
-        it 'returns true for socio?' do
-          expect(usuario.socio?).to be true
+        it 'returns true for perfil_socio?' do
+          expect(usuario.perfil_socio?).to be true
         end
       end
     end
@@ -146,19 +146,19 @@ RSpec.describe Usuario, type: :model do
     it 'creates an admin usuario with :admin trait' do
       usuario = create(:usuario, :admin)
       expect(usuario.perfil).to eq('admin')
-      expect(usuario.admin?).to be true
+      expect(usuario.perfil_admin?).to be true
     end
 
     it 'creates an operador usuario with :operador trait' do
       usuario = create(:usuario, :operador)
       expect(usuario.perfil).to eq('operador')
-      expect(usuario.operador?).to be true
+      expect(usuario.perfil_operador?).to be true
     end
 
     it 'creates a socio usuario with :socio trait' do
       usuario = create(:usuario, :socio)
       expect(usuario.perfil).to eq('socio')
-      expect(usuario.socio?).to be true
+      expect(usuario.perfil_socio?).to be true
     end
 
     it 'creates an inactive usuario with :inativo trait' do

@@ -22,11 +22,18 @@ class ApplicationController < ActionController::Base
     redirect_to root_path, alert: "Configure o PostgreSQL antes de acessar os dados do sistema."
   end
 
+  before_action :require_login
   def set_current_usuario
     return unless database_connected?
+    if session[:usuario_id]
+      Current.usuario = Usuario.find_by(id: session[:usuario_id])
+    end
+  end
 
-    Current.usuario = Usuario.order(:created_at).first
-  rescue StandardError
-    Current.usuario = nil
+  def require_login
+    return unless database_connected?
+    unless Current.usuario || session[:usuario_id]
+      redirect_to login_path, alert: "Por favor, faça login para acessar o sistema."
+    end
   end
 end
