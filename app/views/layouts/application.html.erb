@@ -34,7 +34,8 @@
           <div id="t-user" style="font-size:10px;color:var(--green);font-family:'DM Mono',monospace">
             ● <%= Current.usuario&.nome || "Sem usuário ativo" %>
           </div>
-          <%= button_to "Sair", logout_path, method: :delete, class: "text-[10px] text-stone-400 hover:text-white underline" %>
+          <%= button_to "Sair", logout_path, method: :delete, 
+              style: "padding: 4px 8px; font-size: 10px; background: rgba(224, 80, 80, 0.12); color: var(--red); border: 1px solid rgba(224, 80, 80, 0.2); border-radius: 6px; font-weight: 600;" %>
         </div>
       </div>
     </div>
