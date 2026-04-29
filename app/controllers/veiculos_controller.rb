@@ -1,5 +1,5 @@
 class VeiculosController < ApplicationController
-  before_action :set_veiculo, only: [ :show, :edit, :update, :destroy, :retirar_frota ]
+  before_action :set_veiculo, only: [ :show, :edit, :update, :destroy, :retirar_frota, :manutencao ]
 
   def index
     @veiculos = Veiculo.order(:placa)
@@ -7,7 +7,7 @@ class VeiculosController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html { render layout: false }
+      format.html
       format.turbo_stream
     end
   end
@@ -61,18 +61,22 @@ class VeiculosController < ApplicationController
     redirect_to veiculos_url, notice: "Veiculo was successfully deleted."
   end
 
+  def retirar_frota_form
+    render :retirar_frota
+  end
+
   def retirar_frota
-    motivo = params[:motivo]
-    data_evento = params[:data_evento]
-    valor = params[:valor]
-    observacoes = params[:observacoes]
+    motivo = params[:motivo] || "outros"
+    data_evento = params[:data_evento] || Date.current.to_s
+    valor = params[:valor] || "0"
+    observacoes = params[:observacoes] || "Retirada da frota"
 
     ActiveRecord::Base.transaction do
       # Mark vehicle as inactive
       @veiculo.update!(status: :inativo, updated_by: Current.usuario)
 
-      # Create financial event for the removal
-      Evento.create!(
+      # Create financial event for removal
+      evento = Evento.new(
         tipo_evento: :saida_frota,
         fluxo: :entrada,
         valor: valor.to_f,
@@ -84,11 +88,78 @@ class VeiculosController < ApplicationController
         created_by: Current.usuario,
         updated_by: Current.usuario
       )
+
+      if evento.valid?
+        evento.save!
+      else
+        raise ActiveRecord::RecordInvalid.new(evento)
+      end
     end
 
-    render json: { success: true }
+    redirect_to veiculos_path, notice: "Veículo retirado da frota com sucesso!"
+  rescue ActiveRecord::RecordInvalid => e
+    error_message = e.record.errors.full_messages.join(", ")
+    redirect_to veiculo_path(@veiculo), alert: "Erro ao retirar veículo: #{error_message}"
   rescue => e
-    render json: { success: false, error: e.message }
+    redirect_to veiculos_path, alert: "Erro ao retirar veículo: #{e.message}"
+  end
+
+  def new_manutencao
+    @veiculo_id = params[:veiculo_id]
+    render :new_manutencao
+  end
+
+  def manutencao
+    tipo_manutencao = params[:tipo_manutencao] || "outros"
+    valor = params[:valor] || "0"
+    quilometragem = params[:quilometragem]
+    data_evento = params[:data_evento] || Date.current.to_s
+    responsavel = params[:responsavel] || Current.usuario&.nome || "Sistema"
+    descricao = params[:descricao] || "Manutenção registrada"
+    veiculo_id = params[:veiculo_id]
+
+    # Debug logging
+    Rails.logger.debug "Manutenção params: #{params.inspect}"
+    Rails.logger.debug "tipo_manutencao: #{tipo_manutencao.inspect}"
+    Rails.logger.debug "valor: #{valor.inspect}"
+    Rails.logger.debug "data_evento: #{data_evento.inspect}"
+    Rails.logger.debug "responsavel: #{responsavel.inspect}"
+
+    ActiveRecord::Base.transaction do
+      # Update vehicle mileage if provided
+      if quilometragem.present?
+        veiculo = Veiculo.find(veiculo_id)
+        veiculo.update!(km_atual: quilometragem, updated_by: Current.usuario)
+      end
+
+      # Create financial event for the maintenance
+      evento = Evento.new(
+        tipo_evento: :manutencao,
+        tipo_manutencao: tipo_manutencao,
+        fluxo: :saida,
+        valor: valor.to_f,
+        responsavel: responsavel,
+        data_evento: data_evento,
+        descricao: "Manutenção - #{tipo_manutencao}: #{descricao}",
+        status: :pago,
+        veiculo: Veiculo.find(veiculo_id),
+        created_by: Current.usuario,
+        updated_by: Current.usuario
+      )
+
+      if evento.valid?
+        evento.save!
+      else
+        raise ActiveRecord::RecordInvalid.new(evento)
+      end
+    end
+
+    redirect_to veiculo_path(veiculo_id), notice: "Manutenção registrada com sucesso!"
+  rescue ActiveRecord::RecordInvalid => e
+    error_message = e.record.errors.full_messages.join(", ")
+    redirect_to new_manutencao_veiculos_path(veiculo_id: veiculo_id), alert: "Erro ao registrar manutenção: #{error_message}"
+  rescue => e
+    redirect_to veiculos_path, alert: "Erro ao registrar manutenção: #{e.message}"
   end
 
   private

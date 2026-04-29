@@ -12,7 +12,12 @@ Rails.application.routes.draw do
   resources :clientes
   resources :veiculos do
     member do
+      get :retirar_frota
       post :retirar_frota
+      post :manutencao
+    end
+    collection do
+      get :new_manutencao
     end
   end
   resources :locacoes
@@ -22,5 +27,4 @@ Rails.application.routes.draw do
   resources :participacao_socios
 
   resource :pagamento_semanal, only: :create
-  resource :manutencao, only: [:create, :show]
 end
