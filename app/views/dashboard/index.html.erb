@@ -113,13 +113,13 @@
           <div class="li-title"><%= locacao.numero_contrato %></div>
           <div class="li-sub"><%= locacao.cliente.nome %> • <%= locacao.veiculo.placa %></div>
           <div class="mt4">
-            <span class="badge <%= locacao.status == 'ativa' ? 'b-green' : 'b-orange' %>">
-              <%= enum_label(locacao.status) %>
+            <span class="badge <%= locacao.status == 0 ? 'b-green' : 'b-orange' %>">
+              <%= locacao.status_text %>
             </span>
           </div>
         </div>
         <div class="li-right">
-          <div class="li-val"><%= brl(locacao.valor_semanal) %></div>
+          <div class="li-val"><%= number_to_currency(locacao.valor_semanal, unit: "R$ ", separator: ",", delimiter: ".") %></div>
           <div class="li-date">/semana</div>
         </div>
       </div>

@@ -5,7 +5,7 @@
     <div class="sec-title">Frota</div>
     <div class="sec-sub"><%= @veiculos.size %> veículos cadastrados</div>
   </div>
-  <%= link_to "Novo Veículo", "#", onclick: "AppModal.load('#{new_veiculo_path}', 'Novo Veículo', 'Adicionar moto à frota'); return false;", class: "btn btn-gold btn-sm" %>
+  <%= link_to "Novo Veículo", new_veiculo_path, class: "btn btn-gold btn-sm" %>
 </div>
 
 <!-- Tabs -->
@@ -24,8 +24,8 @@
         <div class="flex1" style="padding-left:4px">
           <div style="font-size:12px;font-weight:600;line-height:1.4"><%= veiculo.marca %> <%= veiculo.modelo %> <%= veiculo.ano %></div>
           <div style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap">
-            <span class="badge <%= veiculo.status == 'disponivel' ? 'b-green' : veiculo.status == 'locado' ? 'b-blue' : 'b-orange' %>">
-              <%= enum_label(veiculo.status) %>
+            <span class="badge <%= case veiculo.status when 0 then 'b-green' when 1 then 'b-blue' when 2 then 'b-orange' when 3 then 'b-red' end %>">
+              <%= veiculo.status_text %>
             </span>
           </div>
         </div>
@@ -37,17 +37,17 @@
             <div class="vc-sl">KM atual</div>
           </div>
           <div class="vc-stat">
-            <div class="vc-sn" style="font-size:11px"><%= brl(veiculo.valor_semanal) %></div>
+            <div class="vc-sn" style="font-size:11px"><%= number_to_currency(veiculo.valor_semanal, unit: "R$ ", separator: ",", delimiter: ".") %></div>
             <div class="vc-sl">/semana</div>
           </div>
           <div class="vc-stat">
-            <div class="vc-sn" style="color:var(--gold)"><%= brl(veiculo.valor_diaria) %></div>
+            <div class="vc-sn" style="color:var(--gold)"><%= number_to_currency(veiculo.valor_diaria, unit: "R$ ", separator: ",", delimiter: ".") %></div>
             <div class="vc-sl">/diária</div>
           </div>
         </div>
         
-        <% if veiculo.locacoes.where(status: 'ativa').any? %>
-          <% locacao_ativa = veiculo.locacoes.where(status: 'ativa').first %>
+        <% if veiculo.locacoes.where(status: 0).any? %>
+          <% locacao_ativa = veiculo.locacoes.where(status: 0).first %>
           <div class="vc-client">
             <span style="color:var(--text3)">Locatário</span>
             <span style="font-weight:600"><%= locacao_ativa.cliente.nome %></span>
