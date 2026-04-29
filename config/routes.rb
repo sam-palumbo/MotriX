@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   resources :clientes
   resources :veiculos do
     member do
-      get :retirar_frota
+      get :retirar_frota, to: 'veiculos#retirar_frota_form'
       post :retirar_frota
       post :manutencao
     end
