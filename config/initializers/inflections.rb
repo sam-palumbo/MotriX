@@ -18,4 +18,5 @@
 # Portuguese inflection rules
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular "locacao", "locacoes"
+  inflect.irregular "manutencao", "manutencoes"
 end

@@ -18,5 +18,5 @@ Rails.application.routes.draw do
   resources :participacao_socios
 
   resource :pagamento_semanal, only: :create
-  resource :manutencao, only: :create
+  resource :manutencao, only: [:create, :show]
 end

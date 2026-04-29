@@ -1,4 +1,8 @@
 class ManutencoesController < ApplicationController
+  def show
+    redirect_to veiculos_path
+  end
+
   def create
     veiculo = Veiculo.find(params[:veiculo_id])
 
