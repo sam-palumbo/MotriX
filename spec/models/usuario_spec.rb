@@ -137,6 +137,41 @@ RSpec.describe Usuario, type: :model do
     end
   end
 
+  describe '#ativo?' do
+    context 'when ativo is true' do
+      let(:usuario) { build(:usuario, ativo: true) }
+
+      it 'returns true' do
+        expect(usuario.ativo?).to be true
+      end
+    end
+
+    context 'when ativo is false' do
+      let(:usuario) { build(:usuario, ativo: false) }
+
+      it 'returns false' do
+        expect(usuario.ativo?).to be false
+      end
+    end
+  end
+
+  describe 'password' do
+    it 'has_secure_password' do
+      usuario = build(:usuario, password: 'password123')
+      expect(usuario).to respond_to(:password_digest)
+    end
+
+    it 'authenticates with correct password' do
+      usuario = create(:usuario, password: 'password123')
+      expect(usuario.authenticate('password123')).to eq(usuario)
+    end
+
+    it 'does not authenticate with incorrect password' do
+      usuario = create(:usuario, password: 'password123')
+      expect(usuario.authenticate('wrongpassword')).to be false
+    end
+  end
+
   describe 'factory' do
     it 'creates a valid usuario' do
       usuario = create(:usuario)
