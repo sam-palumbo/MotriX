@@ -1,0 +1,12 @@
+<%# This is a temporary landing page that redirects based on authentication status %>
+<% if Current.usuario %>
+  <%# User is logged in, redirect to dashboard %>
+  <script>
+    window.location.href = "<%= dashboard_path %>";
+  </script>
+<% else %>
+  <%# User is not logged in, redirect to login %>
+  <script>
+    window.location.href = "<%= login_path %>";
+  </script>
+<% end %>
