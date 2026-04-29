@@ -157,7 +157,7 @@
           <div class="li-title"><%= locacao.numero_contrato %></div>
           <div class="li-sub"><%= locacao.cliente.nome %> · <%= locacao.veiculo.placa %></div>
           <div class="mt4">
-            <span class="badge <%= locacao.status == 0 ? 'b-green' : 'b-orange' %>">
+            <span class="badge <%= locacao.status == 'ativa' ? 'b-green' : locacao.status == 'encerrada' ? 'b-blue' : 'b-orange' %>">
               <%= locacao.status_text %>
             </span>
           </div>

@@ -303,8 +303,9 @@ body {
 }
 
 .b-green {
-  background: rgba(61, 186, 110, 0.12);
+  background: rgba(61, 186, 110, 0.2);
   color: var(--green);
+  border: 1px solid rgba(61, 186, 110, 0.3);
 }
 
 .b-red {
