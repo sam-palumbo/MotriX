@@ -1,68 +1,64 @@
 <%# New Maintenance Form %>
-<div class="page-header">
-  <div class="ph-left">
-    <h1>Registrar Manutenção</h1>
-    <p>Adicionar nova manutenção para o veículo</p>
+<div class="sec-head">
+  <div>
+    <div class="sec-title">Registrar Manutenção</div>
+    <div class="sec-sub">Adicionar nova manutenção para o veículo</div>
   </div>
-  <div class="ph-right">
+  <div class="btn-row">
     <%= link_to "Voltar", veiculos_path, class: "btn btn-ghost" %>
   </div>
 </div>
 
-<div class="page-content">
+<div class="card">
   <% @veiculo = Veiculo.find(@veiculo_id) %>
   <%= form_tag(manutencao_veiculo_path(@veiculo), method: :post) do %>
     <%= hidden_field_tag :veiculo_id, @veiculo_id %>
     
-    <div class="card">
-      <div class="card-lbl">Tipo de Manutenção</div>
-      <div class="fg">
-        <select name="tipo_manutencao" class="fselect" required>
-          <option value="">Selecione...</option>
-          <option value="troca_oleo">Troca de Óleo</option>
-          <option value="pneu">Pneu</option>
-          <option value="freio">Freio</option>
-          <option value="corrente">Corrente</option>
-          <option value="revisao">Revisão</option>
-          <option value="outros">Outros</option>
-        </select>
-      </div>
+    <div class="card-lbl">Tipo de Manutenção</div>
+    <div class="fg">
+      <select name="tipo_manutencao" class="fselect" required>
+        <option value="">Selecione...</option>
+        <option value="troca_oleo">Troca de Óleo</option>
+        <option value="pneu">Pneu</option>
+        <option value="freio">Freio</option>
+        <option value="corrente">Corrente</option>
+        <option value="revisao">Revisão</option>
+        <option value="outros">Outros</option>
+      </select>
     </div>
-    
-    <div class="card">
-      <div class="card-lbl">Detalhes</div>
-      <div class="frow">
-        <div class="fg">
-          <label class="flabel">Valor (R$)</label>
-          <input type="number" name="valor" class="finput" step="0.01" min="0" required>
-        </div>
-        <div class="fg">
-          <label class="flabel">Quilometragem</label>
-          <input type="number" name="quilometragem" class="finput" value="<%= @veiculo.km_atual %>" required>
-        </div>
-      </div>
-      <div class="frow">
-        <div class="fg">
-          <label class="flabel">Data</label>
-          <input type="date" name="data_evento" class="finput" value="<%= Date.current %>" required>
-        </div>
-        <div class="fg">
-          <label class="flabel">Responsável</label>
-          <input type="text" name="responsavel" class="finput" value="<%= Current.usuario&.nome %>" required>
-        </div>
+  </div>
+
+  <div class="card">
+    <div class="card-lbl">Detalhes</div>
+    <div class="frow">
+      <div class="fg">
+        <label class="flabel">Valor (R$)</label>
+        <input type="number" name="valor" class="finput" step="0.01" min="0" required>
       </div>
       <div class="fg">
-        <label class="flabel">Descrição</label>
-        <textarea name="descricao" class="finput" rows="3" placeholder="Detalhes da manutenção..." required></textarea>
+        <label class="flabel">Quilometragem</label>
+        <input type="number" name="quilometragem" class="finput" value="<%= @veiculo.km_atual %>" required>
       </div>
     </div>
-    
-    <div class="card">
-      <div class="card-lbl">Ações</div>
-      <div style="display: flex; gap: 8px;">
-        <%= link_to "Cancelar", veiculos_path, class: "btn btn-ghost" %>
-        <button type="submit" class="btn btn-gold">Registrar Manutenção</button>
+    <div class="frow">
+      <div class="fg">
+        <label class="flabel">Data</label>
+        <input type="date" name="data_evento" class="finput" value="<%= Date.current %>" required>
+      </div>
+      <div class="fg">
+        <label class="flabel">Responsável</label>
+        <input type="text" name="responsavel" class="finput" value="<%= Current.usuario&.nome %>" required>
       </div>
     </div>
-  <% end %>
-</div>
+    <div class="fg">
+      <label class="flabel">Descrição</label>
+      <textarea name="descricao" class="finput" rows="3" placeholder="Detalhes da manutenção..." required></textarea>
+    </div>
+  </div>
+
+  <!-- Botões -->
+  <div class="btn-row">
+    <%= link_to "Cancelar", veiculos_path, class: "btn btn-ghost" %>
+    <button type="submit" class="btn btn-gold">Registrar Manutenção</button>
+  </div>
+<% end %>

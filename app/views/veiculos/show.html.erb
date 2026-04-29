@@ -1,8 +1,8 @@
-<%# Vehicle Details Page %>
+<%# Vehicle Details Page with Enhanced Features %>
 <div class="page-header">
   <div class="ph-left">
-    <h1>Detalhes do Veículo</h1>
-    <p><%= @veiculo.placa %> - <%= @veiculo.marca %> <%= @veiculo.modelo %></p>
+    <h1><%= @veiculo.placa %></h1>
+    <p><%= @veiculo.marca %> <%= @veiculo.modelo %> <%= @veiculo.ano %></p>
   </div>
   <div class="ph-right">
     <%= link_to "Voltar", veiculos_path, class: "btn btn-ghost" %>
@@ -11,6 +11,18 @@
 </div>
 
 <div class="page-content">
+  <!-- KPI Cards -->
+  <div class="kgrid" style="margin-bottom:20px">
+    <div class="kcard">
+      <div class="knum" style="font-size:18px"><%= @veiculo.km_atual&.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\1.').reverse || '0' %></div>
+      <div class="kdesc">KM atual</div>
+    </div>
+    <div class="kcard">
+      <div class="knum" style="font-size:18px;color:var(--green)"><%= number_to_currency(@veiculo.retorno_total, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="kdesc">Retorno total</div>
+    </div>
+  </div>
+
   <!-- Informações Básicas -->
   <div class="card">
     <div class="card-lbl">Informações Básicas</div>
@@ -20,24 +32,14 @@
         <div class="fvalue"><%= @veiculo.placa %></div>
       </div>
       <div class="fg">
-        <div class="flabel">RENAVAM</div>
-        <div class="fvalue"><%= @veiculo.renavam %></div>
+        <div class="flabel">Modelo</div>
+        <div class="fvalue"><%= @veiculo.modelo %></div>
       </div>
     </div>
     <div class="frow">
-      <div class="fg">
-        <div class="flabel">Chassi</div>
-        <div class="fvalue"><%= @veiculo.chassi %></div>
-      </div>
       <div class="fg">
         <div class="flabel">Marca</div>
         <div class="fvalue"><%= @veiculo.marca %></div>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg">
-        <div class="flabel">Modelo</div>
-        <div class="fvalue"><%= @veiculo.modelo %></div>
       </div>
       <div class="fg">
         <div class="flabel">Ano</div>
@@ -47,59 +49,11 @@
     <div class="frow">
       <div class="fg">
         <div class="flabel">Cor</div>
-        <div class="fvalue"><%= @veiculo.cor %></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Quilometragem -->
-  <div class="card">
-    <div class="card-lbl">Quilometragem</div>
-    <div class="frow">
-      <div class="fg">
-        <div class="flabel">KM Aquisição</div>
-        <div class="fvalue"><%= @veiculo.km_aquisicao %> km</div>
+        <div class="fvalue"><%= @veiculo.cor || 'N/A' %></div>
       </div>
       <div class="fg">
-        <div class="flabel">KM Atual</div>
-        <div class="fvalue"><%= @veiculo.km_atual %> km</div>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg">
-        <div class="flabel">KM Rodados</div>
-        <div class="fvalue"><%= @veiculo.km_atual - @veiculo.km_aquisicao %> km</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Valores -->
-  <div class="card">
-    <div class="card-lbl">Valores</div>
-    <div class="frow">
-      <div class="fg">
-        <div class="flabel">Valor Compra</div>
-        <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_compra, unit: "", separator: ",", delimiter: ".") %></div>
-      </div>
-      <div class="fg">
-        <div class="flabel">Valor Aquisição</div>
-        <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_aquisicao, unit: "", separator: ",", delimiter: ".") %></div>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg">
-        <div class="flabel">Valor Semanal</div>
-        <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_semanal, unit: "", separator: ",", delimiter: ".") %></div>
-      </div>
-      <div class="fg">
-        <div class="flabel">Valor Diária</div>
-        <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_diaria, unit: "", separator: ",", delimiter: ".") %></div>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg">
-        <div class="flabel">Caução Retida</div>
-        <div class="fvalue">R$ <%= number_to_currency(@veiculo.caucao_retida, unit: "", separator: ",", delimiter: ".") %></div>
+        <div class="flabel">RENAVAM</div>
+        <div class="fvalue"><%= @veiculo.renavam %></div>
       </div>
     </div>
   </div>
@@ -115,6 +69,41 @@
       <div class="fg">
         <div class="flabel">Primeira Locação</div>
         <div class="fvalue"><%= @veiculo.primeira_locacao_em&.strftime("%d/%m/%Y") || "Não locado" %></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Valores -->
+  <div class="card">
+    <div class="card-lbl">Valores</div>
+    <div class="frow">
+      <div class="fg">
+        <div class="flabel">Valor Compra</div>
+        <div class="fvalue"><%= number_to_currency(@veiculo.valor_compra, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      </div>
+      <div class="fg">
+        <div class="flabel">Valor Aquisição</div>
+        <div class="fvalue"><%= number_to_currency(@veiculo.valor_aquisicao, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <div class="flabel">Valor Semanal</div>
+        <div class="fvalue"><%= number_to_currency(@veiculo.valor_semanal, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      </div>
+      <div class="fg">
+        <div class="flabel">Valor Diária</div>
+        <div class="fvalue"><%= number_to_currency(@veiculo.valor_diaria, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <div class="flabel">Caução Retida</div>
+        <div class="fvalue">R$ <%= number_to_currency(@veiculo.caucao_retida, unit: "", separator: ",", delimiter: ".") %></div>
+      </div>
+      <div class="fg">
+        <div class="flabel">Taxa Retorno</div>
+        <div class="fvalue" style="color:var(--gold)"><%= number_to_percentage(@veiculo.taxa_retorno * 100, precision: 1) %></div>
       </div>
     </div>
   </div>
@@ -140,12 +129,73 @@
     </div>
   </div>
 
+  <!-- Locação Atual -->
+  <% if @veiculo.locacoes.where(status: 0).any? %>
+    <% locacao_ativa = @veiculo.locacoes.where(status: 0).first %>
+    <div class="card">
+      <div class="card-lbl">Locação Atual</div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Cliente</div>
+          <div class="fvalue"><%= locacao_ativa.cliente.nome %></div>
+        </div>
+        <div class="fg">
+          <div class="flabel">Contrato</div>
+          <div class="fvalue"><%= locacao_ativa.numero_contrato %></div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Início</div>
+          <div class="fvalue"><%= locacao_ativa.data_inicio.strftime("%d/%m/%Y") %></div>
+        </div>
+        <div class="fg">
+          <div class="flabel">Dias ativa</div>
+          <div class="fvalue"><%= (Date.current - locacao_ativa.data_inicio).to_i %> dias</div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Valor Semanal</div>
+          <div class="fvalue"><%= number_to_currency(locacao_ativa.valor_semanal, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+        </div>
+        <div class="fg">
+          <div class="flabel">Status Pagamento</div>
+          <div class="fvalue">
+            <span class="badge <%= locacao_ativa.status == 'inadimplente' ? 'b-red' : 'b-green' %>">
+              <%= locacao_ativa.status_text %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Manutenção Preventiva -->
+  <div class="card">
+    <div class="card-lbl">Manutenção Preventiva</div>
+    <div style="padding:20px;text-align:center;color:var(--text3)">
+      Funcionalidade em desenvolvimento
+    </div>
+  </div>
+
+  <!-- Histórico de Manutenção -->
+  <div class="card">
+    <div class="card-lbl">Histórico de Manutenção</div>
+    <div style="padding:20px;text-align:center;color:var(--text3)">
+      Funcionalidade em desenvolvimento
+    </div>
+  </div>
+
   <!-- Action Buttons -->
   <div class="card">
     <div class="card-lbl">Ações</div>
     <div style="display: flex; flex-direction: column; gap: 8px;">
-      <%= link_to "Registrar Manutenção", new_manutencao_veiculos_path(veiculo_id: @veiculo.id), class: "btn btn-gold" %>
+      <%= link_to "Registrar Manutenção", "#", class: "btn btn-gold", onclick: "alert('Funcionalidade em desenvolvimento')" %>
       <%= link_to "Retirar da Frota", retirar_frota_veiculo_path(@veiculo), class: "btn btn-danger" %>
+      <% if @veiculo.status == 1 %>
+        <%= link_to "Encerrar Locação", "#", class: "btn btn-primary", onclick: "alert('Funcionalidade em desenvolvimento')" %>
+      <% end %>
     </div>
   </div>
 </div>

@@ -14,6 +14,7 @@
   <button class="tab" onclick="filterVeiculos('disponivel', this)">Disponíveis</button>
   <button class="tab" onclick="filterVeiculos('locado', this)">Locados</button>
   <button class="tab" onclick="filterVeiculos('manutencao', this)">Manutenção</button>
+  <button class="tab" onclick="filterVeiculos('alerta', this)">Com alerta</button>
 </div>
 
 <div id="veiculos-list">
@@ -27,13 +28,14 @@
             <span class="badge <%= case veiculo.status when 0 then 'b-green' when 1 then 'b-blue' when 2 then 'b-orange' when 3 then 'b-red' end %>">
               <%= veiculo.status_text %>
             </span>
+            <!-- Maintenance alerts -->
           </div>
         </div>
       </div>
       <div class="vc-body">
         <div class="vc-stats">
           <div class="vc-stat">
-            <div class="vc-sn"><%= veiculo.km_atual || 0 %></div>
+            <div class="vc-sn"><%= veiculo.km_atual&.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\1.').reverse || '0' %></div>
             <div class="vc-sl">KM atual</div>
           </div>
           <div class="vc-stat">
@@ -41,8 +43,8 @@
             <div class="vc-sl">/semana</div>
           </div>
           <div class="vc-stat">
-            <div class="vc-sn" style="color:var(--gold)"><%= number_to_currency(veiculo.valor_diaria, unit: "R$ ", separator: ",", delimiter: ".") %></div>
-            <div class="vc-sl">/diária</div>
+            <div class="vc-sn" style="color:var(--gold)"><%= number_to_percentage(veiculo.taxa_retorno * 100, precision: 1) %></div>
+            <div class="vc-sl">retorno</div>
           </div>
         </div>
         
@@ -59,7 +61,7 @@
   
   <% if @veiculos.empty? %>
     <div class="empty">
-      <div class="empty-ico">🏍️</div>
+      <div class="empty-ico">Motorcycle</div>
       <div style="font-size:13px">Nenhum veículo cadastrado</div>
     </div>
   <% end %>
@@ -76,6 +78,10 @@ function filterVeiculos(status, element) {
   veiculos.forEach(veiculo => {
     if (status === 'todos') {
       veiculo.style.display = 'block';
+    } else if (status === 'alerta') {
+      // Show vehicles with maintenance alerts
+      const badgeCount = veiculo.querySelectorAll('.badge.b-red, .badge.b-orange').length;
+      veiculo.style.display = badgeCount > 0 ? 'block' : 'none';
     } else {
       veiculo.style.display = veiculo.dataset.status === status ? 'block' : 'none';
     }

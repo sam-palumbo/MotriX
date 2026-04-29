@@ -19,4 +19,13 @@ class Veiculo < ApplicationRecord
   def status_text
     status.to_s.humanize
   end
+
+  def taxa_retorno
+    return 0 if valor_compra.nil? || valor_compra.zero?
+    retorno_total.to_f / valor_compra.to_f
+  end
+
+  def retorno_total
+    eventos.where(fluxo: 'entrada').sum(:valor) - eventos.where(fluxo: 'saida').sum(:valor)
+  end
 end

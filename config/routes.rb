@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     member do
       get :retirar_frota, to: 'veiculos#retirar_frota_form'
       post :retirar_frota
+      get :new_manutencao
       post :manutencao
     end
     collection do

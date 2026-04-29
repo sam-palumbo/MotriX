@@ -58,40 +58,84 @@
     </div>
   </div>
 
-  <!-- Financeiro -->
+  <!-- Receita e Retorno -->
   <div class="kgrid">
     <div class="kcard">
-      <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Receita últimos 30 dias</div>
-      <div class="knum mt4" style="font-size:20px;color:var(--green)"><%= brl(@receita_periodo) %></div>
+      <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600" id="k-rec-mes-label">Receita mês atual</div>
+      <div class="knum mt4" style="font-size:20px;color:var(--green)" id="k-rec-mes"><%= number_to_currency(@receita_mes_atual, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
     <div class="kcard">
-      <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Despesas últimos 30 dias</div>
-      <div class="knum mt4" style="font-size:20px;color:var(--red)"><%= brl(@despesas_periodo) %></div>
+      <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Retorno total</div>
+      <div class="knum mt4" style="font-size:20px;color:var(--gold)" id="k-ret-total"><%= number_to_currency(@retorno_total, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
-    <div class="kcard wide">
+    <div class="kcard" style="grid-column:span 2">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Saldo líquido</div>
-          <div class="knum mt4" style="font-size:17px;color:<%= (@receita_periodo - @despesas_periodo) >= 0 ? 'var(--green)' : 'var(--red)' %>"><%= brl(@receita_periodo - @despesas_periodo) %></div>
+          <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Investimento total</div>
+          <div class="knum mt4" style="font-size:17px"><%= number_to_currency(@investimento_total, unit: "R$ ", separator: ",", delimiter: ".") %></div>
         </div>
         <div style="text-align:right">
-          <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Margem</div>
-          <div class="knum mt4" style="font-size:17px;color:var(--gold)">
-            <%= @receita_periodo > 0 ? number_to_percentage(((@receita_periodo - @despesas_periodo) / @receita_periodo * 100), precision: 1) : "0%" %>
-          </div>
+          <div class="card-lbl" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Taxa retorno</div>
+          <div class="knum mt4" style="font-size:17px;color:var(--gold)" id="k-taxa"><%= number_to_percentage(@taxa_retorno, precision: 1) %></div>
         </div>
       </div>
       <div class="pbar mt8">
-        <div class="pbar-fill" style="width:<%= @receita_periodo > 0 ? [(@receita_periodo - @despesas_periodo) / @receita_periodo * 100, 0].max : 0 %>%;background:var(--gold)"></div>
+        <div class="pbar-fill" style="width:<%= @taxa_retorno * 100 %>%;background:var(--gold)"></div>
       </div>
     </div>
+  </div>
+
+  <!-- Gráfico Receita Mensal -->
+  <div class="chart-card">
+    <div class="chart-title">Receita Mensal últimos 6 meses</div>
+    <div class="bar-chart" id="bar-chart">
+      <% @receita_mensal.each do |mes, valor| %>
+        <div class="bar-wrap">
+          <div class="bar" style="height:<%= (valor / @max_receita_mensal * 80).round %>px;background:var(--green)"></div>
+          <div class="bar-lbl"><%= mes[0..2] %></div>
+          <div class="bar-val"><%= number_to_currency(valor, unit: "", precision: 0) %></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Alertas -->
+  <div class="sec-lbl" id="alerta-lbl">Alertas</div>
+  <div id="alertas">
+    <% @alertas.each do |alerta| %>
+      <div class="alert a-<%= alerta[:tipo] %>" onclick="window.location.href='<%= alerta[:link] %>'">
+        <div class="a-icon"><%= alerta[:icone] %></div>
+        <div>
+          <div class="a-title"><%= alerta[:titulo] %></div>
+          <div class="a-sub"><%= alerta[:descricao] %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Disponíveis -->
+  <div class="sec-lbl" id="disp-lbl">Disponíveis (<%= @veiculos_disponiveis.size %>)</div>
+  <div id="disponiveis">
+    <% @veiculos_disponiveis.each do |veiculo| %>
+      <div class="li" onclick="window.location.href='<%= veiculo_path(veiculo) %>'">
+        <div class="li-icon" style="background:rgba(61,186,110,.1)">🏍️</div>
+        <div class="li-body">
+          <div class="li-title"><%= veiculo.placa %></div>
+          <div class="li-sub"><%= veiculo.modelo %> · <%= veiculo.ano %></div>
+        </div>
+        <div class="li-right">
+          <div class="li-val"><%= number_to_currency(veiculo.valor_semanal, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+          <div class="li-date">/semana</div>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <!-- Formulários -->
   <div class="sec-lbl mt8">Registrar</div>
   
   <div class="kgrid">
-    <div class="kcard" style="cursor:pointer" onclick="window.location.href='<%= pagamento_semanal_path %>'">
+    <div class="kcard" style="cursor:pointer" onclick="window.location.href='<%= new_evento_path %>'">
       <div class="li-icon" style="background:rgba(61,186,110,.1);margin-bottom:12px">💰</div>
       <div class="knum" style="font-size:16px">Pagamento</div>
       <div class="kdesc">Registrar semana de locação</div>
@@ -104,14 +148,14 @@
   </div>
 
   <!-- Locações Ativas -->
-  <div class="sec-lbl">🔥 Locações Ativas (<%= @locacoes_ativas.count %>)</div>
+  <div class="sec-lbl">Locações Ativas (<%= @locacoes_ativas.size %>)</div>
   <div id="locacoes-ativas">
     <% @locacoes_ativas.each do |locacao| %>
       <div class="li" onclick="window.location.href='<%= locacao_path(locacao) %>'">
-        <div class="li-icon" style="background:var(--bg3)">📋</div>
+        <div class="li-icon" style="background:var(--bg3)">📄</div>
         <div class="li-body">
           <div class="li-title"><%= locacao.numero_contrato %></div>
-          <div class="li-sub"><%= locacao.cliente.nome %> • <%= locacao.veiculo.placa %></div>
+          <div class="li-sub"><%= locacao.cliente.nome %> · <%= locacao.veiculo.placa %></div>
           <div class="mt4">
             <span class="badge <%= locacao.status == 0 ? 'b-green' : 'b-orange' %>">
               <%= locacao.status_text %>
@@ -127,7 +171,7 @@
     
     <% if @locacoes_ativas.empty? %>
       <div class="empty">
-        <div class="empty-ico">📋</div>
+        <div class="empty-ico">📄</div>
         <div style="font-size:13px">Nenhuma locação ativa no momento</div>
       </div>
     <% end %>

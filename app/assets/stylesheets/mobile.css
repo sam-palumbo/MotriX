@@ -1,0 +1,306 @@
+/* Mobile-first styles inspired by 4A Locadora design */
+
+/* Progress bar */
+.pbar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.pbar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 5px;
+  padding: 0 16px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  flex-shrink: 0;
+  padding: 6px 13px;
+  border-radius: 20px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text3);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.tab.on {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+}
+
+/* Vehicle cards */
+.vcard {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin: 0 16px 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+
+.vcard:active {
+  border-color: var(--border2);
+}
+
+.vc-head {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.vc-plate {
+  background: var(--bg4);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  flex-shrink: 0;
+}
+
+.vc-body {
+  padding: 11px 14px;
+}
+
+.vc-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.vc-stat {
+  background: var(--bg3);
+  border-radius: var(--rs);
+  padding: 7px 8px;
+  text-align: center;
+}
+
+.vc-sn {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+  line-height: 1;
+}
+
+.vc-sl {
+  font-size: 9px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+.vc-client {
+  margin-top: 8px;
+  background: var(--bg3);
+  border-radius: var(--rs);
+  padding: 7px 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+/* Chart card */
+.chart-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin: 0 16px 10px;
+  padding: 14px 16px;
+}
+
+.chart-title {
+  font-size: 12px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 80px;
+}
+
+.bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.bar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+  transition: height 0.3s;
+}
+
+.bar-lbl {
+  font-size: 9px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+}
+
+.bar-val {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text2);
+  white-space: nowrap;
+}
+
+/* Alert styles */
+.alert {
+  border-radius: var(--r);
+  padding: 11px 13px;
+  margin: 0 16px 7px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  cursor: pointer;
+}
+
+.a-red {
+  background: rgba(224, 80, 80, 0.07);
+  border: 1px solid rgba(224, 80, 80, 0.18);
+}
+
+.a-orange {
+  background: rgba(224, 120, 48, 0.07);
+  border: 1px solid rgba(224, 120, 48, 0.18);
+}
+
+.a-yellow {
+  background: rgba(232, 197, 71, 0.07);
+  border: 1px solid rgba(232, 197, 71, 0.18);
+}
+
+.a-icon {
+  font-size: 17px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.a-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.a-sub {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 36px 20px;
+  color: var(--text3);
+}
+
+.empty-ico {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+/* KPI Grid */
+.kgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 0 16px 10px;
+}
+
+.kcard {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 13px 14px;
+}
+
+.kcard.wide {
+  grid-column: span 2;
+}
+
+.knum {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.kdesc {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .kgrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .kcard.wide {
+    grid-column: span 1;
+  }
+  
+  .vc-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .chart-card {
+    margin: 0 8px 10px;
+    padding: 12px;
+  }
+  
+  .tabs {
+    padding: 0 8px 12px;
+  }
+  
+  .vcard {
+    margin: 0 8px 8px;
+  }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+  .vcard:active {
+    transform: scale(0.98);
+  }
+  
+  .tab:active {
+    transform: scale(0.95);
+  }
+  
+  .alert:active {
+    transform: scale(0.98);
+  }
+}

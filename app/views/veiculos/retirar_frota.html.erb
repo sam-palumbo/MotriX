@@ -1,69 +1,65 @@
 <%# Retirar da Frota Form %>
-<div class="page-header">
-  <div class="ph-left">
-    <h1>Retirar da Frota</h1>
-    <p>Remover veículo da frota ativa</p>
+<div class="sec-head">
+  <div>
+    <div class="sec-title">Retirar da Frota</div>
+    <div class="sec-sub">Remover veículo da frota ativa</div>
   </div>
-  <div class="ph-right">
+  <div class="btn-row">
     <%= link_to "Voltar", veiculo_path(@veiculo), class: "btn btn-ghost" %>
   </div>
 </div>
 
-<div class="page-content">
+<div class="card">
+  <div class="card-lbl">Veículo</div>
+  <div style="font-size:14px;font-weight:600"><%= @veiculo.placa %> - <%= @veiculo.marca %> <%= @veiculo.modelo %> <%= @veiculo.ano %></div>
+</div>
+
+<%= form_tag(retirar_frota_veiculo_path(@veiculo), method: :post) do %>
   <div class="card">
-    <div class="card-lbl">Veículo</div>
-    <div style="font-size:14px;font-weight:600"><%= @veiculo.placa %> - <%= @veiculo.marca %> <%= @veiculo.modelo %> <%= @veiculo.ano %></div>
+    <div class="card-lbl">Motivo da saída</div>
+    <div class="fg">
+      <select name="motivo" class="fselect">
+        <option value="">Selecionar motivo...</option>
+        <option value="venda">Venda</option>
+        <option value="furto">Furto</option>
+        <option value="perda_total">Perda Total</option>
+        <option value="outros">Outros</option>
+      </select>
+    </div>
   </div>
   
-  <%= form_tag(retirar_frota_veiculo_path(@veiculo), method: :post) do %>
-    <div class="card">
-      <div class="card-lbl">Motivo da saída</div>
-      <div class="fg">
-        <select name="motivo" class="fselect">
-          <option value="">Selecionar motivo...</option>
-          <option value="venda">Venda</option>
-          <option value="furto">Furto</option>
-          <option value="perda_total">Perda Total</option>
-          <option value="outros">Outros</option>
-        </select>
-      </div>
+  <div class="card">
+    <div class="card-lbl">Data do evento</div>
+    <div class="fg">
+      <input type="date" name="data_evento" class="finput" value="<%= Date.current %>">
     </div>
-    
-    <div class="card">
-      <div class="card-lbl">Data do evento</div>
-      <div class="fg">
-        <input type="date" name="data_evento" class="finput" value="<%= Date.current %>">
-      </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-lbl">Valor recebido (R$)</div>
+    <div class="fg">
+      <input type="number" name="valor" class="finput" placeholder="0,00" step="0.01" min="0">
     </div>
-    
-    <div class="card">
-      <div class="card-lbl">Valor recebido (R$)</div>
-      <div class="fg">
-        <input type="number" name="valor" class="finput" placeholder="0,00" step="0.01" min="0">
-      </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-lbl">Observações</div>
+    <div class="fg">
+      <textarea name="observacoes" class="finput" rows="3" placeholder="Detalhes da saída..."></textarea>
     </div>
-    
-    <div class="card">
-      <div class="card-lbl">Observações</div>
-      <div class="fg">
-        <textarea name="observacoes" class="finput" rows="3" placeholder="Detalhes da saída..."></textarea>
-      </div>
+  </div>
+  
+  <div class="alert a-orange">
+    <div class="a-icon">!</div>
+    <div>
+      <div class="a-title">Atenção</div>
+      <div class="a-sub">O veículo será marcado como Inativo e não aparecerá mais no webapp. O histórico financeiro será preservado na planilha.</div>
     </div>
-    
-    <div class="alert a-orange">
-      <div class="a-icon">!</div>
-      <div>
-        <div class="a-title">Atenção</div>
-        <div class="a-sub">O veículo será marcado como Inativo e não aparecerá mais no webapp. O histórico financeiro será preservado na planilha.</div>
-      </div>
-    </div>
-    
-    <div class="card">
-      <div class="card-lbl">Ações</div>
-      <div style="display: flex; gap: 8px;">
-        <%= link_to "Cancelar", veiculo_path(@veiculo), class: "btn btn-ghost" %>
-        <button type="submit" class="btn btn-danger">Confirmar retirada da frota</button>
-      </div>
-    </div>
-  <% end %>
-</div>
+  </div>
+  
+  <!-- Botões -->
+  <div class="btn-row">
+    <%= link_to "Cancelar", veiculo_path(@veiculo), class: "btn btn-ghost" %>
+    <button type="submit" class="btn btn-danger">Confirmar retirada da frota</button>
+  </div>
+<% end %>
