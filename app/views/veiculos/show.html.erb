@@ -182,9 +182,35 @@
   <!-- Histórico de Manutenção -->
   <div class="card">
     <div class="card-lbl">Histórico de Manutenção</div>
-    <div style="padding:20px;text-align:center;color:var(--text3)">
-      Funcionalidade em desenvolvimento
-    </div>
+    <% if @veiculo.eventos.manutencao.any? %>
+      <div style="padding: 10px;">
+        <% @veiculo.eventos.manutencao.order(data_evento: :desc).limit(3).each do |evento| %>
+          <div class="li" style="margin-bottom: 8px; padding: 8px; background: var(--bg2); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 600; color: var(--text);"><%= evento.tipo_manutencao_text %></div>
+                <div style="font-size: 12px; color: var(--text3); margin-top: 2px;"><%= evento.data_evento.strftime("%d/%m/%Y") %></div>
+              </div>
+              <div style="text-align: right;">
+                <span class="badge b-orange"><%= number_to_currency(evento.valor, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+              </div>
+            </div>
+            <% if evento.descricao.present? %>
+              <div style="margin-top: 6px; font-size: 12px; color: var(--text3);"><%= evento.descricao %></div>
+            <% end %>
+          </div>
+        <% end %>
+        <% if @veiculo.eventos.manutencao.count > 3 %>
+          <div style="text-align: center; margin-top: 10px;">
+            <%= link_to "Ver todas as manutenções", veiculo_path(@veiculo, tab: 'manutencao'), class: "btn btn-ghost", style: "font-size: 12px;" %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div style="padding:20px;text-align:center;color:var(--text3)">
+        Nenhuma manutenção registrada
+      </div>
+    <% end %>
   </div>
 
   <!-- Action Buttons -->
