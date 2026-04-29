@@ -10,9 +10,12 @@ class Usuario < ApplicationRecord
   has_secure_password
 
   validates :cpf, :nome, :email, :perfil, presence: true
-  validates :cpf, :email, uniqueness: true
+  validates :cpf, :email, uniqueness: { case_sensitive: false }
 
   scope :ativos, -> { where(ativo: true) }
+  scope :admin, -> { where(perfil: :admin) }
+  scope :operador, -> { where(perfil: :operador) }
+  scope :socio, -> { where(perfil: :socio) }
 
   def to_s
     nome
@@ -30,8 +33,6 @@ class Usuario < ApplicationRecord
       "Desconhecido"
     end
   end
-
-
 
   def ativo?
     ativo == true

@@ -14,8 +14,8 @@ RSpec.describe Usuario, type: :model do
     it { should validate_presence_of(:password) }
     it { should validate_presence_of(:perfil) }
 
-    it { should validate_uniqueness_of(:cpf) }
-    it { should validate_uniqueness_of(:email) }
+    it { should validate_uniqueness_of(:cpf).case_insensitive }
+    it { should validate_uniqueness_of(:email).case_insensitive }
   end
 
   describe 'enums' do

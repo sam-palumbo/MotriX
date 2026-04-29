@@ -3,7 +3,8 @@ FactoryBot.define do
     sequence(:cpf) { |n| Faker::Number.number(digits: 11).to_s + n.to_s }
     nome { Faker::Name.name }
     email { Faker::Internet.email }
-    senha_hash { "hashed_password_#{rand(1000)}" }
+    password { "password123" }
+    password_confirmation { "password123" }
     perfil { :operador }
     ativo { true }
 
