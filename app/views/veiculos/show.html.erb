@@ -1,139 +1,461 @@
-<div class="sec-head">
-  <div>
-    <div class="sec-title">Detalhes do Veículo</div>
-    <div class="sec-sub">Informações do veículo</div>
-  </div>
-  <div class="btn-row">
-    <%= link_to "Editar", edit_veiculo_path(@veiculo), class: "btn btn-ghost" %>
-    <%= link_to "Voltar", veiculos_path, class: "btn btn-ghost" %>
-  </div>
-</div>
-
-<!-- Informações Básicas -->
-<div class="card">
-  <div class="card-lbl">Informações Básicas</div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">Placa</div>
-      <div class="fvalue"><%= @veiculo.placa %></div>
-    </div>
-    <div class="fg">
-      <div class="flabel">RENAVAM</div>
-      <div class="fvalue"><%= @veiculo.renavam %></div>
-    </div>
-  </div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">Chassi</div>
-      <div class="fvalue"><%= @veiculo.chassi %></div>
-    </div>
-    <div class="fg">
-      <div class="flabel">Marca</div>
-      <div class="fvalue"><%= @veiculo.marca %></div>
-    </div>
-  </div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">Modelo</div>
-      <div class="fvalue"><%= @veiculo.modelo %></div>
-    </div>
-    <div class="fg">
-      <div class="flabel">Ano</div>
-      <div class="fvalue"><%= @veiculo.ano %></div>
-    </div>
-  </div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">Cor</div>
-      <div class="fvalue"><%= @veiculo.cor %></div>
-    </div>
-  </div>
-</div>
-
-<!-- Quilometragem -->
-<div class="card">
-  <div class="card-lbl">Quilometragem</div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">KM Aquisição</div>
-      <div class="fvalue"><%= @veiculo.km_aquisicao %> km</div>
-    </div>
-    <div class="fg">
-      <div class="flabel">KM Atual</div>
-      <div class="fvalue"><%= @veiculo.km_atual %> km</div>
-    </div>
-  </div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">KM Rodados</div>
-      <div class="fvalue"><%= @veiculo.km_atual - @veiculo.km_aquisicao %> km</div>
-    </div>
-  </div>
-</div>
-
-<!-- Valores -->
-<div class="card">
-  <div class="card-lbl">Valores</div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">Valor Compra</div>
-      <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_compra, unit: "", separator: ",", delimiter: ".") %></div>
-    </div>
-    <div class="fg">
-      <div class="flabel">Valor Aquisição</div>
-      <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_aquisicao, unit: "", separator: ",", delimiter: ".") %></div>
-    </div>
-  </div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">Valor Semanal</div>
-      <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_semanal, unit: "", separator: ",", delimiter: ".") %></div>
-    </div>
-    <div class="fg">
-      <div class="flabel">Valor Diária</div>
-      <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_diaria, unit: "", separator: ",", delimiter: ".") %></div>
-    </div>
-  </div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">Caução Retida</div>
-      <div class="fvalue">R$ <%= number_to_currency(@veiculo.caucao_retida, unit: "", separator: ",", delimiter: ".") %></div>
-    </div>
-  </div>
-</div>
-
-<!-- Datas -->
-<div class="card">
-  <div class="card-lbl">Datas</div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">Data Compra</div>
-      <div class="fvalue"><%= @veiculo.data_compra&.strftime("%d/%m/%Y") %></div>
-    </div>
-    <div class="fg">
-      <div class="flabel">Primeira Locação</div>
-      <div class="fvalue"><%= @veiculo.primeira_locacao_em&.strftime("%d/%m/%Y") || "Não locado" %></div>
-    </div>
-  </div>
-</div>
-
-<!-- Status -->
-<div class="card">
-  <div class="card-lbl">Status</div>
-  <div class="frow">
-    <div class="fg">
-      <div class="flabel">Situação</div>
-      <div class="flex items-center gap-2">
-        <span class="badge 
-          <%= case @veiculo.status 
-              when 0 then 'b-green'
-              when 1 then 'b-blue'
-              when 2 then 'b-yellow'
-              when 3 then 'b-red'
-              end %>">
-          <%= @veiculo.status_text %>
-        </span>
+<%# Vehicle Details Modal Content %>
+<%= form_with(url: "#", local: true, class: "max-w-2xl") do %>
+  <div class="modal-body">
+    <!-- Informações Básicas -->
+    <div class="card">
+      <div class="card-lbl">Informações Básicas</div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Placa</div>
+          <div class="fvalue"><%= @veiculo.placa %></div>
+        </div>
+        <div class="fg">
+          <div class="flabel">RENAVAM</div>
+          <div class="fvalue"><%= @veiculo.renavam %></div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Chassi</div>
+          <div class="fvalue"><%= @veiculo.chassi %></div>
+        </div>
+        <div class="fg">
+          <div class="flabel">Marca</div>
+          <div class="fvalue"><%= @veiculo.marca %></div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Modelo</div>
+          <div class="fvalue"><%= @veiculo.modelo %></div>
+        </div>
+        <div class="fg">
+          <div class="flabel">Ano</div>
+          <div class="fvalue"><%= @veiculo.ano %></div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Cor</div>
+          <div class="fvalue"><%= @veiculo.cor %></div>
+        </div>
       </div>
     </div>
+
+    <!-- Quilometragem -->
+    <div class="card">
+      <div class="card-lbl">Quilometragem</div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">KM Aquisição</div>
+          <div class="fvalue"><%= @veiculo.km_aquisicao %> km</div>
+        </div>
+        <div class="fg">
+          <div class="flabel">KM Atual</div>
+          <div class="fvalue"><%= @veiculo.km_atual %> km</div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">KM Rodados</div>
+          <div class="fvalue"><%= @veiculo.km_atual - @veiculo.km_aquisicao %> km</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Valores -->
+    <div class="card">
+      <div class="card-lbl">Valores</div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Valor Compra</div>
+          <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_compra, unit: "", separator: ",", delimiter: ".") %></div>
+        </div>
+        <div class="fg">
+          <div class="flabel">Valor Aquisição</div>
+          <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_aquisicao, unit: "", separator: ",", delimiter: ".") %></div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Valor Semanal</div>
+          <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_semanal, unit: "", separator: ",", delimiter: ".") %></div>
+        </div>
+        <div class="fg">
+          <div class="flabel">Valor Diária</div>
+          <div class="fvalue">R$ <%= number_to_currency(@veiculo.valor_diaria, unit: "", separator: ",", delimiter: ".") %></div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Caução Retida</div>
+          <div class="fvalue">R$ <%= number_to_currency(@veiculo.caucao_retida, unit: "", separator: ",", delimiter: ".") %></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datas -->
+    <div class="card">
+      <div class="card-lbl">Datas</div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Data Compra</div>
+          <div class="fvalue"><%= @veiculo.data_compra&.strftime("%d/%m/%Y") %></div>
+        </div>
+        <div class="fg">
+          <div class="flabel">Primeira Locação</div>
+          <div class="fvalue"><%= @veiculo.primeira_locacao_em&.strftime("%d/%m/%Y") || "Não locado" %></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="card">
+      <div class="card-lbl">Status</div>
+      <div class="frow">
+        <div class="fg">
+          <div class="flabel">Situação</div>
+          <div class="flex items-center gap-2">
+            <span class="badge 
+              <%= case @veiculo.status 
+                  when 0 then 'b-green'
+                  when 1 then 'b-blue'
+                  when 2 then 'b-yellow'
+                  when 3 then 'b-red'
+                  end %>">
+              <%= @veiculo.status_text %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons at end of form -->
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 24px;">
+      <button type="button" onclick="AppModal.load('<%= edit_veiculo_path(@veiculo) %>', 'Editar Veículo', 'Editar informações do veículo')" class="btn btn-ghost" style="width: 100%;">Editar Veículo</button>
+      <button type="button" onclick="openManutencaoModal()" class="btn btn-gold" style="width: 100%;">Adicionar Manutenção</button>
+      <button type="button" onclick="openRetirarFrotaModal()" class="btn btn-danger" style="width: 100%;">Retirar da Frota</button>
+    </div>
+  </div>
+
+<script>
+function openManutencaoModal() {
+  document.getElementById('manutencao-modal').style.display = 'flex';
+}
+
+function closeManutencaoModal() {
+  document.getElementById('manutencao-modal').style.display = 'none';
+  document.getElementById('manutencao-form').reset();
+}
+
+function openRetirarFrotaModal() {
+  document.getElementById('retirar-frota-modal').style.display = 'flex';
+}
+
+function closeRetirarFrotaModal() {
+  document.getElementById('retirar-frota-modal').style.display = 'none';
+  document.getElementById('retirar-motivo').value = '';
+  document.getElementById('retirar-data').value = '<%= Date.current %>';
+  document.getElementById('retirar-valor').value = '';
+  document.getElementById('retirar-observacoes').value = '';
+}
+
+function submitManutencao() {
+  const form = document.getElementById('manutencao-form');
+  const formData = new FormData(form);
+  formData.append('veiculo_id', '<%= @veiculo.id %>');
+  
+  fetch('<%= manutencao_path %>', {
+    method: 'POST',
+    headers: {
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Manutenção registrada com sucesso!');
+      closeManutencaoModal();
+      AppModal.close();
+      location.reload();
+    } else {
+      alert('Erro ao registrar manutenção: ' + data.error);
+    }
+  })
+  .catch(error => {
+    alert('Erro ao processar a solicitação: ' + error);
+  });
+}
+
+function confirmarRetiradaFrota() {
+  const motivo = document.getElementById('retirar-motivo').value;
+  const data = document.getElementById('retirar-data').value;
+  const valor = document.getElementById('retirar-valor').value;
+  const observacoes = document.getElementById('retirar-observacoes').value;
+  
+  if (!motivo) {
+    alert('Por favor, selecione o motivo da saída.');
+    return;
+  }
+  
+  if (!data) {
+    alert('Por favor, informe a data do evento.');
+    return;
+  }
+  
+  fetch('<%= retirar_frota_veiculo_path(@veiculo) %>', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: JSON.stringify({
+      motivo: motivo,
+      data_evento: data,
+      valor: valor,
+      observacoes: observacoes
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Veículo retirado da frota com sucesso!');
+      closeRetirarFrotaModal();
+      AppModal.close();
+      location.reload();
+    } else {
+      alert('Erro ao retirar veículo: ' + data.error);
+    }
+  })
+  .catch(error => {
+    alert('Erro ao processar a solicitação: ' + error);
+  });
+}
+</script>
+<% end %>
+
+<!-- Manutenção Modal -->
+<div id="manutencao-modal" class="modal" style="display:none;">
+  <div class="modal-overlay" onclick="closeManutencaoModal()"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>Registrar Manutenção</h3>
+      <button onclick="closeManutencaoModal()" class="modal-close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="card">
+        <div class="card-lbl">Veículo</div>
+        <div style="font-size:14px;font-weight:600"><%= @veiculo.placa %> - <%= @veiculo.marca %> <%= @veiculo.modelo %></div>
+      </div>
+      
+      <form id="manutencao-form">
+        <div class="card">
+          <div class="card-lbl">Tipo de Manutenção</div>
+          <div class="fg">
+            <select name="tipo_manutencao" class="fselect" required>
+              <option value="">Selecione...</option>
+              <option value="troca_oleo">Troca de Óleo</option>
+              <option value="pneu">Pneu</option>
+              <option value="freio">Freio</option>
+              <option value="corrente">Corrente</option>
+              <option value="revisao">Revisão</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-lbl">Detalhes</div>
+          <div class="frow">
+            <div class="fg">
+              <label class="flabel">Valor (R$)</label>
+              <input type="number" name="valor" class="finput" step="0.01" min="0" required>
+            </div>
+            <div class="fg">
+              <label class="flabel">Quilometragem</label>
+              <input type="number" name="quilometragem" class="finput" value="<%= @veiculo.km_atual %>" required>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="fg">
+              <label class="flabel">Data</label>
+              <input type="date" name="data_evento" class="finput" value="<%= Date.current %>" required>
+            </div>
+            <div class="fg">
+              <label class="flabel">Responsável</label>
+              <input type="text" name="responsavel" class="finput" value="<%= Current.usuario&.nome %>" required>
+            </div>
+          </div>
+          <div class="fg">
+            <label class="flabel">Descrição</label>
+            <textarea name="descricao" class="finput" rows="3" placeholder="Detalhes da manutenção..." required></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeManutencaoModal()" class="btn btn-ghost">Cancelar</button>
+      <button onclick="submitManutencao()" class="btn btn-gold">Registrar Manutenção</button>
+    </div>
   </div>
 </div>
+
+<!-- Retirar da Frota Modal -->
+<div id="retirar-frota-modal" class="modal" style="display:none;">
+  <div class="modal-overlay" onclick="closeRetirarFrotaModal()"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>Retirar da Frota</h3>
+      <button onclick="closeRetirarFrotaModal()" class="modal-close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="card">
+        <div class="card-lbl">Veículo</div>
+        <div style="font-size:14px;font-weight:600"><%= @veiculo.placa %> - <%= @veiculo.marca %> <%= @veiculo.modelo %> <%= @veiculo.ano %></div>
+      </div>
+      
+      <div class="card">
+        <div class="card-lbl">Motivo da saída</div>
+        <div class="fg">
+          <select id="retirar-motivo" class="fselect">
+            <option value="">Selecionar motivo...</option>
+            <option value="venda">Venda</option>
+            <option value="furto">Furto</option>
+            <option value="perda_total">Perda Total</option>
+            <option value="outros">Outros</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-lbl">Data do evento</div>
+        <div class="fg">
+          <input type="date" id="retirar-data" class="finput" value="<%= Date.current %>">
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-lbl">Valor recebido (R$)</div>
+        <div class="fg">
+          <input type="number" id="retirar-valor" class="finput" placeholder="0,00" step="0.01" min="0">
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-lbl">Observações</div>
+        <div class="fg">
+          <textarea id="retirar-observacoes" class="finput" rows="3" placeholder="Detalhes da saída..."></textarea>
+        </div>
+      </div>
+      
+      <div class="alert a-orange">
+        <div class="a-icon">!</div>
+        <div>
+          <div class="a-title">Atenção</div>
+          <div class="a-sub">O veículo será marcado como Inativo e não aparecerá mais no webapp. O histórico financeiro será preservado na planilha.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeRetirarFrotaModal()" class="btn btn-ghost">Cancelar</button>
+      <button onclick="confirmarRetiradaFrota()" class="btn btn-danger">Confirmar retirada da frota</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openManutencaoModal() {
+  document.getElementById('manutencao-modal').style.display = 'flex';
+}
+
+function closeManutencaoModal() {
+  document.getElementById('manutencao-modal').style.display = 'none';
+  document.getElementById('manutencao-form').reset();
+}
+
+function submitManutencao() {
+  const form = document.getElementById('manutencao-form');
+  const formData = new FormData(form);
+  formData.append('veiculo_id', '<%= @veiculo.id %>');
+  
+  fetch('<%= manutencao_path %>', {
+    method: 'POST',
+    headers: {
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Manutenção registrada com sucesso!');
+      closeManutencaoModal();
+      AppModal.close();
+      location.reload();
+    } else {
+      alert('Erro ao registrar manutenção: ' + data.error);
+    }
+  })
+  .catch(error => {
+    alert('Erro ao processar a solicitação: ' + error);
+  });
+}
+
+function openRetirarFrotaModal() {
+  document.getElementById('retirar-frota-modal').style.display = 'flex';
+}
+
+function closeRetirarFrotaModal() {
+  document.getElementById('retirar-frota-modal').style.display = 'none';
+  document.getElementById('retirar-motivo').value = '';
+  document.getElementById('retirar-data').value = '<%= Date.current %>';
+  document.getElementById('retirar-valor').value = '';
+  document.getElementById('retirar-observacoes').value = '';
+}
+
+function confirmarRetiradaFrota() {
+  const motivo = document.getElementById('retirar-motivo').value;
+  const data = document.getElementById('retirar-data').value;
+  const valor = document.getElementById('retirar-valor').value;
+  const observacoes = document.getElementById('retirar-observacoes').value;
+  
+  if (!motivo) {
+    alert('Por favor, selecione o motivo da saída.');
+    return;
+  }
+  
+  if (!data) {
+    alert('Por favor, informe a data do evento.');
+    return;
+  }
+  
+  fetch('<%= retirar_frota_veiculo_path(@veiculo) %>', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: JSON.stringify({
+      motivo: motivo,
+      data_evento: data,
+      valor: valor,
+      observacoes: observacoes
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Veículo retirado da frota com sucesso!');
+      closeRetirarFrotaModal();
+      AppModal.close();
+      location.reload();
+    } else {
+      alert('Erro ao retirar veículo: ' + data.error);
+    }
+  })
+  .catch(error => {
+    alert('Erro ao processar a solicitação: ' + error);
+  });
+}
+</script>

@@ -18,7 +18,7 @@
 
 <div id="veiculos-list">
   <% @veiculos.each do |veiculo| %>
-    <div class="vcard" data-status="<%= veiculo.status %>" onclick="window.location.href='<%= veiculo_path(veiculo) %>'">
+    <div class="vcard" data-status="<%= veiculo.status %>" onclick="AppModal.load('<%= veiculo_path(veiculo) %>', 'Detalhes do Veículo', 'Visualizar informações completas do veículo')">
       <div class="vc-head">
         <div class="vc-plate"><%= veiculo.placa %></div>
         <div class="flex1" style="padding-left:4px">

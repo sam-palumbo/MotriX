@@ -10,7 +10,11 @@ Rails.application.routes.draw do
   get "dashboard", to: "dashboard#index", as: :dashboard
 
   resources :clientes
-  resources :veiculos
+  resources :veiculos do
+    member do
+      post :retirar_frota
+    end
+  end
   resources :locacoes
   resources :eventos
   resources :socios
