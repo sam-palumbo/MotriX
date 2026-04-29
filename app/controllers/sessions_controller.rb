@@ -2,7 +2,7 @@ class SessionsController < ApplicationController
   skip_before_action :require_login, only: [:new, :create]
 
   def new
-    # Render the login form
+    redirect_to dashboard_path if Current.usuario
   end
 
   def create

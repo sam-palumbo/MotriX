@@ -59,3 +59,12 @@ pt-BR:
       long: "%d de %B de %Y, %H:%M"
     am: "AM"
     pm: "PM"
+  activerecord:
+    errors:
+      models:
+        usuario:
+          attributes:
+            password_confirmation:
+              confirmation: "não confere com a senha"
+      messages:
+        confirmation: "não confere com a senha"

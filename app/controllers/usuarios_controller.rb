@@ -14,6 +14,8 @@ class UsuariosController < ApplicationController
 
   def create
     @usuario = Usuario.new(usuario_params)
+    @usuario.created_by = Current.usuario
+    @usuario.updated_by = Current.usuario
 
     if @usuario.save
       redirect_to @usuario, notice: "Usuario was successfully created."
@@ -26,7 +28,15 @@ class UsuariosController < ApplicationController
   end
 
   def update
-    if @usuario.update(usuario_params)
+    if usuario_params[:password].blank?
+      params[:usuario].delete(:password)
+      params[:usuario].delete(:password_confirmation)
+    end
+    
+    @usuario.assign_attributes(usuario_params)
+    @usuario.updated_by = Current.usuario
+
+    if @usuario.save
       redirect_to @usuario, notice: "Usuario was successfully updated."
     else
       render :edit, status: :unprocessable_entity
@@ -45,7 +55,7 @@ class UsuariosController < ApplicationController
   end
 
   def usuario_params
-    permitted = params.require(:usuario).permit(:cpf, :nome, :email, :senha_hash, :perfil, :ativo, :created_by_id, :updated_by_id)
+    permitted = params.require(:usuario).permit(:cpf, :nome, :email, :password, :password_confirmation, :perfil, :ativo, :created_by_id, :updated_by_id)
     permitted[:perfil] = permitted[:perfil].to_i if permitted[:perfil].present?
     permitted
   end

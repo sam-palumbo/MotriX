@@ -44,8 +44,14 @@
         <%= form.email_field :email, class: "finput", placeholder: "email@exemplo.com" %>
       </div>
       <div class="fg">
-        <%= form.label :senha_hash, "Senha", class: "flabel" %>
-        <%= form.password_field :senha_hash, class: "finput", placeholder: "Mínimo 6 caracteres" %>
+        <%= form.label :password, "Senha", class: "flabel" %>
+        <%= form.password_field :password, class: "finput", placeholder: "Mínimo 6 caracteres" %>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <%= form.label :password_confirmation, "Confirmar Senha", class: "flabel" %>
+        <%= form.password_field :password_confirmation, class: "finput", placeholder: "Digite a senha novamente" %>
       </div>
     </div>
   </div>
