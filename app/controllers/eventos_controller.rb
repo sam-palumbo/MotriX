@@ -88,6 +88,8 @@ class EventosController < ApplicationController
   end
 
   def upload_anexos_for_evento(evento)
+    Rails.logger.info "upload_anexos_for_evento called for evento #{evento.id}"
+    Rails.logger.info "params[:anexos]: #{params[:anexos].inspect}"
     return unless params[:anexos].present?
 
     uploaded_count = 0
@@ -96,6 +98,7 @@ class EventosController < ApplicationController
 
     params[:anexos].each do |key, anexo_params|
       arquivo = anexo_params[:arquivo]
+      Rails.logger.info "Processing anexo #{key}, arquivo: #{arquivo.inspect}"
       next if arquivo.blank?
 
       categoria = anexo_params[:categoria] || key.to_s
@@ -121,6 +124,7 @@ class EventosController < ApplicationController
         )
 
         uploaded_count += 1
+        Rails.logger.info "Successfully uploaded #{arquivo.original_filename}"
 
       rescue StandardError => e
         Rails.logger.error "Erro ao fazer upload de anexo para evento #{evento.id}: #{e.message}"
