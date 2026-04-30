@@ -2,7 +2,7 @@
 <% if anexos&.any? %>
   <div style="margin-top: 20px;">
     <div style="font-weight: 600; margin-bottom: 12px; color: var(--text);">
-      <%= ui_icon "paperclip", size: 16, style: "vertical-align: middle;" %> 
+      <%= icon "paperclip", size: 16, style: "vertical-align: middle;" %> 
       Documentos Anexados (<%= anexos.count %>)
     </div>
     
@@ -50,7 +50,7 @@
                 class: "btn btn-ghost", 
                 style: "font-size: 12px; padding: 4px 8px;",
                 title: "Visualizar no Google Drive" do %>
-              <%= ui_icon "external-link", size: 14 %> Abrir
+              <%= icon "external-link", size: 14 %> Abrir
             <% end %>
             
             <%= button_to veiculo_anexo_path(veiculo, anexo), 
@@ -59,7 +59,7 @@
                 style: "font-size: 12px; padding: 4px 8px; color: var(--red);",
                 title: "Remover",
                 data: { confirm: "Tem certeza que deseja remover este arquivo?" } do %>
-              <%= ui_icon "trash", size: 14 %>
+              <%= icon "trash", size: 14 %>
             <% end %>
           </div>
         </div>

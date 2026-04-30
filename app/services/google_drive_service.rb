@@ -1,10 +1,34 @@
 # frozen_string_literal: true
 
 require "google_drive"
+require "ostruct"
 
 class GoogleDriveService
   def initialize
-    @session = GoogleDrive::Session.from_service_account_key(service_account_key_path)
+    client_id = ENV["GOOGLE_DRIVE_CLIENT_ID"]
+    client_secret = ENV["GOOGLE_DRIVE_CLIENT_SECRET"]
+    refresh_token = ENV["GOOGLE_DRIVE_REFRESH_TOKEN"]
+
+    if client_id && client_secret && refresh_token
+      config = OpenStruct.new({
+        client_id: client_id,
+        client_secret: client_secret,
+        refresh_token: refresh_token,
+        scope: ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file"]
+      })
+      @session = GoogleDrive::Session.from_config(config)
+    else
+      # Fallback to service account if still configured
+      key = ENV["GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY"] || Rails.root.join("config", "google_drive_service_account.json").to_s
+      
+      if key.is_a?(String) && key.start_with?("{")
+        @session = GoogleDrive::Session.from_service_account_key(StringIO.new(key))
+      elsif key && (key.is_a?(String) || key.is_a?(Pathname)) && File.exist?(key.to_s)
+        @session = GoogleDrive::Session.from_service_account_key(key.to_s)
+      else
+        raise "Missing Google Drive credentials. Please provide GOOGLE_DRIVE_CLIENT_ID, CLIENT_SECRET, and REFRESH_TOKEN (Option B) OR a Service Account JSON (Option A)."
+      end
+    end
   end
 
   def upload_file(file, folder_id: nil, file_name: nil)
@@ -69,10 +93,6 @@ class GoogleDriveService
   end
 
   private
-
-  def service_account_key_path
-    ENV["GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY"] || Rails.root.join("config", "google_drive_service_account.json").to_s
-  end
 
   def get_or_create_folder(folder_id)
     if folder_id

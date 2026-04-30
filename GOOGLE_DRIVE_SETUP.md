@@ -12,9 +12,29 @@ The Google Drive integration allows users to upload documents, photos, and other
 - A Google Drive folder for storing uploaded files
 - Access to MotriX environment variables
 
+## Project Approach
+
+MotriX uses **Google Drive Service Account** authentication for file uploads. This means:
+- Files are uploaded to a dedicated Google Drive folder using a service account (not your personal account)
+- No OAuth flow or refresh tokens required for server-to-server uploads
+- Credentials are stored as a JSON key file
+- All team members upload to the same Drive folder
+
+### Quick Setup (Using Scratch Scripts)
+
+We have helper scripts in `scratch/` directory:
+
+1. **`scratch/generate_json.rb`** - Creates the service account JSON file
+2. **`scratch/test_google_drive.rb`** - Tests the upload connection
+3. **`scratch/get_refresh_token.rb`** - For OAuth approach (alternative)
+
+---
+
 ## Setup Steps
 
-### 1. Create a Google Cloud Project
+### Option A: Service Account (Recommended for Teams)
+
+#### 1. Create a Google Cloud Project
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select an existing one
@@ -44,22 +64,22 @@ The Google Drive integration allows users to upload documents, photos, and other
 
 1. Rename the downloaded JSON key file to `google_drive_service_account.json`
 2. Place it in the `config/` directory
-3. Copy `.env.example` to `.env` if you haven't already:
-   ```bash
-   cp .env.example .env
+3. Update the environment variables in `.env` (Optional if you use the default path above):
    ```
-4. Update the environment variables in `.env`:
-   ```
+   # Option A: Path to the JSON file
    GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY=config/google_drive_service_account.json
+   
+   # Option B: Paste the entire JSON content directly
+   GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY='{"type": "service_account", ...}'
    ```
 
-### 5. Create Google Drive Folder (Optional but Recommended)
+#### 5. Create Google Drive Folder (Recommended)
 
 1. Go to [Google Drive](https://drive.google.com)
 2. Create a folder for MotriX uploads (e.g., "MotriX - Documentos")
 3. Share the folder with the service account email:
    - Right-click the folder > "Share"
-   - Add the service account email (found in the JSON key file)
+   - Add the service account email (found in the JSON key file, e.g., `motrixserviceaccount@motrixuploadedfiles.iam.gserviceaccount.com`)
    - Grant "Editor" permissions
 4. Get the Folder ID from the URL:
    - URL format: `https://drive.google.com/drive/folders/FOLDER_ID`
@@ -69,18 +89,61 @@ The Google Drive integration allows users to upload documents, photos, and other
    GOOGLE_DRIVE_VEICULOS_FOLDER_ID=your_folder_id_here
    ```
 
+#### 6. Test the Connection
+
+Run the test script to verify everything works:
+
+```bash
+ruby scratch/test_google_drive.rb
+```
+
+Expected output:
+```
+Testing Google Drive connection...
+SUCCESS! File uploaded.
+File ID: 1xxxxx...
+View URL: https://drive.google.com/file/d/1xxxxx.../view?usp=drivesdk
+```
+
+Check your Google Drive folder - you should see the test file!
+
+---
+
+### Option B: OAuth2 (Personal Google Account)
+
+Use this if you want uploads to go to your personal Google Drive using your storage quota.
+
+This is better for personal `@gmail.com` accounts because it uses your own storage quota.
+
+1.  **Create OAuth Credentials**:
+    *   Go to **APIs & Services > Credentials**.
+    *   Click **+ Create Credentials > OAuth client ID**.
+    *   Select **Application type: Desktop app**.
+    *   Copy the **Client ID** and **Client Secret**.
+2.  **Generate Refresh Token**:
+    *   Run this script in your terminal:
+      ```bash
+      ruby scratch/get_refresh_token.rb
+      ```
+    *   Follow the instructions to log in and get your **Refresh Token**.
+3.  **Update `.env`**:
+    ```env
+    GOOGLE_DRIVE_CLIENT_ID=your_client_id
+    GOOGLE_DRIVE_CLIENT_SECRET=your_client_secret
+    GOOGLE_DRIVE_REFRESH_TOKEN=your_refresh_token
+    GOOGLE_DRIVE_VEICULOS_FOLDER_ID=your_folder_id
+    ```
+
 ### 6. Test the Integration
 
-1. Install the new gem:
-   ```bash
-   bundle install
-   ```
+1. Ensure the test script passed (see above)
 2. Start the Rails server:
    ```bash
    rails server
    ```
 3. Navigate to a vehicle page
-4. Try uploading a document using the new "Adicionar Documento" form
+4. Try uploading a document using the "Adicionar Documento" form
+5. Or create a New Evento with file attachments
 
 ## Features
 
@@ -188,6 +251,30 @@ If migrating from another storage solution:
 1. Existing `arquivo_url` values should remain valid
 2. New uploads will go to Google Drive
 3. Consider a migration script to move existing files
+
+## Scratch Scripts Reference
+
+The `scratch/` directory contains utility scripts for Google Drive setup:
+
+### `scratch/generate_json.rb`
+Creates the service account JSON credentials file programmatically. 
+- **Usage**: `ruby scratch/generate_json.rb`
+- **Output**: Creates `config/google_drive_service_account.json`
+- **Note**: Contains embedded credentials - run once to generate the file
+
+### `scratch/test_google_drive.rb`
+Tests the Google Drive connection and uploads a test file.
+- **Usage**: `ruby scratch/test_google_drive.rb`
+- **Output**: Confirms successful upload with File ID and View URL
+- **Use this first** to verify your setup works before using the web interface
+
+### `scratch/get_refresh_token.rb`
+For OAuth2 personal account setup (alternative to service account).
+- **Usage**: `ruby scratch/get_refresh_token.rb`
+- **Purpose**: Gets refresh token for personal Google Drive access
+- **Note**: Only needed if using OAuth2 approach instead of service account
+
+---
 
 ## Support
 

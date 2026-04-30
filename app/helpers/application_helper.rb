@@ -1,6 +1,6 @@
 module ApplicationHelper
   # Simple icon helper using emoji or SVG icons
-  def ui_icon(name, size: 16, style: "", class_name: "")
+  def icon(name, size: 16, style: "", class_name: "")
     icon_emoji = {
       "cloud-upload" => "☁️",
       "paperclip" => "📎",
