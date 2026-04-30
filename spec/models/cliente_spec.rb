@@ -46,7 +46,7 @@ RSpec.describe Cliente, type: :model do
 
     it "nullifies dependent eventos on destroy" do
       cliente = create(:cliente)
-      evento = create(:evento, :manutencao, cliente: cliente, veiculo: create(:veiculo), tipo_manutencao: "troca_oleo")
+      evento = create(:evento, :manutencao, cliente: cliente, veiculo: create(:veiculo), tipo_manutencao: "troca_de_oleo")
       
       expect { cliente.destroy }.to change { evento.reload.cliente_id }.to(nil)
     end

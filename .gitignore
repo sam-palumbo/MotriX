@@ -32,3 +32,6 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Google Drive Service Account Key
+/config/google_drive_service_account.json

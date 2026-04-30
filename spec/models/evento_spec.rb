@@ -66,7 +66,7 @@ RSpec.describe Evento, type: :model do
 
       context "when tipo_evento is manutencao" do
         it "is invalid if veiculo is missing" do
-          evento = build(:evento, tipo_evento: "manutencao", veiculo: nil, tipo_manutencao: "troca_oleo")
+          evento = build(:evento, tipo_evento: "manutencao", veiculo: nil, tipo_manutencao: "troca_de_oleo")
           expect(evento).not_to be_valid
           expect(evento.errors[:veiculo]).not_to be_empty
         end
@@ -84,7 +84,7 @@ RSpec.describe Evento, type: :model do
         evento = build(:evento, 
           tipo_evento: "manutencao",
           veiculo: veiculo,
-          tipo_manutencao: "troca_oleo",
+          tipo_manutencao: "troca_de_oleo",
           periodo_inicio: Date.new(2024, 1, 1),
           periodo_fim: Date.new(2024, 1, 15))
         expect(evento).to be_valid
@@ -94,7 +94,7 @@ RSpec.describe Evento, type: :model do
         evento = build(:evento, 
           tipo_evento: "manutencao",
           veiculo: veiculo,
-          tipo_manutencao: "troca_oleo",
+          tipo_manutencao: "troca_de_oleo",
           periodo_inicio: Date.new(2024, 1, 1),
           periodo_fim: Date.new(2024, 1, 1))
         expect(evento).to be_valid
@@ -104,7 +104,7 @@ RSpec.describe Evento, type: :model do
         evento = build(:evento, 
           tipo_evento: "manutencao",
           veiculo: veiculo,
-          tipo_manutencao: "troca_oleo",
+          tipo_manutencao: "troca_de_oleo",
           periodo_inicio: Date.new(2024, 1, 15),
           periodo_fim: Date.new(2024, 1, 1))
         expect(evento).not_to be_valid
@@ -115,7 +115,7 @@ RSpec.describe Evento, type: :model do
         evento = build(:evento, 
           tipo_evento: "manutencao",
           veiculo: veiculo,
-          tipo_manutencao: "troca_oleo",
+          tipo_manutencao: "troca_de_oleo",
           periodo_inicio: nil, 
           periodo_fim: nil)
         expect(evento).to be_valid
@@ -167,9 +167,11 @@ RSpec.describe Evento, type: :model do
 
     describe "tipo_manutencao" do
       it "defines expected tipos" do
-        # Skip this test since tipo_manutencao has a prefix
-        # The prefix methods test below covers the enum functionality
-        skip "tipo_manutencao has a prefix, tested in prefix methods"
+        expect(Evento.tipo_manutencoes.keys).to include(
+          "troca_de_oleo", "troca_da_relacao", "pastilhas_de_freio_dianteira", 
+          "disco_de_freio_dianteiro", "lona_de_freio_traseira", "pneu_dianteiro", 
+          "pneu_traseiro", "vela_de_ignicao", "lona_de_freio_dianteira", "outros"
+        )
       end
     end
 
@@ -224,8 +226,8 @@ RSpec.describe Evento, type: :model do
 
   describe "#tipo_manutencao_text" do
     it "returns humanized tipo_manutencao" do
-      evento = build(:evento, tipo_manutencao: "troca_oleo")
-      expect(evento.tipo_manutencao_text).to eq("Troca oleo")
+      evento = build(:evento, tipo_manutencao: "troca_de_oleo")
+      expect(evento.tipo_manutencao_text).to eq("Troca de oleo")
     end
   end
 
@@ -245,9 +247,9 @@ RSpec.describe Evento, type: :model do
     let(:veiculo) { create(:veiculo) }
 
     it "has tipo_manutencao prefix methods" do
-      evento = create(:evento, :manutencao, veiculo: veiculo, tipo_manutencao: "troca_oleo")
-      expect(evento).to respond_to(:tipo_manutencao_troca_oleo?)
-      expect(evento.tipo_manutencao_troca_oleo?).to be true
+      evento = create(:evento, :manutencao, veiculo: veiculo, tipo_manutencao: "troca_de_oleo")
+      expect(evento).to respond_to(:tipo_manutencao_troca_de_oleo?)
+      expect(evento.tipo_manutencao_troca_de_oleo?).to be true
     end
 
     it "has status prefix methods" do

@@ -156,3 +156,67 @@
   </div>
 </div>
 <% end %>
+
+<!-- Anexos -->
+<% if @evento.anexos.any? %>
+<div class="card">
+  <div class="card-lbl">
+    <%= icon "paperclip", size: 16, style: "vertical-align: middle;" %> 
+    Documentos Anexados (<%= @evento.anexos.count %>)
+  </div>
+  <div style="padding: 10px;">
+    <% @evento.anexos.order(created_at: :desc).each do |anexo| %>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 8px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border);">
+        <!-- File Icon -->
+        <div style="flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg3); border-radius: 6px; font-size: 20px;">
+          <% case anexo.mime_type %>
+          <% when /pdf/ %>
+            📄
+          <% when /image/ %>
+            🖼️
+          <% when /word/ %>
+            📝
+          <% when /zip/ %>
+            📦
+          <% else %>
+            📎
+          <% end %>
+        </div>
+        
+        <!-- File Info -->
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            <%= anexo.nome_arquivo %>
+          </div>
+          <div style="font-size: 12px; color: var(--text3); margin-top: 2px;">
+            <span class="badge b-gold" style="font-size: 10px;"><%= anexo.categoria %></span>
+            <span style="margin-left: 8px;">
+              <%= anexo.created_at.strftime("%d/%m/%Y %H:%M") %>
+            </span>
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div style="display: flex; gap: 8px; flex-shrink: 0;">
+          <%= link_to anexo.arquivo_url, 
+              target: "_blank", 
+              class: "btn btn-ghost", 
+              style: "font-size: 12px; padding: 4px 8px;",
+              title: "Visualizar no Google Drive" do %>
+            <%= icon "external-link", size: 14 %> Abrir
+          <% end %>
+          
+          <%= button_to evento_anexo_path(@evento, anexo), 
+              method: :delete, 
+              class: "btn btn-ghost", 
+              style: "font-size: 12px; padding: 4px 8px; color: var(--red);",
+              title: "Remover",
+              data: { confirm: "Tem certeza que deseja remover este arquivo?" } do %>
+            <%= icon "trash", size: 14 %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<% end %>

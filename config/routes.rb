@@ -20,9 +20,12 @@ Rails.application.routes.draw do
     collection do
       get :new_manutencao
     end
+    resources :anexos, only: [:create, :destroy]
   end
   resources :locacoes
-  resources :eventos
+  resources :eventos do
+    resources :anexos, only: [:destroy]
+  end
   resources :socios
   resources :usuarios
   resources :participacao_socios

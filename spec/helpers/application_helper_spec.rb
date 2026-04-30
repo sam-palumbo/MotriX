@@ -34,4 +34,18 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.flash_alert_class(:alert)).to eq("red")
     end
   end
+
+  describe "#icon" do
+    it "renders a span with the correct emoji" do
+      html = helper.icon("cloud-upload")
+      expect(html).to include("☁️")
+      expect(html).to include("font-size: 16px")
+    end
+
+    it "accepts custom size" do
+      html = helper.icon("paperclip", size: 24)
+      expect(html).to include("📎")
+      expect(html).to include("font-size: 24px")
+    end
+  end
 end
