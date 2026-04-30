@@ -97,4 +97,15 @@ module ApplicationHelper
       "Notificação"
     end
   end
+
+  def safe_google_drive_url(url)
+    return "#" if url.blank?
+
+    # Only allow Google Drive URLs
+    if url.match?(/\Ahttps?:\/\/(drive\.google\.com|docs\.google\.com)/i)
+      url
+    else
+      "#"
+    end
+  end
 end

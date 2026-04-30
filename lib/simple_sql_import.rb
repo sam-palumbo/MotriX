@@ -59,13 +59,18 @@ class SimpleSqlImport
             cliente_id = cliente.id if cliente
           end
 
-          # Build SQL with proper escaping
-          sql = <<-SQL
-            INSERT INTO eventos (tipo_evento, fluxo, valor, responsavel, data_evento, descricao, status, created_at, updated_at, veiculo_id, cliente_id)#{' '}
-            VALUES ('#{tipo_evento_db}', '#{fluxo_db}', #{evento_data[:valor_pago] || 0}, '#{(evento_data[:responsavel_pagamento] || 'Sistema').gsub("'", "''")}', '#{evento_data[:data] || Date.current}', '#{(evento_data[:descricao] || '').gsub("'", "''")}', 'pago', '#{Time.current}', '#{Time.current}', #{veiculo_id || 'NULL'}, #{cliente_id || 'NULL'})
-          SQL
-
-          ActiveRecord::Base.connection.execute(sql)
+          # Create event using ActiveRecord (safe from SQL injection)
+          Evento.create!(
+            tipo_evento: tipo_evento_db,
+            fluxo: fluxo_db,
+            valor: evento_data[:valor_pago] || 0,
+            responsavel: evento_data[:responsavel_pagamento] || "Sistema",
+            data_evento: evento_data[:data] || Date.current,
+            descricao: evento_data[:descricao] || "",
+            status: "pago",
+            veiculo_id: veiculo_id,
+            cliente_id: cliente_id
+          )
 
           imported += 1
           puts "✓ #{imported}: #{tipo_evento_db} - R$ #{evento_data[:valor_pago]}"

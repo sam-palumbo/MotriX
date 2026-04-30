@@ -45,9 +45,9 @@
           
           <!-- Actions -->
           <div style="display: flex; gap: 8px; flex-shrink: 0;">
-            <%= link_to anexo.arquivo_url, 
-                target: "_blank", 
-                class: "btn btn-ghost", 
+            <%= link_to safe_google_drive_url(anexo.arquivo_url),
+                target: "_blank",
+                class: "btn btn-ghost",
                 style: "font-size: 12px; padding: 4px 8px;",
                 title: "Visualizar no Google Drive" do %>
               <%= icon "external-link", size: 14 %> Abrir
