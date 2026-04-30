@@ -58,8 +58,8 @@ RSpec.describe Locacao, type: :model do
     end
 
     it "validates data_prevista_fim is not before data_inicio" do
-      locacao = build(:locacao, 
-        cliente: cliente, 
+      locacao = build(:locacao,
+        cliente: cliente,
         veiculo: veiculo,
         data_inicio: Date.new(2024, 1, 15),
         data_prevista_fim: Date.new(2024, 1, 10))
@@ -68,8 +68,8 @@ RSpec.describe Locacao, type: :model do
     end
 
     it "validates data_fim is not before data_inicio" do
-      locacao = build(:locacao, 
-        cliente: cliente, 
+      locacao = build(:locacao,
+        cliente: cliente,
         veiculo: veiculo,
         data_inicio: Date.new(2024, 1, 15),
         data_fim: Date.new(2024, 1, 10))
@@ -78,8 +78,8 @@ RSpec.describe Locacao, type: :model do
     end
 
     it "allows data_prevista_fim equal to data_inicio" do
-      locacao = build(:locacao, 
-        cliente: cliente, 
+      locacao = build(:locacao,
+        cliente: cliente,
         veiculo: veiculo,
         data_inicio: Date.new(2024, 1, 15),
         data_prevista_fim: Date.new(2024, 1, 15))
@@ -87,8 +87,8 @@ RSpec.describe Locacao, type: :model do
     end
 
     it "allows data_fim equal to data_inicio" do
-      locacao = build(:locacao, 
-        cliente: cliente, 
+      locacao = build(:locacao,
+        cliente: cliente,
         veiculo: veiculo,
         data_inicio: Date.new(2024, 1, 15),
         data_fim: Date.new(2024, 1, 15))
@@ -118,7 +118,7 @@ RSpec.describe Locacao, type: :model do
     it "nullifies eventos on destroy" do
       locacao = create(:locacao, cliente: cliente, veiculo: veiculo)
       evento = create(:evento, :pagamento_semanal, locacao: locacao, status: "pago")
-      
+
       expect { locacao.destroy }.to change { evento.reload.locacao_id }.to(nil)
     end
   end
@@ -181,10 +181,10 @@ RSpec.describe Locacao, type: :model do
       end
 
       it "passes when data_prevista_fim is after data_inicio" do
-        locacao = build(:locacao, 
-          cliente: cliente, 
+        locacao = build(:locacao,
+          cliente: cliente,
           veiculo: veiculo,
-          data_inicio: Date.today, 
+          data_inicio: Date.today,
           data_prevista_fim: Date.today + 30.days)
         expect(locacao).to be_valid
       end
@@ -203,10 +203,10 @@ RSpec.describe Locacao, type: :model do
       end
 
       it "passes when data_fim is after data_inicio" do
-        locacao = build(:locacao, 
-          cliente: cliente, 
+        locacao = build(:locacao,
+          cliente: cliente,
           veiculo: veiculo,
-          data_inicio: Date.today, 
+          data_inicio: Date.today,
           data_fim: Date.today + 30.days)
         expect(locacao).to be_valid
       end

@@ -32,7 +32,7 @@ class UsuariosController < ApplicationController
       params[:usuario].delete(:password)
       params[:usuario].delete(:password_confirmation)
     end
-    
+
     @usuario.assign_attributes(usuario_params)
     @usuario.updated_by = Current.usuario
 

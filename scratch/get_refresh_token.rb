@@ -6,7 +6,7 @@ require "googleauth/stores/file_token_store"
 client_id = ENV["GOOGLE_DRIVE_CLIENT_ID"]
 client_secret = ENV["GOOGLE_DRIVE_CLIENT_SECRET"]
 
-scope = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file"]
+scope = [ "https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file" ]
 client_id_obj = Google::Auth::ClientId.new(client_id, client_secret)
 token_store = Google::Auth::Stores::FileTokenStore.new(file: "tmp/tokens.yaml")
 authorizer = Google::Auth::UserAuthorizer.new(client_id_obj, scope, token_store)

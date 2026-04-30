@@ -30,7 +30,7 @@ RSpec.describe Veiculo, type: :model do
       expect(veiculo).not_to be_valid
       expect(veiculo.errors[:status]).to include("can't be blank")
     end
-    
+
     it "validates uniqueness of placa" do
       create(:veiculo, placa: "ABC1234")
       veiculo = build(:veiculo, placa: "ABC1234")
@@ -77,14 +77,14 @@ RSpec.describe Veiculo, type: :model do
     it "destroys dependent participacao_socios on destroy" do
       veiculo = create(:veiculo)
       create(:participacao_socio, veiculo: veiculo)
-      
+
       expect { veiculo.destroy }.to change(ParticipacaoSocio, :count).by(-1)
     end
 
     it "restricts deletion if has locacoes" do
       veiculo = create(:veiculo)
       create(:locacao, veiculo: veiculo)
-      
+
       expect { veiculo.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
     end
   end
@@ -154,7 +154,7 @@ RSpec.describe Veiculo, type: :model do
       veiculo = create(:veiculo, valor_compra: 10000)
       create(:evento, :manutencao, veiculo: veiculo, fluxo: "entrada", valor: 5000, tipo_manutencao: "troca_de_oleo")
       create(:evento, :manutencao, veiculo: veiculo, fluxo: "saida", valor: 1000, tipo_manutencao: "pneu_dianteiro")
-      
+
       expect(veiculo.taxa_retorno).to eq(0.4) # (5000 - 1000) / 10000
     end
   end
@@ -164,7 +164,7 @@ RSpec.describe Veiculo, type: :model do
       veiculo = create(:veiculo)
       create(:evento, :manutencao, veiculo: veiculo, fluxo: "entrada", valor: 5000, tipo_manutencao: "troca_de_oleo")
       create(:evento, :manutencao, veiculo: veiculo, fluxo: "saida", valor: 1000, tipo_manutencao: "pneu_dianteiro")
-      
+
       expect(veiculo.retorno_total).to eq(4000) # 5000 - 1000
     end
 

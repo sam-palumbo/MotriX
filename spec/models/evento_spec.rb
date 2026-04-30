@@ -8,11 +8,11 @@ RSpec.describe Evento, type: :model do
     let(:usuario) { create(:usuario) }
 
     it "is valid with valid attributes" do
-      evento = build(:evento, 
-        fluxo: "entrada", 
-        tipo_evento: "pagamento_semanal", 
-        valor: 100, 
-        responsavel: usuario.nome, 
+      evento = build(:evento,
+        fluxo: "entrada",
+        tipo_evento: "pagamento_semanal",
+        valor: 100,
+        responsavel: usuario.nome,
         data_evento: Date.today,
         status: "pago",
         locacao: locacao)
@@ -81,7 +81,7 @@ RSpec.describe Evento, type: :model do
 
     describe "periodo_fim_nao_antecede_inicio" do
       it "is valid when periodo_fim is after periodo_inicio" do
-        evento = build(:evento, 
+        evento = build(:evento,
           tipo_evento: "manutencao",
           veiculo: veiculo,
           tipo_manutencao: "troca_de_oleo",
@@ -91,7 +91,7 @@ RSpec.describe Evento, type: :model do
       end
 
       it "is valid when periodo_fim equals periodo_inicio" do
-        evento = build(:evento, 
+        evento = build(:evento,
           tipo_evento: "manutencao",
           veiculo: veiculo,
           tipo_manutencao: "troca_de_oleo",
@@ -101,7 +101,7 @@ RSpec.describe Evento, type: :model do
       end
 
       it "is invalid when periodo_fim is before periodo_inicio" do
-        evento = build(:evento, 
+        evento = build(:evento,
           tipo_evento: "manutencao",
           veiculo: veiculo,
           tipo_manutencao: "troca_de_oleo",
@@ -112,11 +112,11 @@ RSpec.describe Evento, type: :model do
       end
 
       it "is valid when periodo_inicio or periodo_fim is blank" do
-        evento = build(:evento, 
+        evento = build(:evento,
           tipo_evento: "manutencao",
           veiculo: veiculo,
           tipo_manutencao: "troca_de_oleo",
-          periodo_inicio: nil, 
+          periodo_inicio: nil,
           periodo_fim: nil)
         expect(evento).to be_valid
       end
@@ -150,7 +150,7 @@ RSpec.describe Evento, type: :model do
     it "nullifies anexos on destroy" do
       evento = create(:evento, :manutencao, veiculo: veiculo)
       anexo = create(:anexo, evento: evento)
-      
+
       expect { evento.destroy }.to change { anexo.reload.evento_id }.to(nil)
     end
   end
@@ -159,7 +159,7 @@ RSpec.describe Evento, type: :model do
     describe "tipo_evento" do
       it "defines expected tipos" do
         expect(Evento.tipo_eventos.keys).to include(
-          "pagamento_semanal", "manutencao", "gasto_empresa", 
+          "pagamento_semanal", "manutencao", "gasto_empresa",
           "retirada", "devolucao", "aquisicao_veiculo", "saida_frota"
         )
       end
@@ -168,8 +168,8 @@ RSpec.describe Evento, type: :model do
     describe "tipo_manutencao" do
       it "defines expected tipos" do
         expect(Evento.tipo_manutencoes.keys).to include(
-          "troca_de_oleo", "troca_da_relacao", "pastilhas_de_freio_dianteira", 
-          "disco_de_freio_dianteiro", "lona_de_freio_traseira", "pneu_dianteiro", 
+          "troca_de_oleo", "troca_da_relacao", "pastilhas_de_freio_dianteira",
+          "disco_de_freio_dianteiro", "lona_de_freio_traseira", "pneu_dianteiro",
           "pneu_traseiro", "vela_de_ignicao", "lona_de_freio_dianteira", "outros"
         )
       end

@@ -1,5 +1,5 @@
-require_relative '../config/environment'
-require 'roo'
+require_relative "../config/environment"
+require "roo"
 
 class FinalWorkingImport
   def initialize(file_path)
@@ -8,17 +8,17 @@ class FinalWorkingImport
 
   def import_events
     puts "Final working import of events from: #{@file_path}"
-    
+
     begin
       spreadsheet = Roo::Spreadsheet.open(@file_path)
       worksheet = spreadsheet.sheets.first
       sheet = spreadsheet.sheet(worksheet)
-      
+
       puts "Processing #{sheet.last_row - 1} events..."
-      
+
       imported = 0
       skipped = 0
-      
+
       (2..sheet.last_row).each do |row|
         begin
           # Extract data
@@ -34,86 +34,86 @@ class FinalWorkingImport
             status: sheet.cell(row, 13),
             descricao: sheet.cell(row, 16)
           }
-          
+
           # Skip if no value
           if evento_data[:valor_pago].nil? || evento_data[:valor_pago] == 0
             skipped += 1
             next
           end
-          
+
           # Map to database values
           tipo_evento_db = map_tipo_evento(evento_data[:tipo_evento])
-          fluxo_db = evento_data[:fluxo]&.downcase == 'entrada' ? 'entrada' : 'saida'
-          
+          fluxo_db = evento_data[:fluxo]&.downcase == "entrada" ? "entrada" : "saida"
+
           # Find vehicle ID
           veiculo_id = nil
           if evento_data[:placa]
             veiculo = Veiculo.find_by(placa: evento_data[:placa].to_s.strip)
             veiculo_id = veiculo.id if veiculo
           end
-          
+
           # Find client ID
           cliente_id = nil
           if evento_data[:nome_cliente]
             cliente = Cliente.find_by("nome ILIKE ?", "%#{evento_data[:nome_cliente]}%")
             cliente_id = cliente.id if cliente
           end
-          
+
           # Create event using ActiveRecord with bypass of validations
           evento = Evento.new(
             tipo_evento: tipo_evento_db,
             fluxo: fluxo_db,
             valor: evento_data[:valor_pago] || 0,
-            responsavel: evento_data[:responsavel_pagamento] || 'Sistema',
+            responsavel: evento_data[:responsavel_pagamento] || "Sistema",
             data_evento: evento_data[:data] || Date.current,
             descricao: evento_data[:descricao],
-            status: 'pago',
+            status: "pago",
             veiculo_id: veiculo_id,
             cliente_id: cliente_id
           )
-          
+
           # Skip validations and save directly
           evento.save(validate: false)
-          
+
           imported += 1
           puts "✓ #{imported}: #{tipo_evento_db} - R$ #{evento_data[:valor_pago]}"
-          
+
         rescue => e
           skipped += 1
           puts "✗ Row #{row} error: #{e.message}"
         end
       end
-      
+
       puts "\nImport completed:"
       puts "Successfully imported: #{imported} events"
       puts "Skipped: #{skipped} events"
-      
+
     rescue => e
       puts "Fatal error: #{e.message}"
       puts e.backtrace
     end
   end
-  
+
   private
-  
+
   def map_tipo_evento(tipo)
     case tipo&.to_s&.downcase
-    when 'aquisicao_veiculo'
-      'aquisicao_veiculo'
-    when 'pagamento_semanal'
-      'pagamento_semanal'
-    when 'manutencao'
-      'manutencao'
-    when 'gasto_empresa'
-      'gasto_empresa'
-    when 'retirada'
-      'retirada'
-    when 'devolucao'
-      'devolucao'
-    when 'saida_frota'
-      'saida_frota'
+    when "aquisicao_veiculo"
+      "aquisicao_veiculo"
+    when "pagamento_semanal"
+      "pagamento_semanal"
+    when "manutencao"
+      "manutencao"
+    when "gasto_empresa"
+      "gasto_empresa"
+    when "retirada"
+      "retirada"
+    when "devolucao"
+      "devolucao"
+    when "saida_frota"
+      "saida_frota"
     else
-      'gasto_empresa'
+      "gasto_empresa"
     end
   end
 end

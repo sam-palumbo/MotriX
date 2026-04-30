@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  skip_before_action :require_login, only: [:new, :create]
+  skip_before_action :require_login, only: [ :new, :create ]
 
   def new
     redirect_to dashboard_path if Current.usuario
@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
 
   def create
     usuario = Usuario.find_by(email: params[:email])
-    
+
     if usuario&.authenticate(params[:password])
       if usuario.ativo?
         session[:usuario_id] = usuario.id

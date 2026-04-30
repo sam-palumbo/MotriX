@@ -50,7 +50,7 @@ RSpec.describe ParticipacaoSocio, type: :model do
       socio = create(:socio)
       veiculo = create(:veiculo)
       create(:participacao_socio, socio: socio, veiculo: veiculo)
-      
+
       participacao = build(:participacao_socio, socio: socio, veiculo: veiculo)
       expect(participacao).not_to be_valid
       expect(participacao.errors[:socio_id]).to include("has already been taken")
@@ -61,7 +61,7 @@ RSpec.describe ParticipacaoSocio, type: :model do
       veiculo1 = create(:veiculo)
       veiculo2 = create(:veiculo)
       create(:participacao_socio, socio: socio, veiculo: veiculo1)
-      
+
       participacao = build(:participacao_socio, socio: socio, veiculo: veiculo2)
       expect(participacao).to be_valid
     end
@@ -71,7 +71,7 @@ RSpec.describe ParticipacaoSocio, type: :model do
       socio2 = create(:socio)
       veiculo = create(:veiculo)
       create(:participacao_socio, socio: socio1, veiculo: veiculo)
-      
+
       participacao = build(:participacao_socio, socio: socio2, veiculo: veiculo)
       expect(participacao).to be_valid
     end

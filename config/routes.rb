@@ -6,13 +6,13 @@ Rails.application.routes.draw do
   get "login", to: "sessions#new"
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"
-  
+
   get "dashboard", to: "dashboard#index", as: :dashboard
 
   resources :clientes
   resources :veiculos do
     member do
-      get :retirar_frota, to: 'veiculos#retirar_frota_form'
+      get :retirar_frota, to: "veiculos#retirar_frota_form"
       post :retirar_frota
       get :new_manutencao
       post :manutencao
@@ -20,11 +20,11 @@ Rails.application.routes.draw do
     collection do
       get :new_manutencao
     end
-    resources :anexos, only: [:create, :destroy]
+    resources :anexos, only: [ :create, :destroy ]
   end
   resources :locacoes
   resources :eventos do
-    resources :anexos, only: [:destroy]
+    resources :anexos, only: [ :destroy ]
   end
   resources :socios
   resources :usuarios

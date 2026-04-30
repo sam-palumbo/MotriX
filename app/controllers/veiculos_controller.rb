@@ -1,5 +1,5 @@
 class VeiculosController < ApplicationController
-  before_action :set_veiculo, only: [:show, :edit, :update, :destroy, :retirar_frota, :manutencao]
+  before_action :set_veiculo, only: [ :show, :edit, :update, :destroy, :retirar_frota, :manutencao ]
 
   def index
     @veiculos = Veiculo.order(:placa)
@@ -181,7 +181,7 @@ class VeiculosController < ApplicationController
     maintenance_items = get_maintenance_items(veiculo)
     overdue = maintenance_items.count { |item| item[:progress_percentage] >= 100 }
     upcoming = maintenance_items.count { |item| item[:progress_percentage] >= 70 && item[:progress_percentage] < 100 }
-    
+
     {
       overdue: overdue,
       upcoming: upcoming
@@ -191,24 +191,24 @@ class VeiculosController < ApplicationController
   def get_maintenance_items(veiculo)
     # Define maintenance intervals (in km)
     maintenance_intervals = {
-      'Troca de óleo' => 3000,
-      'Troca da relação' => 15000,
-      'Pastilhas de freio dianteira' => 12000,
-      'Disco de freio dianteiro' => 24000,
-      'Lona de freio traseira' => 18000,
-      'Pneu dianteiro' => 15000,
-      'Pneu traseiro' => 12000,
-      'Vela de ignição' => 6000
+      "Troca de óleo" => 3000,
+      "Troca da relação" => 15000,
+      "Pastilhas de freio dianteira" => 12000,
+      "Disco de freio dianteiro" => 24000,
+      "Lona de freio traseira" => 18000,
+      "Pneu dianteiro" => 15000,
+      "Pneu traseiro" => 12000,
+      "Vela de ignição" => 6000
     }
 
     # Check if vehicle has drum brakes (simplified logic)
-    has_drum_brake = ['SDL2H36', 'ROM2A60', 'SMD4E03'].include?(veiculo.placa)
-    
+    has_drum_brake = [ "SDL2H36", "ROM2A60", "SMD4E03" ].include?(veiculo.placa)
+
     # Adjust for drum brakes
     if has_drum_brake
-      maintenance_intervals['Lona de freio dianteira'] = 15000
-      maintenance_intervals.delete('Pastilhas de freio dianteira')
-      maintenance_intervals.delete('Disco de freio dianteiro')
+      maintenance_intervals["Lona de freio dianteira"] = 15000
+      maintenance_intervals.delete("Pastilhas de freio dianteira")
+      maintenance_intervals.delete("Disco de freio dianteiro")
     end
 
     current_km = veiculo.km_atual || 0
@@ -219,31 +219,31 @@ class VeiculosController < ApplicationController
       last_maintenance = Evento.where(
         veiculo: veiculo,
         tipo_evento: :manutencao,
-      tipo_manutencao: type.parameterize(separator: '_')
+      tipo_manutencao: type.parameterize(separator: "_")
       ).order(data_evento: :desc).first
 
       last_km = last_maintenance&.km || veiculo.km_aquisicao || 0
       next_km = last_km + interval
       km_remaining = next_km - current_km
-      
+
       # Calculate progress percentage
       progress = ((current_km - last_km).to_f / interval * 100).round(1)
-      progress = [progress, 100].min
-      progress = [progress, 0].max
+      progress = [ progress, 100 ].min
+      progress = [ progress, 0 ].max
 
       # Determine status and colors
       if current_km >= next_km
-        status_icon = '!'
-        status_text = 'VENCIDO'
-        progress_color = 'var(--red)'
+        status_icon = "!"
+        status_text = "VENCIDO"
+        progress_color = "var(--red)"
       elsif progress >= 70
-        status_icon = '!'
+        status_icon = "!"
         status_text = "+#{number_with_delimiter(km_remaining)}"
-        progress_color = 'var(--orange)'
+        progress_color = "var(--orange)"
       else
-        status_icon = '!'
+        status_icon = "!"
         status_text = "+#{number_with_delimiter(km_remaining)}"
-        progress_color = 'var(--green)'
+        progress_color = "var(--green)"
       end
 
       items << {
@@ -268,7 +268,7 @@ class VeiculosController < ApplicationController
       tipo_evento: :manutencao
     ).order(data_evento: :desc).limit(10).map do |event|
       {
-        type: event.tipo_manutencao&.humanize || 'Manutenção',
+        type: event.tipo_manutencao&.humanize || "Manutenção",
         date: event.data_evento.strftime("%d/%m/%Y"),
         km: event.km || 0,
         cost: event.valor || 0,

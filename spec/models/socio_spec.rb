@@ -41,7 +41,7 @@ RSpec.describe Socio, type: :model do
     it "destroys dependent participacao_socios on destroy" do
       socio = create(:socio)
       create(:participacao_socio, socio: socio)
-      
+
       expect { socio.destroy }.to change(ParticipacaoSocio, :count).by(-1)
     end
   end
@@ -58,7 +58,7 @@ RSpec.describe Socio, type: :model do
       socio = create(:socio)
       veiculo = create(:veiculo)
       create(:participacao_socio, socio: socio, veiculo: veiculo)
-      
+
       expect(socio.veiculos).to include(veiculo)
     end
 

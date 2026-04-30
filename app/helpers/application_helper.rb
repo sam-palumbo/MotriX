@@ -7,7 +7,7 @@ module ApplicationHelper
       "external-link" => "🔗",
       "trash" => "🗑️"
     }[name.to_s] || "•"
-    
+
     content_tag(:span, icon_emoji, style: "font-size: #{size}px; #{style}; vertical-align: middle; #{class_name}")
   end
 

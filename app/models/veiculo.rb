@@ -26,6 +26,6 @@ class Veiculo < ApplicationRecord
   end
 
   def retorno_total
-    eventos.where(fluxo: 'entrada').sum(:valor) - eventos.where(fluxo: 'saida').sum(:valor)
+    eventos.where(fluxo: "entrada").sum(:valor) - eventos.where(fluxo: "saida").sum(:valor)
   end
 end

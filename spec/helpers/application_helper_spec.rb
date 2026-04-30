@@ -24,12 +24,12 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.enum_label(:rendimento_socio)).to eq("Rendimento socio")
     end
   end
-  
+
   describe "#flash_alert_class" do
     it "maps notice to green" do
       expect(helper.flash_alert_class(:notice)).to eq("green")
     end
-    
+
     it "maps alert to red" do
       expect(helper.flash_alert_class(:alert)).to eq("red")
     end

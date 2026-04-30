@@ -1,6 +1,6 @@
 class AnexosController < ApplicationController
   before_action :set_parent_resource
-  before_action :set_anexo, only: [:destroy]
+  before_action :set_anexo, only: [ :destroy ]
 
   def create
     if anexo_params[:arquivo].blank?
@@ -9,7 +9,7 @@ class AnexosController < ApplicationController
     end
 
     arquivo = anexo_params[:arquivo]
-    
+
     begin
       # Upload to Google Drive
       drive_service = GoogleDriveService.new
@@ -55,7 +55,7 @@ class AnexosController < ApplicationController
     begin
       # Extract file ID from Google Drive URL
       file_id = extract_drive_file_id(@anexo.arquivo_url)
-      
+
       if file_id
         drive_service = GoogleDriveService.new
         drive_service.delete_file(file_id)
@@ -113,7 +113,7 @@ class AnexosController < ApplicationController
 
   def extract_drive_file_id(url)
     return nil if url.blank?
-    
+
     # Extract file ID from various Google Drive URL formats
     if url.match?(/\/d\/([^\/]+)/)
       url.match(/\/d\/([^\/]+)/)[1]

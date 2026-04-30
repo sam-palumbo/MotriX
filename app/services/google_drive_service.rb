@@ -14,13 +14,13 @@ class GoogleDriveService
         client_id: client_id,
         client_secret: client_secret,
         refresh_token: refresh_token,
-        scope: ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file"]
+        scope: [ "https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file" ]
       })
       @session = GoogleDrive::Session.from_config(config)
     else
       # Fallback to service account if still configured
       key = ENV["GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY"] || Rails.root.join("config", "google_drive_service_account.json").to_s
-      
+
       if key.is_a?(String) && key.start_with?("{")
         @session = GoogleDrive::Session.from_service_account_key(StringIO.new(key))
       elsif key && (key.is_a?(String) || key.is_a?(Pathname)) && File.exist?(key.to_s)
@@ -33,16 +33,16 @@ class GoogleDriveService
 
   def upload_file(file, folder_id: nil, file_name: nil)
     file_name ||= file.original_filename
-    
+
     # Create or get folder
     folder = get_or_create_folder(folder_id)
-    
+
     # Upload file
     uploaded_file = folder.upload_from_file(file.path, file_name, convert: false)
-    
+
     # Make file publicly readable (optional - can be configured)
     uploaded_file.acl.push({ type: "anyone", role: "reader" })
-    
+
     {
       file_id: uploaded_file.id,
       file_url: uploaded_file.web_content_link,
@@ -67,10 +67,10 @@ class GoogleDriveService
   def update_file(file_id, new_file)
     old_file = @session.file_by_id(file_id)
     folder = old_file.parents.first
-    
+
     # Delete old file
     old_file.delete
-    
+
     # Upload new file
     upload_file(new_file, folder_id: folder.id, file_name: new_file.original_filename)
   rescue StandardError => e
@@ -85,7 +85,7 @@ class GoogleDriveService
     else
       folder = @session.root_collection.create_subfolder(name)
     end
-    
+
     { folder_id: folder.id, folder_name: folder.title }
   rescue StandardError => e
     Rails.logger.error "Google Drive folder creation failed: #{e.message}"

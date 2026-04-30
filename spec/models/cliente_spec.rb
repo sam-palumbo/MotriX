@@ -47,14 +47,14 @@ RSpec.describe Cliente, type: :model do
     it "nullifies dependent eventos on destroy" do
       cliente = create(:cliente)
       evento = create(:evento, :manutencao, cliente: cliente, veiculo: create(:veiculo), tipo_manutencao: "troca_de_oleo")
-      
+
       expect { cliente.destroy }.to change { evento.reload.cliente_id }.to(nil)
     end
 
     it "restricts deletion if has locacoes" do
       cliente = create(:cliente)
       create(:locacao, cliente: cliente)
-      
+
       expect { cliente.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
     end
   end
