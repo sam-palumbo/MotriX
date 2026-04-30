@@ -38,7 +38,7 @@ group :development, :test do
   gem "factory_bot_rails", "~> 6.2"
   gem "faker", "~> 3.0"
   gem "sqlite3", "~> 2.1"
-  gem "shoulda-matchers", "~> 6.0"
+  gem "shoulda-matchers", "~> 7.0"
   gem "rubocop", require: false
   gem "rubocop-rails-omakase", require: false
   gem "brakeman", require: false
