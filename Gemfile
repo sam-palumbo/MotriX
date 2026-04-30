@@ -34,7 +34,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "dotenv-rails", group: :development
 
 group :development, :test do
-  gem "rspec-rails", "~> 6.0"
+  gem "rspec-rails", "~> 8.0"
   gem "factory_bot_rails", "~> 6.2"
   gem "faker", "~> 3.0"
   gem "sqlite3", "~> 2.1"
