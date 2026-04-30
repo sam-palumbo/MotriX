@@ -12,8 +12,12 @@ development:
   database: db/development.sqlite3
 
 test:
+  <% if ENV["DATABASE_URL"] %>
+  url: <%= ENV["DATABASE_URL"] %>
+  <% else %>
   adapter: sqlite3
   database: db/test.sqlite3
+  <% end %>
 
 production:
   url: <%= ENV["DATABASE_URL"] %>
