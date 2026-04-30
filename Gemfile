@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.0.5"
+gem "rails", "~> 8.1.3"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use postgresql as the database for Active Record
@@ -18,8 +18,8 @@ gem "stimulus-rails"
 gem "tailwindcss-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
-gem "irb", "= 1.14.3"
-gem "rdoc", "= 6.14.0"
+gem "irb", "1.18.0"
+gem "rdoc", "7.2.0"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
@@ -37,11 +37,11 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "dotenv-rails", group: :development
 
 group :development, :test do
-  gem "rspec-rails", "~> 6.0"
+  gem "rspec-rails", "~> 8.0"
   gem "factory_bot_rails", "~> 6.2"
   gem "faker", "~> 3.0"
   gem "sqlite3", "~> 2.1"
-  gem "shoulda-matchers", "~> 6.0"
+  gem "shoulda-matchers", "~> 7.0"
   gem "rubocop", require: false
   gem "rubocop-rails-omakase", require: false
   gem "brakeman", require: false
