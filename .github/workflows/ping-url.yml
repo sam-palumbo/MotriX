@@ -1,9 +1,9 @@
-name: Ping URL Every 17 Minutes
+name: Ping URL Every 14 Minutes
 
 on:
   schedule:
-    # Run every 17 minutes (using cron syntax)
-    - cron: '*/17 * * * *'
+    # Run every 14 minutes (using cron syntax)
+    - cron: '*/14 * * * *'
   workflow_dispatch: # Allow manual triggering
 
 jobs:
@@ -12,4 +12,4 @@ jobs:
     
     steps:
       - name: Ping URL
-        run: curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://motrix-ixyh.onrender.com/
+        run: curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://motrix-ixyh.onrender.com/
