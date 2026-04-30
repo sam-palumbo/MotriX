@@ -1,0 +1,62 @@
+<!-- Upload Form for Anexos (Google Drive) -->
+<div class="card" style="margin-bottom: 20px;">
+  <div class="card-lbl">Adicionar Documento</div>
+  
+  <%= form_with(model: [@veiculo, Anexo.new], local: true, multipart: true) do |form| %>
+    <div class="frow">
+      <div class="fg" style="flex: 2;">
+        <%= form.label :arquivo, "Selecionar arquivo", class: "flabel" %>
+        <%= form.file_field :arquivo, class: "finput", accept: ".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.zip,.rar", required: true %>
+        <div style="font-size: 12px; color: var(--text3); margin-top: 4px;">
+          Formatos aceitos: PDF, DOC, DOCX, JPG, PNG, ZIP (máx. 50MB)
+        </div>
+      </div>
+      
+      <div class="fg" style="flex: 1;">
+        <%= form.label :categoria, "Categoria", class: "flabel" %>
+        <%= form.select :categoria, 
+            options_for_select([
+              ["Documento", "documento"],
+              ["Foto", "foto"],
+              ["Contrato", "contrato"],
+              ["Nota Fiscal", "nota_fiscal"],
+              ["Outros", "outros"]
+            ]), 
+            {}, 
+            class: "fselect" %>
+      </div>
+    </div>
+    
+    <% if local_assigns[:evento] %>
+      <%= form.hidden_field :evento_id, value: evento.id %>
+    <% end %>
+    
+    <div style="margin-top: 16px; display: flex; gap: 8px;">
+      <%= form.submit "Enviar para Google Drive", class: "btn btn-primary", data: { disable_with: "Enviando..." } %>
+      <span style="font-size: 12px; color: var(--text3); align-self: center;">
+        <%= ui_icon "cloud-upload", size: 14, style: "vertical-align: middle;" %> Será salvo no Google Drive
+      </span>
+    </div>
+  <% end %>
+</div>
+
+<style>
+input[type="file"].finput {
+  padding: 8px 12px;
+  border: 1px solid var(--border2);
+  border-radius: var(--rxs);
+  background: var(--bg2);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+input[type="file"].finput:hover {
+  border-color: var(--border);
+}
+
+input[type="file"].finput:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+</style>

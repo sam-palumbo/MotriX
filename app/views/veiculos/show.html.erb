@@ -213,6 +213,20 @@
     <% end %>
   </div>
 
+  <!-- Documentos / Anexos (Google Drive) -->
+  <div class="card">
+    <div class="card-lbl">
+      <%= ui_icon "cloud-upload", size: 16, style: "vertical-align: middle;" %> 
+      Documentos (Google Drive)
+    </div>
+    
+    <!-- Upload Form -->
+    <%= render "anexos/form", veiculo: @veiculo %>
+    
+    <!-- File List -->
+    <%= render "anexos/list", anexos: @veiculo.anexos.order(created_at: :desc), veiculo: @veiculo %>
+  </div>
+
   <!-- Action Buttons -->
   <div class="card">
     <div class="card-lbl">Ações</div>

@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<%= form_with(model: @evento, local: true, class: "max-w-2xl") do |form| %>
+<%= form_with(model: @evento, local: true, class: "max-w-2xl", multipart: true) do |form| %>
   <% if @evento.errors.any? %>
     <div class="alert a-red">
       <div class="a-icon">⚠</div>
@@ -155,6 +155,83 @@
     <div class="fg">
       <%= form.label :descricao, "Detalhes importantes", class: "flabel" %>
       <%= form.text_area :descricao, class: "ftextarea", placeholder: "Descreva os detalhes deste evento..." %>
+    </div>
+  </div>
+
+  <!-- Anexos / Documentos -->
+  <div class="card">
+    <div class="card-lbl">
+      <%= ui_icon "cloud-upload", size: 16, style: "vertical-align: middle;" %> 
+      Anexar Documentos (Google Drive)
+    </div>
+    
+    <div style="padding: 10px;">
+      <!-- Upload Fields -->
+      <div class="frow" style="margin-bottom: 12px;">
+        <div class="fg" style="flex: 2;">
+          <%= label_tag "anexos[comprovante][arquivo]", "Comprovante de Pagamento", class: "flabel" %>
+          <%= file_field_tag "anexos[comprovante][arquivo]", 
+              class: "finput", 
+              accept: ".pdf,.jpg,.jpeg,.png,.gif",
+              style: "font-size: 13px;" %>
+        </div>
+        <div class="fg" style="flex: 1;">
+          <%= hidden_field_tag "anexos[comprovante][categoria]", "comprovante_pagamento" %>
+        </div>
+      </div>
+      
+      <div class="frow" style="margin-bottom: 12px;">
+        <div class="fg" style="flex: 2;">
+          <%= label_tag "anexos[hodometro][arquivo]", "Hodômetro", class: "flabel" %>
+          <%= file_field_tag "anexos[hodometro][arquivo]", 
+              class: "finput", 
+              accept: ".jpg,.jpeg,.png,.gif",
+              style: "font-size: 13px;" %>
+        </div>
+        <div class="fg" style="flex: 1;">
+          <%= hidden_field_tag "anexos[hodometro][categoria]", "hodometro" %>
+        </div>
+      </div>
+      
+      <div class="frow" style="margin-bottom: 12px;">
+        <div class="fg" style="flex: 2;">
+          <%= label_tag "anexos[foto][arquivo]", "Foto do Veículo", class: "flabel" %>
+          <%= file_field_tag "anexos[foto][arquivo]", 
+              class: "finput", 
+              accept: ".jpg,.jpeg,.png,.gif",
+              style: "font-size: 13px;" %>
+        </div>
+        <div class="fg" style="flex: 1;">
+          <%= hidden_field_tag "anexos[foto][categoria]", "foto_veiculo" %>
+        </div>
+      </div>
+      
+      <div class="frow">
+        <div class="fg" style="flex: 2;">
+          <%= label_tag "anexos[outro][arquivo]", "Outro Documento", class: "flabel" %>
+          <%= file_field_tag "anexos[outro][arquivo]", 
+              class: "finput", 
+              accept: ".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.zip,.rar",
+              style: "font-size: 13px;" %>
+        </div>
+        <div class="fg" style="flex: 1;">
+          <%= label_tag "anexos[outro][categoria]", "Tipo", class: "flabel" %>
+          <%= select_tag "anexos[outro][categoria]",
+              options_for_select([
+                ["Outros", "outros"],
+                ["Documento", "documento"],
+                ["Contrato", "contrato"],
+                ["Nota Fiscal", "nota_fiscal"]
+              ]),
+              class: "fselect",
+              style: "font-size: 13px;" %>
+        </div>
+      </div>
+      
+      <div style="font-size: 12px; color: var(--text3); margin-top: 12px; text-align: center;">
+        <%= ui_icon "cloud-upload", size: 12, style: "vertical-align: middle;" %> 
+        Os arquivos serão enviados automaticamente para o Google Drive ao registrar o evento
+      </div>
     </div>
   </div>
 

@@ -152,8 +152,8 @@ RSpec.describe Veiculo, type: :model do
 
     it "calculates taxa_retorno correctly" do
       veiculo = create(:veiculo, valor_compra: 10000)
-      create(:evento, :manutencao, veiculo: veiculo, fluxo: "entrada", valor: 5000, tipo_manutencao: "troca_oleo")
-      create(:evento, :manutencao, veiculo: veiculo, fluxo: "saida", valor: 1000, tipo_manutencao: "pneu")
+      create(:evento, :manutencao, veiculo: veiculo, fluxo: "entrada", valor: 5000, tipo_manutencao: "troca_de_oleo")
+      create(:evento, :manutencao, veiculo: veiculo, fluxo: "saida", valor: 1000, tipo_manutencao: "pneu_dianteiro")
       
       expect(veiculo.taxa_retorno).to eq(0.4) # (5000 - 1000) / 10000
     end
@@ -162,8 +162,8 @@ RSpec.describe Veiculo, type: :model do
   describe "#retorno_total" do
     it "calculates total return from eventos" do
       veiculo = create(:veiculo)
-      create(:evento, :manutencao, veiculo: veiculo, fluxo: "entrada", valor: 5000, tipo_manutencao: "troca_oleo")
-      create(:evento, :manutencao, veiculo: veiculo, fluxo: "saida", valor: 1000, tipo_manutencao: "pneu")
+      create(:evento, :manutencao, veiculo: veiculo, fluxo: "entrada", valor: 5000, tipo_manutencao: "troca_de_oleo")
+      create(:evento, :manutencao, veiculo: veiculo, fluxo: "saida", valor: 1000, tipo_manutencao: "pneu_dianteiro")
       
       expect(veiculo.retorno_total).to eq(4000) # 5000 - 1000
     end

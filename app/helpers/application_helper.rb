@@ -1,4 +1,16 @@
 module ApplicationHelper
+  # Simple icon helper using emoji or SVG icons
+  def ui_icon(name, size: 16, style: "", class_name: "")
+    icon_emoji = {
+      "cloud-upload" => "☁️",
+      "paperclip" => "📎",
+      "external-link" => "🔗",
+      "trash" => "🗑️"
+    }[name.to_s] || "•"
+    
+    content_tag(:span, icon_emoji, style: "font-size: #{size}px; #{style}; vertical-align: middle; #{class_name}")
+  end
+
   def brl(value)
     number_to_currency(value || 0, unit: "R$ ", separator: ",", delimiter: ".", precision: 2)
   end

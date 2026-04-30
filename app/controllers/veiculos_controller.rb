@@ -219,7 +219,7 @@ class VeiculosController < ApplicationController
       last_maintenance = Evento.where(
         veiculo: veiculo,
         tipo_evento: :manutencao,
-        tipo_manutencao: type.downcase.gsub(' ', '_')
+      tipo_manutencao: type.parameterize(separator: '_')
       ).order(data_evento: :desc).first
 
       last_km = last_maintenance&.km || veiculo.km_aquisicao || 0

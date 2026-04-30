@@ -11,12 +11,16 @@ class Evento < ApplicationRecord
     saida_frota: 6
   }
   enum :tipo_manutencao, {
-    troca_oleo: 0,
-    pneu: 1,
-    freio: 2,
-    corrente: 3,
-    revisao: 4,
-    outros: 5
+    troca_de_oleo: 0,
+    troca_da_relacao: 1,
+    pastilhas_de_freio_dianteira: 2,
+    disco_de_freio_dianteiro: 3,
+    lona_de_freio_traseira: 4,
+    pneu_dianteiro: 5,
+    pneu_traseiro: 6,
+    vela_de_ignicao: 7,
+    lona_de_freio_dianteira: 8,
+    outros: 9
   }, prefix: true
   enum :fluxo, { entrada: 0, saida: 1 }
   enum :status, { pendente: 0, pago: 1, parcial: 2 }, prefix: true

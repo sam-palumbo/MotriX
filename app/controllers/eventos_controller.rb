@@ -26,7 +26,10 @@ class EventosController < ApplicationController
 
     respond_to do |format|
       if @evento.save
-        format.html { redirect_to @evento, notice: "Evento was successfully created." }
+        # Handle file uploads to Google Drive
+        upload_anexos_for_evento(@evento)
+
+        format.html { redirect_to @evento, notice: "Evento criado com sucesso.#{upload_notice}" }
         format.turbo_stream
       else
         @clientes = Cliente.order(:nome)
@@ -82,5 +85,55 @@ class EventosController < ApplicationController
     permitted[:tipo_manutencao] = permitted[:tipo_manutencao].to_i if permitted[:tipo_manutencao].present?
     permitted[:fluxo] = permitted[:fluxo].to_i if permitted[:fluxo].present?
     permitted
+  end
+
+  def upload_anexos_for_evento(evento)
+    return unless params[:anexos].present?
+
+    uploaded_count = 0
+    drive_service = GoogleDriveService.new
+    folder_id = ENV["GOOGLE_DRIVE_VEICULOS_FOLDER_ID"] || ENV["GOOGLE_DRIVE_DEFAULT_FOLDER_ID"]
+
+    params[:anexos].each do |key, anexo_params|
+      arquivo = anexo_params[:arquivo]
+      next if arquivo.blank?
+
+      categoria = anexo_params[:categoria] || key.to_s
+
+      begin
+        # Upload to Google Drive
+        upload_result = drive_service.upload_file(
+          arquivo,
+          folder_id: folder_id,
+          file_name: arquivo.original_filename
+        )
+
+        # Create anexo record associated with evento and veiculo
+        Anexo.create!(
+          veiculo: evento.veiculo,
+          evento: evento,
+          categoria: categoria,
+          nome_arquivo: arquivo.original_filename,
+          arquivo_url: upload_result[:view_url],
+          mime_type: arquivo.content_type,
+          created_by: Current.usuario,
+          updated_by: Current.usuario
+        )
+
+        uploaded_count += 1
+
+      rescue StandardError => e
+        Rails.logger.error "Erro ao fazer upload de anexo para evento #{evento.id}: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        # Continue with other files even if one fails
+      end
+    end
+
+    @uploaded_anexos_count = uploaded_count
+  end
+
+  def upload_notice
+    return "" if @uploaded_anexos_count.nil? || @uploaded_anexos_count == 0
+    " #{@uploaded_anexos_count} arquivo(s) anexado(s) ao Google Drive."
   end
 end
