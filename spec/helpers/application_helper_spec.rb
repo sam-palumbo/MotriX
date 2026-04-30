@@ -35,15 +35,15 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe "#ui_icon" do
+  describe "#icon" do
     it "renders a span with the correct emoji" do
-      html = helper.ui_icon("cloud-upload")
+      html = helper.icon("cloud-upload")
       expect(html).to include("☁️")
       expect(html).to include("font-size: 16px")
     end
 
     it "accepts custom size" do
-      html = helper.ui_icon("paperclip", size: 24)
+      html = helper.icon("paperclip", size: 24)
       expect(html).to include("📎")
       expect(html).to include("font-size: 24px")
     end
