@@ -10,9 +10,26 @@ class EventosController < ApplicationController
 
   def new
     @evento = Evento.new
-    @clientes = Cliente.order(:nome)
-    @veiculos = Veiculo.order(:placa)
     @locacoes = Locacao.order(:numero_contrato)
+
+    # Filter vehicles and clients based on event type
+    if params[:tipo].present?
+      case params[:tipo]
+      when 'retirada'
+        @veiculos = Veiculo.where(status: :disponivel).order(:placa)
+        # Only show clients without active locacoes
+        @clientes = Cliente.where.not(id: Locacao.where(status: :ativa).select(:cliente_id)).order(:nome)
+      when 'devolucao'
+        @veiculos = Veiculo.where(status: :locado).order(:placa)
+        @clientes = Cliente.order(:nome)
+      else
+        @veiculos = Veiculo.order(:placa)
+        @clientes = Cliente.order(:nome)
+      end
+    else
+      @veiculos = Veiculo.order(:placa)
+      @clientes = Cliente.order(:nome)
+    end
 
     # Pre-fill tipo_evento based on tipo parameter
     if params[:tipo].present?
