@@ -139,7 +139,7 @@ class EventosController < ApplicationController
   end
 
   def evento_params
-    permitted = params.require(:evento).permit(:cliente_id, :veiculo_id, :locacao_id, :tipo_evento, :tipo_manutencao, :fluxo, :status, :valor, :periodo_inicio, :periodo_fim, :quilometragem, :responsavel, :descricao, :data_evento, :data_inicio, :data_prevista_fim, :data_fim, :valor_semanal)
+    permitted = params.require(:evento).permit(:cliente_id, :veiculo_id, :locacao_id, :tipo_evento, :tipo_manutencao, :fluxo, :status, :valor, :periodo_inicio, :periodo_fim, :quilometragem, :responsavel, :descricao, :data_evento)
     permitted[:status] = permitted[:status].to_i if permitted[:status].present?
     permitted[:tipo_evento] = permitted[:tipo_evento].to_i if permitted[:tipo_evento].present?
     permitted[:tipo_manutencao] = permitted[:tipo_manutencao].to_i if permitted[:tipo_manutencao].present?
@@ -148,14 +148,14 @@ class EventosController < ApplicationController
   end
 
   def handle_retirada_logic
-    # Create a new Locacao record
+    # Create a new Locacao record using form parameters
     locacao = Locacao.create!(
       cliente_id: @evento.cliente_id,
       veiculo_id: @evento.veiculo_id,
       numero_contrato: params[:numero_contrato] || "LOC-#{Time.current.to_i}",
-      data_inicio: @evento.data_inicio,
-      data_prevista_fim: @evento.data_prevista_fim,
-      valor_semanal: @evento.valor_semanal,
+      data_inicio: params[:evento][:data_inicio],
+      data_prevista_fim: params[:evento][:data_prevista_fim],
+      valor_semanal: params[:evento][:valor_semanal],
       caucao_valor: params[:caucao_valor],
       caucao_recebida: params[:caucao_valor].present?,
       status: :ativa,
