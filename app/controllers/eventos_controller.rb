@@ -65,7 +65,12 @@ class EventosController < ApplicationController
         handle_devolucao_logic if @evento.devolucao?
 
         # Handle file uploads to Google Drive
-        upload_anexos_for_evento(@evento)
+        begin
+          upload_anexos_for_evento(@evento)
+        rescue StandardError => e
+          Rails.logger.error "Error in upload_anexos_for_evento: #{e.message}"
+          Rails.logger.error e.backtrace.join("\n")
+        end
 
         format.html { redirect_to @evento, notice: "Evento criado com sucesso.#{upload_notice}" }
         format.turbo_stream
@@ -179,17 +184,29 @@ class EventosController < ApplicationController
   end
 
   def upload_anexos_for_evento(evento)
-    Rails.logger.info "upload_anexos_for_evento called for evento #{evento.id}"
-    Rails.logger.info "params[:anexos]: #{params[:anexos].inspect}"
     return unless params[:anexos].present?
 
     uploaded_count = 0
     drive_service = GoogleDriveService.new
     folder_id = ENV["GOOGLE_DRIVE_VEICULOS_FOLDER_ID"] || ENV["GOOGLE_DRIVE_DEFAULT_FOLDER_ID"]
 
-    params[:anexos].each do |key, anexo_params|
+    # Handle both array and hash formats for anexos
+    anexos_to_process = case params[:anexos]
+    when Array
+      params[:anexos].map.with_index { |arquivo, index| [index.to_s, { arquivo: arquivo }] }
+    when Hash, ActionController::Parameters
+      # If it's a hash with arquivo key (single file upload), wrap it in array
+      if params[:anexos].has_key?('arquivo')
+        [['0', params[:anexos]]]
+      else
+        params[:anexos]
+      end
+    else
+      []
+    end
+
+    anexos_to_process.each do |key, anexo_params|
       arquivo = anexo_params[:arquivo]
-      Rails.logger.info "Processing anexo #{key}, arquivo: #{arquivo.inspect}"
       next if arquivo.blank?
 
       categoria = anexo_params[:categoria] || key.to_s

@@ -9,7 +9,7 @@
   </div>
 </div>
 
-<%= form_with(model: @evento, local: true, class: "max-w-2xl", multipart: true) do |form| %>
+<%= form_with(model: @evento, local: true, class: "max-w-2xl", multipart: true, data: { turbo: false }) do |form| %>
   <% if @evento.errors.any? %>
     <div class="alert a-red">
       <div class="a-icon">⚠</div>
