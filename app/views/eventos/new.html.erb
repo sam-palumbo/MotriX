@@ -29,6 +29,54 @@
   <%= form.hidden_field :fluxo if evento_tipo %>
   <%= form.hidden_field :status if evento_tipo %>
 
+  <!-- Relacionamentos (show for Pagamento, Retirada, Devolução, Manutenção) - FIRST SECTION -->
+  <% if !evento_tipo || ['pagamento_semanal', 'retirada', 'devolucao', 'manutencao'].include?(evento_tipo.to_s) %>
+  <div class="card">
+    <div class="card-lbl">Veículo</div>
+    <div class="fg">
+      <%= form.label :veiculo_id, "Selecione o veículo *", class: "flabel" %>
+      <%= form.select :veiculo_id,
+          options_from_collection_for_select(@veiculos, :id, :to_s, @evento.veiculo_id),
+          { prompt: "Selecione um veículo", required: true },
+          class: "fselect",
+          id: "evento-veiculo-select" %>
+      <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Cliente será preenchido automaticamente</div>
+    </div>
+
+    <!-- Info Box for Vehicle -->
+    <div class="finfo" id="veiculo-info" style="display: none;">
+      <div class="finfo-lbl">Veículo selecionado</div>
+      <div class="finfo-val" id="veiculo-info-val">—</div>
+    </div>
+
+    <!-- Info Box for Client (auto-populated) -->
+    <div class="finfo" id="cliente-info" style="display: none;">
+      <div class="finfo-lbl">Cliente</div>
+      <div class="finfo-val" id="cliente-info-val">—</div>
+    </div>
+
+    <!-- Hidden field for auto-populated cliente -->
+    <%= form.hidden_field :cliente_id, id: "evento-cliente-id" %>
+  </div>
+  <% end %>
+
+  <!-- Data for vehicle associations (always available) -->
+  <script>
+    // Vehicle data with associated cliente
+    const veiculoData = {
+      <% @veiculos.each do |v| %>
+        <%= v.id %>: {
+          placa: "<%= j v.placa %>",
+          marca: "<%= j v.marca.to_s %>",
+          modelo: "<%= j v.modelo.to_s %>",
+          <% active_locacao = v.locacoes.where(status: :ativa).first %>
+          clienteNome: "<%= j (active_locacao&.cliente&.nome || '') %>",
+          clienteId: "<%= (active_locacao&.cliente_id || '') %>"
+        }<%= "," unless v == @veiculos.last %>
+      <% end %>
+    };
+  </script>
+
   <!-- Informações Básicas (only show if no tipo pre-selected) -->
   <% unless evento_tipo %>
   <div class="card">
@@ -108,51 +156,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Relacionamentos (show for Pagamento, Retirada, Devolução, Manutenção) -->
-  <% if !evento_tipo || ['pagamento_semanal', 'retirada', 'devolucao', 'manutencao'].include?(evento_tipo.to_s) %>
-  <div class="card">
-    <div class="card-lbl">Relacionamentos</div>
-    <div class="frow">
-      <div class="fg">
-        <%= form.label :cliente_id, "Cliente", class: "flabel" %>
-        <%= form.select :cliente_id,
-            options_from_collection_for_select(@clientes, :id, :nome, @evento.cliente_id),
-            { prompt: "Selecione um cliente (opcional)" },
-            class: "fselect",
-            id: "evento-cliente-select" %>
-      </div>
-      <div class="fg">
-        <%= form.label :veiculo_id, "Veículo", class: "flabel" %>
-        <%= form.select :veiculo_id,
-            options_from_collection_for_select(@veiculos, :id, :to_s, @evento.veiculo_id),
-            { prompt: "Selecione um veículo" },
-            class: "fselect",
-            id: "evento-veiculo-select" %>
-      </div>
-    </div>
-    <div class="fg">
-      <%= form.label :locacao_id, "Locação", class: "flabel" %>
-      <%= form.select :locacao_id,
-          options_from_collection_for_select(@locacoes, :id, :numero_contrato, @evento.locacao_id),
-          { prompt: "Selecione uma locação (opcional)" },
-          class: "fselect",
-          id: "evento-locacao-select" %>
-    </div>
-
-    <!-- Info Box for Vehicle -->
-    <div class="finfo" id="veiculo-info" style="display: none;">
-      <div class="finfo-lbl">Veículo selecionado</div>
-      <div class="finfo-val" id="veiculo-info-val">—</div>
-    </div>
-
-    <!-- Info Box for Client -->
-    <div class="finfo" id="cliente-info" style="display: none;">
-      <div class="finfo-lbl">Cliente selecionado</div>
-      <div class="finfo-val" id="cliente-info-val">—</div>
-    </div>
-  </div>
-  <% end %>
 
   <!-- Manutenção (only for Manutenção type) -->
   <% if !evento_tipo || evento_tipo.to_s == 'manutencao' %>
@@ -304,36 +307,54 @@
   </div>
 
   <script>
-    // Vehicle info box update
+    // Vehicle selection handler with auto-population
     const veiculoSelect = document.getElementById('evento-veiculo-select');
     const veiculoInfo = document.getElementById('veiculo-info');
     const veiculoInfoVal = document.getElementById('veiculo-info-val');
+    const clienteInfo = document.getElementById('cliente-info');
+    const clienteInfoVal = document.getElementById('cliente-info-val');
+    const clienteIdField = document.getElementById('evento-cliente-id');
 
     if (veiculoSelect) {
       veiculoSelect.addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
-        if (this.value && selectedOption.text) {
+        const veiculoId = this.value;
+
+        console.log('Veículo selecionado:', veiculoId);
+        console.log('veiculoData:', typeof veiculoData !== 'undefined' ? veiculoData : 'undefined');
+
+        if (veiculoId && selectedOption.text) {
+          // Show vehicle info
           veiculoInfo.style.display = 'block';
           veiculoInfoVal.textContent = selectedOption.text;
+
+          // Auto-populate cliente from veiculoData
+          if (typeof veiculoData !== 'undefined') {
+            const data = veiculoData[veiculoId];
+            console.log('Dados do veículo:', data);
+            if (data) {
+              // Cliente
+              if (data.clienteNome) {
+                clienteInfo.style.display = 'block';
+                clienteInfoVal.textContent = data.clienteNome;
+                clienteIdField.value = data.clienteId;
+                console.log('Cliente preenchido:', data.clienteNome);
+              } else {
+                clienteInfo.style.display = 'none';
+                clienteIdField.value = '';
+                console.log('Sem cliente associado');
+              }
+            } else {
+              console.log('Dados não encontrados para veículo:', veiculoId);
+            }
+          } else {
+            console.log('veiculoData não está definido');
+          }
         } else {
+          // Clear all
           veiculoInfo.style.display = 'none';
-        }
-      });
-    }
-
-    // Client info box update
-    const clienteSelect = document.getElementById('evento-cliente-select');
-    const clienteInfo = document.getElementById('cliente-info');
-    const clienteInfoVal = document.getElementById('cliente-info-val');
-
-    if (clienteSelect) {
-      clienteSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        if (this.value && selectedOption.text) {
-          clienteInfo.style.display = 'block';
-          clienteInfoVal.textContent = selectedOption.text;
-        } else {
           clienteInfo.style.display = 'none';
+          clienteIdField.value = '';
         }
       });
     }
