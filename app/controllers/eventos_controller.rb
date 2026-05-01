@@ -13,6 +13,40 @@ class EventosController < ApplicationController
     @clientes = Cliente.order(:nome)
     @veiculos = Veiculo.order(:placa)
     @locacoes = Locacao.order(:numero_contrato)
+
+    # Pre-fill tipo_evento based on tipo parameter
+    if params[:tipo].present?
+      case params[:tipo]
+      when 'pagamento_semanal'
+        @evento.tipo_evento = 0
+        @evento.fluxo = 0
+        @evento.status = 1
+        @evento.data_evento = Date.current
+        @evento.periodo_inicio = Date.current.beginning_of_week
+        @evento.periodo_fim = Date.current.end_of_week
+      when 'retirada'
+        @evento.tipo_evento = 3
+        @evento.fluxo = 1
+        @evento.status = 1
+        @evento.data_evento = Date.current
+      when 'devolucao'
+        @evento.tipo_evento = 4
+        @evento.fluxo = 1
+        @evento.status = 1
+        @evento.data_evento = Date.current
+      when 'manutencao'
+        @evento.tipo_evento = 1
+        @evento.fluxo = 1
+        @evento.status = 1
+        @evento.data_evento = Date.current
+      when 'gasto_empresa'
+        @evento.tipo_evento = 2
+        @evento.fluxo = 1
+        @evento.status = 1
+        @evento.data_evento = Date.current
+      end
+    end
+
     respond_to do |format|
       format.html
       format.turbo_stream

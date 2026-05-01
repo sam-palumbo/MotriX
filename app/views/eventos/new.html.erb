@@ -1,7 +1,11 @@
+<%# Determine event type from params or from @evento.tipo_evento %>
+<% evento_tipo = params[:tipo] || (@evento.tipo_evento.present? ? @evento.tipo_evento : nil) %>
+<% tipo_labels = { 'pagamento_semanal' => '💰 Pagamento Semanal', 'retirada' => '🔑 Retirada de Veículo', 'devolucao' => '↩️ Devolução de Veículo', 'manutencao' => '🔧 Manutenção de Veículo', 'gasto_empresa' => '📋 Gasto da Empresa' } %>
+
 <div class="sec-head">
   <div>
-    <div class="sec-title">Novo Evento</div>
-    <div class="sec-sub">Registrar evento financeiro ou operacional</div>
+    <div class="sec-title"><%= evento_tipo ? tipo_labels[evento_tipo.to_s] : 'Novo Evento' %></div>
+    <div class="sec-sub"><%= evento_tipo ? 'Registrar evento' : 'Registrar evento financeiro ou operacional' %></div>
   </div>
 </div>
 
@@ -20,54 +24,74 @@
     </div>
   <% end %>
 
-  <!-- Informações Básicas -->
+  <!-- Hidden fields for pre-filled values -->
+  <%= form.hidden_field :tipo_evento if evento_tipo %>
+  <%= form.hidden_field :fluxo if evento_tipo %>
+  <%= form.hidden_field :status if evento_tipo %>
+
+  <!-- Informações Básicas (only show if no tipo pre-selected) -->
+  <% unless evento_tipo %>
   <div class="card">
     <div class="card-lbl">Informações do Evento</div>
     <div class="frow">
       <div class="fg">
         <%= form.label :tipo_evento, "Tipo do Evento *", class: "flabel" %>
-        <%= form.select :tipo_evento, 
+        <%= form.select :tipo_evento,
             options_for_select([
-              ["Pagamento Semanal", 0], 
-              ["Manutenção", 1], 
-              ["Gasto Empresa", 2], 
+              ["Pagamento Semanal", 0],
+              ["Manutenção", 1],
+              ["Gasto Empresa", 2],
               ["Retirada", 3],
               ["Devolução", 4],
               ["Aquisição Veículo", 5],
               ["Saída Frota", 6]
-            ], @evento.tipo_evento), 
-            { prompt: "Selecione um tipo", required: true }, 
+            ], @evento.tipo_evento),
+            { prompt: "Selecione um tipo", required: true },
             class: "fselect" %>
       </div>
       <div class="fg">
         <%= form.label :fluxo, "Fluxo Financeiro *", class: "flabel" %>
-        <%= form.select :fluxo, 
+        <%= form.select :fluxo,
             options_for_select([
-              ["Entrada", 0], 
+              ["Entrada", 0],
               ["Saída", 1]
-            ], @evento.fluxo), 
-            { prompt: "Selecione o fluxo", required: true }, 
+            ], @evento.fluxo),
+            { prompt: "Selecione o fluxo", required: true },
             class: "fselect" %>
       </div>
     </div>
     <div class="frow">
       <div class="fg">
         <%= form.label :status, "Status", class: "flabel" %>
-        <%= form.select :status, 
+        <%= form.select :status,
             options_for_select([
-              ["Pendente", 0], 
-              ["Pago", 1], 
+              ["Pendente", 0],
+              ["Pago", 1],
               ["Cancelado", 2]
-            ], @evento.status), 
-            { prompt: "Selecione um status" }, 
+            ], @evento.status),
+            { prompt: "Selecione um status" },
             class: "fselect" %>
       </div>
       <div class="fg">
         <%= form.label :valor, "Valor (R$) *", class: "flabel" %>
         <%= form.number_field :valor, step: 0.01, class: "finput", placeholder: "0,00", required: true %>
+        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Use vírgula para centavos</div>
       </div>
     </div>
   </div>
+  <% end %>
+
+  <!-- Valor field (show separately if tipo is pre-selected) -->
+  <% if evento_tipo %>
+  <div class="card">
+    <div class="card-lbl">Valor</div>
+    <div class="fg">
+      <%= form.label :valor, "Valor (R$) *", class: "flabel" %>
+      <%= form.number_field :valor, step: 0.01, class: "finput", placeholder: "0,00", required: true %>
+      <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Use vírgula para centavos</div>
+    </div>
+  </div>
+  <% end %>
 
   <!-- Datas e Responsável -->
   <div class="card">
@@ -75,7 +99,8 @@
     <div class="frow">
       <div class="fg">
         <%= form.label :data_evento, "Data do Evento *", class: "flabel" %>
-        <%= form.date_field :data_evento, class: "finput", value: Date.current, required: true %>
+        <%= form.date_field :data_evento, class: "finput", value: @evento.data_evento || Date.current, required: true %>
+        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Data em que o evento ocorreu</div>
       </div>
       <div class="fg">
         <%= form.label :responsavel, "Responsável *", class: "flabel" %>
@@ -84,47 +109,65 @@
     </div>
   </div>
 
-  <!-- Relacionamentos -->
+  <!-- Relacionamentos (show for Pagamento, Retirada, Devolução, Manutenção) -->
+  <% if !evento_tipo || ['pagamento_semanal', 'retirada', 'devolucao', 'manutencao'].include?(evento_tipo.to_s) %>
   <div class="card">
-    <div class="card-lbl">Relacionamentos (Opcional)</div>
+    <div class="card-lbl">Relacionamentos</div>
     <div class="frow">
       <div class="fg">
         <%= form.label :cliente_id, "Cliente", class: "flabel" %>
-        <%= form.select :cliente_id, 
-            options_from_collection_for_select(@clientes, :id, :nome, @evento.cliente_id), 
-            { prompt: "Selecione um cliente (opcional)" }, 
-            class: "fselect" %>
+        <%= form.select :cliente_id,
+            options_from_collection_for_select(@clientes, :id, :nome, @evento.cliente_id),
+            { prompt: "Selecione um cliente (opcional)" },
+            class: "fselect",
+            id: "evento-cliente-select" %>
       </div>
       <div class="fg">
         <%= form.label :veiculo_id, "Veículo", class: "flabel" %>
-        <%= form.select :veiculo_id, 
-            options_from_collection_for_select(@veiculos, :id, :to_s, @evento.veiculo_id), 
-            { prompt: "Selecione um veículo" }, 
-            class: "fselect" %>
+        <%= form.select :veiculo_id,
+            options_from_collection_for_select(@veiculos, :id, :to_s, @evento.veiculo_id),
+            { prompt: "Selecione um veículo" },
+            class: "fselect",
+            id: "evento-veiculo-select" %>
       </div>
     </div>
     <div class="fg">
       <%= form.label :locacao_id, "Locação", class: "flabel" %>
-      <%= form.select :locacao_id, 
-          options_from_collection_for_select(@locacoes, :id, :numero_contrato, @evento.locacao_id), 
-          { prompt: "Selecione uma locação (opcional)" }, 
-          class: "fselect" %>
+      <%= form.select :locacao_id,
+          options_from_collection_for_select(@locacoes, :id, :numero_contrato, @evento.locacao_id),
+          { prompt: "Selecione uma locação (opcional)" },
+          class: "fselect",
+          id: "evento-locacao-select" %>
+    </div>
+
+    <!-- Info Box for Vehicle -->
+    <div class="finfo" id="veiculo-info" style="display: none;">
+      <div class="finfo-lbl">Veículo selecionado</div>
+      <div class="finfo-val" id="veiculo-info-val">—</div>
+    </div>
+
+    <!-- Info Box for Client -->
+    <div class="finfo" id="cliente-info" style="display: none;">
+      <div class="finfo-lbl">Cliente selecionado</div>
+      <div class="finfo-val" id="cliente-info-val">—</div>
     </div>
   </div>
+  <% end %>
 
-  <!-- Manutenção (se aplicável) -->
+  <!-- Manutenção (only for Manutenção type) -->
+  <% if !evento_tipo || evento_tipo.to_s == 'manutencao' %>
   <div class="card">
     <div class="card-lbl">Dados de Manutenção</div>
     <div class="frow">
       <div class="fg">
         <%= form.label :tipo_manutencao, "Tipo de Manutenção", class: "flabel" %>
-        <%= form.select :tipo_manutencao, 
+        <%= form.select :tipo_manutencao,
             options_for_select([
-              ["Preventiva", 0], 
-              ["Corretiva", 1], 
+              ["Preventiva", 0],
+              ["Corretiva", 1],
               ["Revisão", 2]
-            ], @evento.tipo_manutencao), 
-            { prompt: "Apenas para eventos de manutenção" }, 
+            ], @evento.tipo_manutencao),
+            { prompt: "Apenas para eventos de manutenção" },
             class: "fselect" %>
       </div>
       <div class="fg">
@@ -133,21 +176,72 @@
       </div>
     </div>
   </div>
+  <% end %>
 
-  <!-- Período (para pagamentos) -->
+  <!-- Período (only for Pagamento Semanal type) -->
+  <% if !evento_tipo || evento_tipo.to_s == 'pagamento_semanal' %>
   <div class="card">
     <div class="card-lbl">Período Referência</div>
     <div class="frow">
       <div class="fg">
         <%= form.label :periodo_inicio, "Início do Período", class: "flabel" %>
-        <%= form.date_field :periodo_inicio, class: "finput", value: Date.current.beginning_of_week %>
+        <%= form.date_field :periodo_inicio, class: "finput", value: @evento.periodo_inicio || Date.current.beginning_of_week %>
       </div>
       <div class="fg">
         <%= form.label :periodo_fim, "Fim do Período", class: "flabel" %>
-        <%= form.date_field :periodo_fim, class: "finput", value: Date.current.end_of_week %>
+        <%= form.date_field :periodo_fim, class: "finput", value: @evento.periodo_fim || Date.current.end_of_week %>
       </div>
     </div>
   </div>
+  <% end %>
+
+  <!-- Retirada specific fields -->
+  <% if evento_tipo.to_s == 'retirada' %>
+  <div class="card">
+    <div class="card-lbl">Dados da Retirada</div>
+    <div class="frow">
+      <div class="fg">
+        <%= form.label :quilometragem, "KM na retirada", class: "flabel" %>
+        <%= form.number_field :quilometragem, class: "finput", placeholder: "Ex: 45000" %>
+      </div>
+      <div class="fg">
+        <label class="flabel">Caução recebido (R$)</label>
+        <input type="number" class="finput" placeholder="0,00" step="0.01">
+        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Será registrado na aba Veículos</div>
+      </div>
+    </div>
+  </div>
+  <% end %>
+
+  <!-- Devolução specific fields -->
+  <% if evento_tipo.to_s == 'devolucao' %>
+  <div class="card">
+    <div class="card-lbl">Dados da Devolução</div>
+    <div class="fg">
+      <%= form.label :quilometragem, "KM devolução", class: "flabel" %>
+      <%= form.number_field :quilometragem, class: "finput", placeholder: "Ex: 45000" %>
+    </div>
+  </div>
+  <% end %>
+
+  <!-- Gasto Empresa specific fields -->
+  <% if evento_tipo.to_s == 'gasto_empresa' %>
+  <div class="card">
+    <div class="card-lbl">Dados do Gasto</div>
+    <div class="fg">
+      <label class="flabel">Categoria</label>
+      <select class="fselect">
+        <option>Combustível</option>
+        <option>Logística / Transporte</option>
+        <option>Cartório / Documentação</option>
+        <option>Imposto / Taxa</option>
+        <option>Equipamento</option>
+        <option>Marketing</option>
+        <option>Outro</option>
+      </select>
+    </div>
+  </div>
+  <% end %>
 
   <!-- Descrição -->
   <div class="card">
@@ -161,79 +255,123 @@
   <!-- Anexos / Documentos -->
   <div class="card">
     <div class="card-lbl">
-      <%= icon "cloud-upload", size: 16, style: "vertical-align: middle;" %> 
+      <%= icon "cloud-upload", size: 16, style: "vertical-align: middle;" %>
       Anexar Documentos (Google Drive)
     </div>
-    
+
     <div style="padding: 10px;">
-      <!-- Upload Fields -->
-      <div class="frow" style="margin-bottom: 12px;">
-        <div class="fg" style="flex: 2;">
-          <%= label_tag "anexos[comprovante][arquivo]", "Comprovante de Pagamento", class: "flabel" %>
-          <%= file_field_tag "anexos[comprovante][arquivo]", 
-              class: "finput", 
-              accept: ".pdf,.jpg,.jpeg,.png,.gif",
-              style: "font-size: 13px;" %>
-        </div>
-        <div class="fg" style="flex: 1;">
-          <%= hidden_field_tag "anexos[comprovante][categoria]", "comprovante_pagamento" %>
-        </div>
+      <!-- Upload Area -->
+      <div class="anexo-area" id="evento-upload-area">
+        <%= file_field_tag "anexos[arquivo]",
+            id: "evento-file-input",
+            accept: "image/*,.pdf,.doc,.docx",
+            multiple: true,
+            capture: "environment" %>
+        <div class="anexo-area-ico">📷</div>
+        <div class="anexo-area-txt">Toque para tirar foto ou selecionar arquivo</div>
+        <div class="anexo-area-sub">Imagens, PDF — máx. 10MB por arquivo</div>
       </div>
-      
-      <div class="frow" style="margin-bottom: 12px;">
-        <div class="fg" style="flex: 2;">
-          <%= label_tag "anexos[hodometro][arquivo]", "Hodômetro", class: "flabel" %>
-          <%= file_field_tag "anexos[hodometro][arquivo]", 
-              class: "finput", 
-              accept: ".jpg,.jpeg,.png,.gif",
-              style: "font-size: 13px;" %>
-        </div>
-        <div class="fg" style="flex: 1;">
-          <%= hidden_field_tag "anexos[hodometro][categoria]", "hodometro" %>
-        </div>
+
+      <!-- File List (will be populated by JavaScript) -->
+      <div class="anexo-lista" id="evento-anexo-lista"></div>
+
+      <!-- Category Selection -->
+      <div class="fg" id="categoria-select-group" style="display: none;">
+        <label class="flabel">📂 Salvar em:</label>
+        <%= select_tag "anexos[categoria]",
+            options_for_select([
+              ["Comprovante de pagamento", "comprovante_pagamento"],
+              ["Hodômetro", "hodometro"],
+              ["Foto do veículo", "foto_veiculo"],
+              ["Nota fiscal", "nota_fiscal"],
+              ["Documento do cliente (CNH/RG)", "documento_cliente"],
+              ["Comprovante de caução", "comprovante_caucao"],
+              ["Contrato", "contrato"],
+              ["Registro de avaria", "registro_avaria"],
+              ["Comprovante de garantia", "comprovante_garantia"],
+              ["Outro", "outro"]
+            ]),
+            class: "fselect",
+            id: "anexo-categoria-select" %>
+        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;" id="categoria-hint">Selecione a categoria do documento</div>
       </div>
-      
-      <div class="frow" style="margin-bottom: 12px;">
-        <div class="fg" style="flex: 2;">
-          <%= label_tag "anexos[foto][arquivo]", "Foto do Veículo", class: "flabel" %>
-          <%= file_field_tag "anexos[foto][arquivo]", 
-              class: "finput", 
-              accept: ".jpg,.jpeg,.png,.gif",
-              style: "font-size: 13px;" %>
-        </div>
-        <div class="fg" style="flex: 1;">
-          <%= hidden_field_tag "anexos[foto][categoria]", "foto_veiculo" %>
-        </div>
-      </div>
-      
-      <div class="frow">
-        <div class="fg" style="flex: 2;">
-          <%= label_tag "anexos[outro][arquivo]", "Outro Documento", class: "flabel" %>
-          <%= file_field_tag "anexos[outro][arquivo]", 
-              class: "finput", 
-              accept: ".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.zip,.rar",
-              style: "font-size: 13px;" %>
-        </div>
-        <div class="fg" style="flex: 1;">
-          <%= label_tag "anexos[outro][categoria]", "Tipo", class: "flabel" %>
-          <%= select_tag "anexos[outro][categoria]",
-              options_for_select([
-                ["Outros", "outros"],
-                ["Documento", "documento"],
-                ["Contrato", "contrato"],
-                ["Nota Fiscal", "nota_fiscal"]
-              ]),
-              class: "fselect",
-              style: "font-size: 13px;" %>
-        </div>
-      </div>
-      
+
       <div style="font-size: 12px; color: var(--text3); margin-top: 12px; text-align: center;">
-        <%= icon "cloud-upload", size: 12, style: "vertical-align: middle;" %> 
+        <%= icon "cloud-upload", size: 12, style: "vertical-align: middle;" %>
         Os arquivos serão enviados automaticamente para o Google Drive ao registrar o evento
       </div>
     </div>
   </div>
+
+  <script>
+    // Vehicle info box update
+    const veiculoSelect = document.getElementById('evento-veiculo-select');
+    const veiculoInfo = document.getElementById('veiculo-info');
+    const veiculoInfoVal = document.getElementById('veiculo-info-val');
+
+    if (veiculoSelect) {
+      veiculoSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (this.value && selectedOption.text) {
+          veiculoInfo.style.display = 'block';
+          veiculoInfoVal.textContent = selectedOption.text;
+        } else {
+          veiculoInfo.style.display = 'none';
+        }
+      });
+    }
+
+    // Client info box update
+    const clienteSelect = document.getElementById('evento-cliente-select');
+    const clienteInfo = document.getElementById('cliente-info');
+    const clienteInfoVal = document.getElementById('cliente-info-val');
+
+    if (clienteSelect) {
+      clienteSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (this.value && selectedOption.text) {
+          clienteInfo.style.display = 'block';
+          clienteInfoVal.textContent = selectedOption.text;
+        } else {
+          clienteInfo.style.display = 'none';
+        }
+      });
+    }
+
+    // Simple file upload preview without drag-and-drop for now
+    document.getElementById('evento-file-input').addEventListener('change', function(e) {
+      const files = Array.from(e.target.files);
+      const lista = document.getElementById('evento-anexo-lista');
+      const categoriaGroup = document.getElementById('categoria-select-group');
+
+      if (files.length > 0) {
+        categoriaGroup.style.display = 'block';
+      }
+
+      files.forEach(file => {
+        if (file.size > 10 * 1024 * 1024) {
+          alert(file.name + ' excede 10MB');
+          return;
+        }
+
+        const icon = file.type.startsWith('image/') ? '🖼️' :
+                    file.type.includes('pdf') ? '📋' :
+                    file.type.includes('word') ? '📝' : '📄';
+
+        const item = document.createElement('div');
+        item.className = 'anexo-item';
+        item.innerHTML = `
+          <div class="anexo-item-ico">${icon}</div>
+          <div class="anexo-item-info">
+            <div class="anexo-item-nome">${file.name}</div>
+            <div class="anexo-item-status">${(file.size / 1024 / 1024).toFixed(1)} MB</div>
+          </div>
+          <button type="button" class="anexo-item-rem" onclick="this.parentElement.remove()">✕</button>
+        `;
+        lista.appendChild(item);
+      });
+    });
+  </script>
 
   <!-- Botões -->
   <div class="btn-row">

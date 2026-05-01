@@ -1,53 +1,66 @@
-<% content_for :title, "Eventos | MotriX" %>
+<% content_for :title, "Registrar Evento | MotriX" %>
 
 <div class="sec-head">
   <div>
-    <div class="sec-title">Eventos</div>
-    <div class="sec-sub"><%= @eventos.size %> eventos registrados</div>
-  </div>
-  <%= link_to "Novo Evento", "#", onclick: "AppModal.load('#{new_evento_path}', 'Novo Evento', 'Registrar evento financeiro ou operacional'); return false;", class: "btn btn-gold btn-sm" %>
-</div>
-
-<!-- Quick Stats -->
-<div class="kgrid">
-  <div class="kcard">
-    <div class="knum" style="color:var(--green)">
-      <%= brl(@eventos.where(fluxo: 'entrada').sum(:valor)) %>
-    </div>
-    <div class="kdesc">Entradas</div>
-  </div>
-  <div class="kcard">
-    <div class="knum" style="color:var(--red)">
-      <%= brl(@eventos.where(fluxo: 'saida').sum(:valor)) %>
-    </div>
-    <div class="kdesc">Saídas</div>
-  </div>
-  <div class="kcard">
-    <div class="knum" style="color:var(--gold)">
-      <%= brl(@eventos.sum(:valor)) %>
-    </div>
-    <div class="kdesc">Total</div>
-  </div>
-  <div class="kcard">
-    <div class="knum" style="font-size:20px">
-      <%= @eventos.where(fluxo: 'entrada').count %>
-    </div>
-    <div class="kdesc">Pagamentos</div>
+    <div class="sec-title">Registrar</div>
+    <div class="sec-sub">Lançar eventos</div>
   </div>
 </div>
 
-<!-- Tabs -->
-<div class="tabs">
-  <button class="tab active" onclick="filterEventos('todos', this)">Todos</button>
-  <button class="tab" onclick="filterEventos('entrada', this)">Entradas</button>
-  <button class="tab" onclick="filterEventos('saida', this)">Saídas</button>
-  <button class="tab" onclick="filterEventos('pagamento_semanal', this)">Pagamentos</button>
-  <button class="tab" onclick="filterEventos('manutencao', this)">Manutenção</button>
+<!-- Locação -->
+<div class="sec-lbl">Locação</div>
+<div class="li" onclick="window.location.href='<%= new_evento_path(tipo: 'pagamento_semanal') %>'">
+  <div class="li-icon" style="background:rgba(61,186,110,.1)">💰</div>
+  <div class="li-body">
+    <div class="li-title">Pagamento semanal</div>
+    <div class="li-sub">Registrar semana de locação</div>
+  </div>
+  <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+</div>
+<div class="li" onclick="window.location.href='<%= new_evento_path(tipo: 'retirada') %>'">
+  <div class="li-icon" style="background:rgba(80,144,240,.1)">🔑</div>
+  <div class="li-body">
+    <div class="li-title">Retirada de veículo</div>
+    <div class="li-sub">Novo cliente retirando moto</div>
+  </div>
+  <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+</div>
+<div class="li" onclick="window.location.href='<%= new_evento_path(tipo: 'devolucao') %>'">
+  <div class="li-icon" style="background:rgba(144,112,232,.1)">↩️</div>
+  <div class="li-body">
+    <div class="li-title">Devolução de veículo</div>
+    <div class="li-sub">Encerrar locação</div>
+  </div>
+  <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
 </div>
 
+<!-- Despesas -->
+<div class="sec-lbl mt8">Despesas</div>
+<div class="li" onclick="window.location.href='<%= new_evento_path(tipo: 'manutencao') %>'">
+  <div class="li-icon" style="background:rgba(224,120,48,.1)">🔧</div>
+  <div class="li-body">
+    <div class="li-title">Manutenção de veículo</div>
+    <div class="li-sub">Registrar serviço ou reparo</div>
+  </div>
+  <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+</div>
+<div class="li" onclick="window.location.href='<%= new_evento_path(tipo: 'gasto_empresa') %>'">
+  <div class="li-icon" style="background:rgba(224,80,80,.1)">📋</div>
+  <div class="li-body">
+    <div class="li-title">Gasto da empresa</div>
+    <div class="li-sub">Despesa geral não vinculada</div>
+  </div>
+  <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+</div>
+
+<!-- Últimos eventos -->
+<div class="sec-lbl mt8" style="display:flex;align-items:center;justify-content:space-between;padding-right:16px">
+  <span>📋 Últimos eventos</span>
+  <%= link_to "Ver todos", eventos_path, style: "background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;font-family:inherit;text-decoration:none" %>
+</div>
 <div id="eventos-list">
-  <% @eventos.each do |evento| %>
-    <div class="li" data-fluxo="<%= evento.fluxo %>" data-tipo="<%= evento.tipo_evento %>" onclick="window.location.href='<%= evento_path(evento) %>'">
+  <% @eventos.limit(5).each do |evento| %>
+    <div class="li" onclick="window.location.href='<%= evento_path(evento) %>'">
       <div class="li-icon" style="background:<%= evento.fluxo == 'entrada' ? 'rgba(61,186,110,.1)' : 'rgba(224,80,80,.1)' %>">
         <%= evento.fluxo == 'entrada' ? '💰' : evento.tipo_evento == 'manutencao' ? '🔧' : '💸' %>
       </div>
@@ -55,21 +68,6 @@
         <div class="li-title"><%= enum_label(evento.tipo_evento) %></div>
         <div class="li-sub">
           <%= [evento.cliente&.nome, evento.veiculo&.placa, evento.locacao&.numero_contrato].compact.join(" • ") %>
-        </div>
-        <div class="mt4">
-          <span class="badge <%= evento.fluxo == 'entrada' ? 'b-green' : 'b-red' %>">
-            <%= enum_label(evento.fluxo) %>
-          </span>
-          <% if evento.status.present? %>
-            <span class="badge <%= evento.status == 'pago' ? 'b-green' : 'b-orange' %>">
-              <%= enum_label(evento.status) %>
-            </span>
-          <% end %>
-          <% if evento.tipo_manutencao.present? %>
-            <span class="badge b-orange">
-              <%= enum_label(evento.tipo_manutencao) %>
-            </span>
-          <% end %>
         </div>
       </div>
       <div class="li-right">
@@ -80,7 +78,7 @@
       </div>
     </div>
   <% end %>
-  
+
   <% if @eventos.empty? %>
     <div class="empty">
       <div class="empty-ico">📊</div>
@@ -88,23 +86,3 @@
     </div>
   <% end %>
 </div>
-
-<script>
-function filterEventos(filter, element) {
-  // Update active tab
-  document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-  element.classList.add('active');
-  
-  // Filter eventos
-  const eventos = document.querySelectorAll('#eventos-list .li');
-  eventos.forEach(evento => {
-    if (filter === 'todos') {
-      evento.style.display = 'flex';
-    } else if (filter === 'entrada' || filter === 'saida') {
-      evento.style.display = evento.dataset.fluxo === filter ? 'flex' : 'none';
-    } else {
-      evento.style.display = evento.dataset.tipo === filter ? 'flex' : 'none';
-    }
-  });
-}
-</script>
