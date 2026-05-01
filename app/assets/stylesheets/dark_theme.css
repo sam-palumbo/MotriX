@@ -759,22 +759,21 @@ body {
     max-width: 1200px;
     padding: 0 20px;
   }
-  
+
   .nav {
-    position: static;
-    border-top: none;
-    border-bottom: 1px solid var(--border);
+    position: fixed;
+    border-top: 1px solid var(--border);
     padding: 12px 0;
   }
-  
+
   .scroller {
-    padding-bottom: 0;
+    padding-bottom: 76px;
   }
-  
+
   .kgrid {
     grid-template-columns: repeat(4, 1fr);
   }
-  
+
   .kcard.wide {
     grid-column: span 2;
   }
