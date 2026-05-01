@@ -150,10 +150,7 @@
         <%= form.date_field :data_evento, class: "finput", value: @evento.data_evento || Date.current, required: true %>
         <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Data em que o evento ocorreu</div>
       </div>
-      <div class="fg">
-        <%= form.label :responsavel, "Responsável *", class: "flabel" %>
-        <%= form.text_field :responsavel, class: "finput", value: Current.usuario&.nome, placeholder: "Nome do responsável", required: true %>
-      </div>
+      <%= form.hidden_field :responsavel, value: Current.usuario&.nome %>
     </div>
   </div>
 

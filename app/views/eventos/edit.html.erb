@@ -69,10 +69,7 @@
         <%= form.label :data_evento, "Data Evento", class: "flabel" %>
         <%= form.date_field :data_evento, class: "finput" %>
       </div>
-      <div class="fg">
-        <%= form.label :responsavel, "Responsável", class: "flabel" %>
-        <%= form.text_field :responsavel, class: "finput", placeholder: "Nome do responsável" %>
-      </div>
+      <%= form.hidden_field :responsavel, value: Current.usuario&.nome %>
     </div>
   </div>
 

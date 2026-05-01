@@ -45,10 +45,7 @@
         <label class="flabel">Data</label>
         <input type="date" name="data_evento" class="finput" value="<%= Date.current %>" required>
       </div>
-      <div class="fg">
-        <label class="flabel">Responsável</label>
-        <input type="text" name="responsavel" class="finput" value="<%= Current.usuario&.nome %>" required>
-      </div>
+      <input type="hidden" name="responsavel" value="<%= Current.usuario&.nome %>">
     </div>
     <div class="fg">
       <label class="flabel">Descrição</label>
