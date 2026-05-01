@@ -358,7 +358,7 @@
     <div style="padding: 10px;">
       <!-- Upload Area -->
       <div class="anexo-area" id="evento-upload-area">
-        <%= file_field_tag "anexos[arquivo]",
+        <%= file_field_tag "evento[anexos][]",
             id: "evento-file-input",
             accept: "image/*,.pdf,.doc,.docx",
             multiple: true,

@@ -184,23 +184,19 @@ class EventosController < ApplicationController
   end
 
   def upload_anexos_for_evento(evento)
-    return unless params[:anexos].present?
+    anexos_param = params[:evento]&.dig(:anexos) || params[:anexos]
+    return unless anexos_param.present?
 
     uploaded_count = 0
     drive_service = GoogleDriveService.new
     folder_id = ENV["GOOGLE_DRIVE_VEICULOS_FOLDER_ID"] || ENV["GOOGLE_DRIVE_DEFAULT_FOLDER_ID"]
 
-    # Handle both array and hash formats for anexos
-    anexos_to_process = case params[:anexos]
-    when Array
-      params[:anexos].map.with_index { |arquivo, index| [index.to_s, { arquivo: arquivo }] }
-    when Hash, ActionController::Parameters
-      # If it's a hash with arquivo key (single file upload), wrap it in array
-      if params[:anexos].has_key?('arquivo')
-        [['0', params[:anexos]]]
-      else
-        params[:anexos]
-      end
+    # Handle multiple files - Rails creates an array for nested file fields
+    anexos_to_process = if anexos_param.is_a?(Array)
+      anexos_param.map.with_index { |arquivo, index| [index.to_s, { arquivo: arquivo, categoria: 'comprovante_pagamento' }] }
+    elsif anexos_param.respond_to?(:has_key?) && anexos_param.has_key?('arquivo')
+      # Single file format (backward compatibility)
+      [['0', anexos_param]]
     else
       []
     end
