@@ -297,8 +297,9 @@
     <div class="card-lbl">Dados da Devolução</div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :data_fim, "Data de encerramento *", class: "flabel" %>
-        <%= form.date_field :data_fim, class: "finput", value: Date.current, required: true %>
+        <label class="flabel">Data de encerramento *</label>
+        <input type="date" name="data_fim" class="finput" value="<%= Date.current %>" required>
+        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Será usado para encerrar a locação</div>
       </div>
       <div class="fg">
         <%= form.label :quilometragem, "KM na devolução", class: "flabel" %>
@@ -326,14 +327,14 @@
     <div class="card-lbl">Dados do Gasto</div>
     <div class="fg">
       <label class="flabel">Categoria</label>
-      <select class="fselect">
-        <option>Combustível</option>
-        <option>Logística / Transporte</option>
-        <option>Cartório / Documentação</option>
-        <option>Imposto / Taxa</option>
-        <option>Equipamento</option>
-        <option>Marketing</option>
-        <option>Outro</option>
+      <select name="categoria_gasto" class="fselect">
+        <option value="combustivel">Combustível</option>
+        <option value="logistica">Logística / Transporte</option>
+        <option value="cartorio">Cartório / Documentação</option>
+        <option value="imposto">Imposto / Taxa</option>
+        <option value="equipamento">Equipamento</option>
+        <option value="marketing">Marketing</option>
+        <option value="outro">Outro</option>
       </select>
     </div>
   </div>

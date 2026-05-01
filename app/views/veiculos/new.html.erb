@@ -134,6 +134,22 @@
     </div>
   </div>
 
+  <!-- Status -->
+  <div class="card">
+    <div class="card-lbl">Status</div>
+    <div class="fg">
+      <%= form.label :status, "Status do Veículo *", class: "flabel" %>
+      <%= form.select :status, 
+          options_for_select([
+            ["Disponível", 0], 
+            ["Locado", 1],
+            ["Manutenção", 2],
+            ["Inativo", 3]
+          ], @veiculo.status || 0), 
+          { required: true }, class: "fselect" %>
+    </div>
+  </div>
+
   <!-- Botões -->
   <div class="btn-row">
     <%= link_to "Cancelar", veiculos_path, class: "btn btn-ghost" %>

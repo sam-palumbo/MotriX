@@ -180,9 +180,9 @@ class EventosController < ApplicationController
     locacao = @evento.veiculo.locacoes.ativa.first
     
     if locacao
-      # Update locacao with end date
+      # Update locacao with end date from form parameter
       locacao.update!(
-        data_fim: @evento.data_fim,
+        data_fim: params[:data_fim],
         status: :encerrada,
         updated_by: Current.usuario
       )

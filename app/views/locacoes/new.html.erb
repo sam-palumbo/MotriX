@@ -101,6 +101,22 @@
     </div>
   </div>
 
+  <!-- Status -->
+  <div class="card">
+    <div class="card-lbl">Status</div>
+    <div class="fg">
+      <%= form.label :status, "Status da Locação *", class: "flabel" %>
+      <%= form.select :status, 
+          options_for_select([
+            ["Ativa", 0], 
+            ["Encerrada", 1],
+            ["Inadimplente", 2],
+            ["Cancelada", 3]
+          ], @locacao.status || 0), 
+          { required: true }, class: "fselect" %>
+    </div>
+  </div>
+
   <!-- Observações -->
   <div class="card">
     <div class="card-lbl">Observações</div>
