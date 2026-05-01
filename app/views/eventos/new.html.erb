@@ -62,48 +62,21 @@
       <div class="finfo-val" id="veiculo-info-val">—</div>
     </div>
 
+    <!-- Info Box for Cliente (auto-populated) -->
+    <div class="finfo" id="cliente-info" style="display: none;">
+      <div class="finfo-lbl">Cliente associado</div>
+      <div class="finfo-val" id="cliente-info-val">—</div>
+    </div>
+
     <!-- Info Box for Locacao (auto-populated) -->
     <div class="finfo" id="locacao-info" style="display: none;">
-      <div class="finfo-lbl">Locação</div>
+      <div class="finfo-lbl">Locação ativa</div>
       <div class="finfo-val" id="locacao-info-val">—</div>
     </div>
   </div>
   <% end %>
 
-  <!-- Data for vehicle and client associations (always available) -->
-  <script>
-    // Vehicle data with associated cliente and locacao
-    const veiculoData = {
-      <% @veiculos.each do |v| %>
-        <%= v.id %>: {
-          placa: "<%= j v.placa %>",
-          marca: "<%= j v.marca.to_s %>",
-          modelo: "<%= j v.modelo.to_s %>",
-          <% active_locacao = v.locacoes.where(status: :ativa).first %>
-          clienteId: "<%= (active_locacao&.cliente_id || '') %>",
-          clienteNome: "<%= j (active_locacao&.cliente&.nome || '') %>",
-          locacaoId: "<%= (active_locacao&.id || '') %>",
-          locacaoNumero: "<%= j (active_locacao&.numero_contrato || '') %>"
-        }<%= "," unless v == @veiculos.last %>
-      <% end %>
-    };
-    
-    // Client data with associated veiculo and locacao
-    const clienteData = {
-      <% @clientes.each do |c| %>
-        <%= c.id %>: {
-          nome: "<%= j c.nome %>",
-          <% active_locacao = c.locacoes.where(status: :ativa).first %>
-          veiculoId: "<%= (active_locacao&.veiculo_id || '') %>",
-          veiculoPlaca: "<%= j (active_locacao&.veiculo&.to_s || '') %>",
-          locacaoId: "<%= (active_locacao&.id || '') %>",
-          locacaoNumero: "<%= j (active_locacao&.numero_contrato || '') %>"
-        }<%= "," unless c == @clientes.last %>
-      <% end %>
-    };
-    
-      </script>
-
+  
   <!-- Informações Básicas (only show if no tipo pre-selected) -->
   <% unless evento_tipo %>
   <div class="card">
@@ -429,10 +402,42 @@
   <script>
     // Vehicle and Client selection handlers with bidirectional auto-population
     (function() {
+      // Vehicle data with associated cliente and locacao
+      const veiculoData = {
+        <% @veiculos.each do |v| %>
+          "<%= v.id %>": {
+            placa: "<%= j v.placa %>",
+            marca: "<%= j v.marca.to_s %>",
+            modelo: "<%= j v.modelo.to_s %>",
+            <% active_locacao = v.locacoes.where(status: :ativa).first %>
+            clienteId: "<%= (active_locacao&.cliente_id || '') %>",
+            clienteNome: "<%= j (active_locacao&.cliente&.nome || '') %>",
+            locacaoId: "<%= (active_locacao&.id || '') %>",
+            locacaoNumero: "<%= j (active_locacao&.numero_contrato || '') %>"
+          }<%= "," unless v == @veiculos.last %>
+        <% end %>
+      };
+      
+      // Client data with associated veiculo and locacao
+      const clienteData = {
+        <% @clientes.each do |c| %>
+          "<%= c.id %>": {
+            nome: "<%= j c.nome %>",
+            <% active_locacao = c.locacoes.where(status: :ativa).first %>
+            veiculoId: "<%= (active_locacao&.veiculo_id || '') %>",
+            veiculoPlaca: "<%= j (active_locacao&.veiculo&.to_s || '') %>",
+            locacaoId: "<%= (active_locacao&.id || '') %>",
+            locacaoNumero: "<%= j (active_locacao&.numero_contrato || '') %>"
+          }<%= "," unless c == @clientes.last %>
+        <% end %>
+      };
+
       const veiculoSelect = document.getElementById('evento-veiculo-select');
       const clienteSelect = document.getElementById('evento-cliente-select');
       const veiculoInfo = document.getElementById('veiculo-info');
       const veiculoInfoVal = document.getElementById('veiculo-info-val');
+      const clienteInfo = document.getElementById('cliente-info');
+      const clienteInfoVal = document.getElementById('cliente-info-val');
       const locacaoInfo = document.getElementById('locacao-info');
       const locacaoInfoVal = document.getElementById('locacao-info-val');
       const locacaoIdField = document.getElementById('evento-locacao-id');
@@ -451,11 +456,16 @@
             // Auto-populate cliente and locacao from veiculoData
             if (typeof veiculoData !== 'undefined') {
               const data = veiculoData[veiculoId];
+              
               if (data) {
-                // Auto-select cliente if there's an active locacao
+                // Show cliente info if there's an active locacao
                 if (data.clienteId && data.clienteNome) {
+                  clienteInfo.style.display = 'block';
+                  clienteInfoVal.textContent = data.clienteNome;
                   clienteSelect.value = data.clienteId;
                   clienteSelect.dispatchEvent(new Event('change'));
+                } else {
+                  clienteInfo.style.display = 'none';
                 }
                 
                 // Show locacao info if there's an active locacao
@@ -472,6 +482,7 @@
           } else {
             // Clear all
             veiculoInfo.style.display = 'none';
+            clienteInfo.style.display = 'none';
             locacaoInfo.style.display = 'none';
             locacaoIdField.value = '';
           }
@@ -488,6 +499,7 @@
             // Auto-populate veiculo and locacao from clienteData
             if (typeof clienteData !== 'undefined') {
               const data = clienteData[clienteId];
+              
               if (data) {
                 // Auto-select veiculo if there's an active locacao
                 if (data.veiculoId && data.veiculoPlaca) {
@@ -509,6 +521,9 @@
                 }
               }
             }
+          } else {
+            // Clear cliente info when no client selected
+            clienteInfo.style.display = 'none';
           }
         });
       }
