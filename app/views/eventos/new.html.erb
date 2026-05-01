@@ -40,7 +40,13 @@
           { prompt: "Selecione um veículo", required: true },
           class: "fselect",
           id: "evento-veiculo-select" %>
-      <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Cliente será preenchido automaticamente</div>
+      <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">
+        <% if evento_tipo.to_s == 'retirada' %>
+          Selecione um veículo disponível
+        <% else %>
+          Cliente será preenchido automaticamente
+        <% end %>
+      </div>
     </div>
 
     <!-- Info Box for Vehicle -->
@@ -49,14 +55,25 @@
       <div class="finfo-val" id="veiculo-info-val">—</div>
     </div>
 
-    <!-- Info Box for Client (auto-populated) -->
-    <div class="finfo" id="cliente-info" style="display: none;">
-      <div class="finfo-lbl">Cliente</div>
-      <div class="finfo-val" id="cliente-info-val">—</div>
-    </div>
-
-    <!-- Hidden field for auto-populated cliente -->
-    <%= form.hidden_field :cliente_id, id: "evento-cliente-id" %>
+    <!-- Cliente Selection for Retirada -->
+    <% if evento_tipo.to_s == 'retirada' %>
+      <div class="fg">
+        <%= form.label :cliente_id, "Cliente *", class: "flabel" %>
+        <%= form.select :cliente_id,
+            options_from_collection_for_select(@clientes, :id, :nome, @evento.cliente_id),
+            { prompt: "Selecione um cliente", required: true },
+            class: "fselect",
+            id: "evento-cliente-select" %>
+      </div>
+    <% else %>
+      <!-- Info Box for Client (auto-populated) -->
+      <div class="finfo" id="cliente-info" style="display: none;">
+        <div class="finfo-lbl">Cliente</div>
+        <div class="finfo-val" id="cliente-info-val">—</div>
+      </div>
+      <!-- Hidden field for auto-populated cliente -->
+      <%= form.hidden_field :cliente_id, id: "evento-cliente-id" %>
+    <% end %>
   </div>
   <% end %>
 
@@ -160,22 +177,73 @@
   <!-- Manutenção (only for Manutenção type) -->
   <% if !evento_tipo || evento_tipo.to_s == 'manutencao' %>
   <div class="card">
-    <div class="card-lbl">Dados de Manutenção</div>
+    <div class="card-lbl">Dados da Manutenção</div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :tipo_manutencao, "Tipo de Manutenção", class: "flabel" %>
+        <%= form.label :data_evento, "Data do serviço", class: "flabel" %>
+        <%= form.date_field :data_evento, class: "finput", value: @evento.data_evento || Date.current %>
+      </div>
+      <div class="fg">
+        <%= form.label :quilometragem, "KM no serviço", class: "flabel" %>
+        <%= form.number_field :quilometragem, class: "finput", placeholder: "Ex: 45000" %>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <%= form.label :tipo_manutencao, "Tipo de serviço", class: "flabel" %>
         <%= form.select :tipo_manutencao,
             options_for_select([
-              ["Preventiva", 0],
-              ["Corretiva", 1],
-              ["Revisão", 2]
+              ["Troca de óleo", 0],
+              ["Troca da relação", 1],
+              ["Pastilhas de freio dianteira", 2],
+              ["Disco de freio dianteiro", 3],
+              ["Lona de freio traseira", 4],
+              ["Pneu dianteiro", 5],
+              ["Pneu traseiro", 6],
+              ["Vela de ignição", 7],
+              ["Lona de freio dianteira", 8],
+              ["Outros", 9]
             ], @evento.tipo_manutencao),
-            { prompt: "Apenas para eventos de manutenção" },
+            { prompt: "Selecione o tipo" },
             class: "fselect" %>
       </div>
       <div class="fg">
-        <%= form.label :quilometragem, "Quilometragem", class: "flabel" %>
-        <%= form.number_field :quilometragem, class: "finput", placeholder: "0" %>
+        <label class="flabel">Pago por</label>
+        <select name="pago_por" class="fselect">
+          <option value="4A">4A</option>
+          <option value="CLIENTE">CLIENTE</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-lbl">Serviços Realizados</div>
+    <div id="servicos-list">
+      <div class="serv-item">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 11px; font-weight: 700; color: var(--gold); background: rgba(232,197,71,0.1); padding: 2px 8px; border-radius: 10px;">1</span>
+          <button type="button" class="btn btn-sm" onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--text3); font-size: 16px; padding: 0;">✕</button>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <input type="text" name="servicos[][descricao]" class="finput" placeholder="Descrição do serviço" required>
+          </div>
+          <div class="fg">
+            <input type="number" name="servicos[][valor]" class="finput" placeholder="0,00" step="0.01" required onchange="calcularTotalServicos()">
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-ghost" onclick="adicionarServico()" style="margin-top: 8px;">+ Adicionar serviço</button>
+  </div>
+  
+  <div class="card">
+    <div class="card-lbl">Resumo</div>
+    <div class="frow">
+      <div class="fg">
+        <label class="flabel">Total dos serviços</label>
+        <input type="number" id="total-servicos" class="finput" placeholder="0,00" step="0.01" readonly style="background: var(--bg2); color: var(--gold); font-weight: 700;">
       </div>
     </div>
   </div>
@@ -201,6 +269,31 @@
   <!-- Retirada specific fields -->
   <% if evento_tipo.to_s == 'retirada' %>
   <div class="card">
+    <div class="card-lbl">Dados da Locação</div>
+    <div class="frow">
+      <div class="fg">
+        <%= form.label :data_inicio, "Início da locação *", class: "flabel" %>
+        <%= form.date_field :data_inicio, class: "finput", value: Date.current, required: true %>
+      </div>
+      <div class="fg">
+        <%= form.label :data_prevista_fim, "Previsão de fim *", class: "flabel" %>
+        <%= form.date_field :data_prevista_fim, class: "finput", value: Date.current + 7.days, required: true %>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <%= form.label :valor_semanal, "Valor semanal (R$) *", class: "flabel" %>
+        <%= form.number_field :valor_semanal, step: 0.01, class: "finput", placeholder: "0,00", required: true %>
+      </div>
+      <div class="fg">
+        <label class="flabel">Caução recebido (R$)</label>
+        <input type="number" name="caucao_valor" class="finput" placeholder="0,00" step="0.01">
+        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Será registrado no veículo</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
     <div class="card-lbl">Dados da Retirada</div>
     <div class="frow">
       <div class="fg">
@@ -208,9 +301,8 @@
         <%= form.number_field :quilometragem, class: "finput", placeholder: "Ex: 45000" %>
       </div>
       <div class="fg">
-        <label class="flabel">Caução recebido (R$)</label>
-        <input type="number" class="finput" placeholder="0,00" step="0.01">
-        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Será registrado na aba Veículos</div>
+        <label class="flabel">Número do contrato</label>
+        <input type="text" name="numero_contrato" class="finput" placeholder="Ex: LOC-001" required>
       </div>
     </div>
   </div>
@@ -220,9 +312,27 @@
   <% if evento_tipo.to_s == 'devolucao' %>
   <div class="card">
     <div class="card-lbl">Dados da Devolução</div>
-    <div class="fg">
-      <%= form.label :quilometragem, "KM devolução", class: "flabel" %>
-      <%= form.number_field :quilometragem, class: "finput", placeholder: "Ex: 45000" %>
+    <div class="frow">
+      <div class="fg">
+        <%= form.label :data_fim, "Data de encerramento *", class: "flabel" %>
+        <%= form.date_field :data_fim, class: "finput", value: Date.current, required: true %>
+      </div>
+      <div class="fg">
+        <%= form.label :quilometragem, "KM na devolução", class: "flabel" %>
+        <%= form.number_field :quilometragem, class: "finput", placeholder: "Ex: 45000" %>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="flabel">Valor final a pagar (R$)</label>
+        <input type="number" name="valor_final" class="finput" placeholder="0,00" step="0.01">
+        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Incluir multas e descontos se houver</div>
+      </div>
+      <div class="fg">
+        <label class="flabel">Devolução de caução (R$)</label>
+        <input type="number" name="devolucao_caucao" class="finput" placeholder="0,00" step="0.01">
+        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;">Valor devolvido ao cliente</div>
+      </div>
     </div>
   </div>
   <% end %>
@@ -392,6 +502,44 @@
         lista.appendChild(item);
       });
     });
+
+    // Functions for maintenance form
+    window.adicionarServico = function() {
+      const servicosList = document.getElementById('servicos-list');
+      const servicoCount = servicosList.children.length + 1;
+      
+      const servicoItem = document.createElement('div');
+      servicoItem.className = 'serv-item';
+      servicoItem.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 11px; font-weight: 700; color: var(--gold); background: rgba(232,197,71,0.1); padding: 2px 8px; border-radius: 10px;">${servicoCount}</span>
+          <button type="button" class="btn btn-sm" onclick="this.parentElement.parentElement.remove(); calcularTotalServicos();" style="background: none; border: none; color: var(--text3); font-size: 16px; padding: 0;">✕</button>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <input type="text" name="servicos[][descricao]" class="finput" placeholder="Descrição do serviço" required>
+          </div>
+          <div class="fg">
+            <input type="number" name="servicos[][valor]" class="finput" placeholder="0,00" step="0.01" required onchange="calcularTotalServicos()">
+          </div>
+        </div>
+      `;
+      
+      servicosList.appendChild(servicoItem);
+    };
+
+    window.calcularTotalServicos = function() {
+      const servicoInputs = document.querySelectorAll('input[name="servicos[][valor]"]');
+      const totalInput = document.getElementById('total-servicos');
+      
+      let total = 0;
+      servicoInputs.forEach(input => {
+        const valor = parseFloat(input.value) || 0;
+        total += valor;
+      });
+      
+      totalInput.value = total.toFixed(2);
+    };
   </script>
 
   <!-- Botões -->

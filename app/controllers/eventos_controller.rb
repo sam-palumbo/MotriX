@@ -60,6 +60,10 @@ class EventosController < ApplicationController
 
     respond_to do |format|
       if @evento.save
+        # Handle special cases for Retirada and Devolução
+        handle_retirada_logic if @evento.retirada?
+        handle_devolucao_logic if @evento.devolucao?
+
         # Handle file uploads to Google Drive
         upload_anexos_for_evento(@evento)
 
@@ -113,12 +117,65 @@ class EventosController < ApplicationController
   end
 
   def evento_params
-    permitted = params.require(:evento).permit(:cliente_id, :veiculo_id, :locacao_id, :tipo_evento, :tipo_manutencao, :fluxo, :status, :valor, :periodo_inicio, :periodo_fim, :quilometragem, :responsavel, :descricao, :data_evento)
+    permitted = params.require(:evento).permit(:cliente_id, :veiculo_id, :locacao_id, :tipo_evento, :tipo_manutencao, :fluxo, :status, :valor, :periodo_inicio, :periodo_fim, :quilometragem, :responsavel, :descricao, :data_evento, :data_inicio, :data_prevista_fim, :data_fim, :valor_semanal)
     permitted[:status] = permitted[:status].to_i if permitted[:status].present?
     permitted[:tipo_evento] = permitted[:tipo_evento].to_i if permitted[:tipo_evento].present?
     permitted[:tipo_manutencao] = permitted[:tipo_manutencao].to_i if permitted[:tipo_manutencao].present?
     permitted[:fluxo] = permitted[:fluxo].to_i if permitted[:fluxo].present?
     permitted
+  end
+
+  def handle_retirada_logic
+    # Create a new Locacao record
+    locacao = Locacao.create!(
+      cliente_id: @evento.cliente_id,
+      veiculo_id: @evento.veiculo_id,
+      numero_contrato: params[:numero_contrato] || "LOC-#{Time.current.to_i}",
+      data_inicio: @evento.data_inicio,
+      data_prevista_fim: @evento.data_prevista_fim,
+      valor_semanal: @evento.valor_semanal,
+      caucao_valor: params[:caucao_valor],
+      caucao_recebida: params[:caucao_valor].present?,
+      status: :ativa,
+      created_by: Current.usuario,
+      updated_by: Current.usuario
+    )
+    
+    # Update the evento to reference the locacao
+    @evento.update!(locacao_id: locacao.id)
+    
+    # Update vehicle status to locado
+    @evento.veiculo.update!(status: :locado)
+    
+    # Update vehicle caucao_retida if provided
+    if params[:caucao_valor].present?
+      @evento.veiculo.update!(caucao_retida: params[:caucao_valor])
+    end
+  end
+
+  def handle_devolucao_logic
+    # Find the active locacao for this vehicle
+    locacao = @evento.veiculo.locacoes.ativa.first
+    
+    if locacao
+      # Update locacao with end date
+      locacao.update!(
+        data_fim: @evento.data_fim,
+        status: :encerrada,
+        updated_by: Current.usuario
+      )
+      
+      # Update evento to reference the locacao
+      @evento.update!(locacao_id: locacao.id)
+    end
+    
+    # Update vehicle status to disponivel
+    @evento.veiculo.update!(status: :disponivel)
+    
+    # Handle caução devolução
+    if params[:devolucao_caucao].present?
+      @evento.veiculo.update!(caucao_retida: 0) # Clear retained deposit
+    end
   end
 
   def upload_anexos_for_evento(evento)
