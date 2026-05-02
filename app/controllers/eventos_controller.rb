@@ -10,9 +10,60 @@ class EventosController < ApplicationController
 
   def new
     @evento = Evento.new
-    @clientes = Cliente.order(:nome)
-    @veiculos = Veiculo.order(:placa)
     @locacoes = Locacao.order(:numero_contrato)
+
+    # Filter vehicles and clients based on event type
+    if params[:tipo].present?
+      case params[:tipo]
+      when 'retirada'
+        @veiculos = Veiculo.where(status: :disponivel).order(:placa)
+        # Only show clients without active locacoes
+        @clientes = Cliente.where.not(id: Locacao.where(status: :ativa).select(:cliente_id)).order(:nome)
+      when 'devolucao'
+        @veiculos = Veiculo.where(status: :locado).order(:placa)
+        @clientes = Cliente.order(:nome)
+      else
+        @veiculos = Veiculo.order(:placa)
+        @clientes = Cliente.order(:nome)
+      end
+    else
+      @veiculos = Veiculo.order(:placa)
+      @clientes = Cliente.order(:nome)
+    end
+
+    # Pre-fill tipo_evento based on tipo parameter
+    if params[:tipo].present?
+      case params[:tipo]
+      when 'pagamento_semanal'
+        @evento.tipo_evento = 0
+        @evento.fluxo = 0
+        @evento.status = 1
+        @evento.data_evento = Date.current
+        @evento.periodo_inicio = Date.current.beginning_of_week
+        @evento.periodo_fim = Date.current.end_of_week
+      when 'retirada'
+        @evento.tipo_evento = 3
+        @evento.fluxo = 1
+        @evento.status = 1
+        @evento.data_evento = Date.current
+      when 'devolucao'
+        @evento.tipo_evento = 4
+        @evento.fluxo = 1
+        @evento.status = 1
+        @evento.data_evento = Date.current
+      when 'manutencao'
+        @evento.tipo_evento = 1
+        @evento.fluxo = 1
+        @evento.status = 1
+        @evento.data_evento = Date.current
+      when 'gasto_empresa'
+        @evento.tipo_evento = 2
+        @evento.fluxo = 1
+        @evento.status = 1
+        @evento.data_evento = Date.current
+      end
+    end
+
     respond_to do |format|
       format.html
       format.turbo_stream
@@ -26,8 +77,17 @@ class EventosController < ApplicationController
 
     respond_to do |format|
       if @evento.save
+        # Handle special cases for Retirada and Devolução
+        handle_retirada_logic if @evento.retirada?
+        handle_devolucao_logic if @evento.devolucao?
+
         # Handle file uploads to Google Drive
-        upload_anexos_for_evento(@evento)
+        begin
+          upload_anexos_for_evento(@evento)
+        rescue StandardError => e
+          Rails.logger.error "Error in upload_anexos_for_evento: #{e.message}"
+          Rails.logger.error e.backtrace.join("\n")
+        end
 
         format.html { redirect_to @evento, notice: "Evento criado com sucesso.#{upload_notice}" }
         format.turbo_stream
@@ -87,18 +147,79 @@ class EventosController < ApplicationController
     permitted
   end
 
+  def handle_retirada_logic
+    # Create a new Locacao record using form parameters
+    locacao = Locacao.create!(
+      cliente_id: @evento.cliente_id,
+      veiculo_id: @evento.veiculo_id,
+      numero_contrato: params[:numero_contrato] || "LOC-#{Time.current.to_i}",
+      data_inicio: params[:evento][:data_inicio],
+      data_prevista_fim: params[:evento][:data_prevista_fim],
+      valor_semanal: params[:evento][:valor_semanal],
+      caucao_valor: params[:caucao_valor],
+      caucao_recebida: params[:caucao_valor].present?,
+      status: :ativa,
+      created_by: Current.usuario,
+      updated_by: Current.usuario
+    )
+    
+    # Update the evento to reference the locacao
+    @evento.update!(locacao_id: locacao.id)
+    
+    # Update vehicle status to locado
+    @evento.veiculo.update!(status: :locado)
+    
+    # Update vehicle caucao_retida if provided
+    if params[:caucao_valor].present?
+      @evento.veiculo.update!(caucao_retida: params[:caucao_valor])
+    end
+  end
+
+  def handle_devolucao_logic
+    # Find the active locacao for this vehicle
+    locacao = @evento.veiculo.locacoes.ativa.first
+    
+    if locacao
+      # Update locacao with end date from form parameter
+      locacao.update!(
+        data_fim: params[:data_fim],
+        status: :encerrada,
+        updated_by: Current.usuario
+      )
+      
+      # Update evento to reference the locacao
+      @evento.update!(locacao_id: locacao.id)
+    end
+    
+    # Update vehicle status to disponivel
+    @evento.veiculo.update!(status: :disponivel)
+    
+    # Handle caução devolução
+    if params[:devolucao_caucao].present?
+      @evento.veiculo.update!(caucao_retida: 0) # Clear retained deposit
+    end
+  end
+
   def upload_anexos_for_evento(evento)
-    Rails.logger.info "upload_anexos_for_evento called for evento #{evento.id}"
-    Rails.logger.info "params[:anexos]: #{params[:anexos].inspect}"
-    return unless params[:anexos].present?
+    anexos_param = params[:evento]&.dig(:anexos) || params[:anexos]
+    return unless anexos_param.present?
 
     uploaded_count = 0
     drive_service = GoogleDriveService.new
     folder_id = ENV["GOOGLE_DRIVE_VEICULOS_FOLDER_ID"] || ENV["GOOGLE_DRIVE_DEFAULT_FOLDER_ID"]
 
-    params[:anexos].each do |key, anexo_params|
+    # Handle multiple files - Rails creates an array for nested file fields
+    anexos_to_process = if anexos_param.is_a?(Array)
+      anexos_param.map.with_index { |arquivo, index| [index.to_s, { arquivo: arquivo, categoria: 'comprovante_pagamento' }] }
+    elsif anexos_param.respond_to?(:has_key?) && anexos_param.has_key?('arquivo')
+      # Single file format (backward compatibility)
+      [['0', anexos_param]]
+    else
+      []
+    end
+
+    anexos_to_process.each do |key, anexo_params|
       arquivo = anexo_params[:arquivo]
-      Rails.logger.info "Processing anexo #{key}, arquivo: #{arquivo.inspect}"
       next if arquivo.blank?
 
       categoria = anexo_params[:categoria] || key.to_s

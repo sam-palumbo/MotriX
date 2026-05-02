@@ -90,12 +90,13 @@
     <div class="card-lbl">Status e Observações</div>
     <div class="frow">
       <div class="fg">
-        <%= form.label :ativo, "Situação", class: "flabel" %>
-        <%= form.select :ativo, 
+        <%= form.label :status, "Situação", class: "flabel" %>
+        <%= form.select :status, 
             options_for_select([
-              ["Ativo", true], 
-              ["Inativo", false]
-            ], @cliente.ativo), 
+              ["Ativo", "ativo"], 
+              ["Bloqueado", "bloqueado"],
+              ["Inativo", "inativo"]
+            ], @cliente.status), 
             {}, class: "fselect" %>
       </div>
     </div>
