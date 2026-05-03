@@ -22,6 +22,8 @@ class ParticipacaoSociosController < ApplicationController
     if @participacao_socio.save
       redirect_to @participacao_socio, notice: "ParticipacaoSocio was successfully created."
     else
+      @socios = Socio.order(:nome)
+      @veiculos = Veiculo.order(:placa)
       render :new, status: :unprocessable_entity
     end
   end

@@ -48,6 +48,7 @@ group :development, :test do
   gem "rubocop", require: false
   gem "rubocop-rails-omakase", require: false
   gem "brakeman", require: false
+  gem "rails-controller-testing"
 end
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]

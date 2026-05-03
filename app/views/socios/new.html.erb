@@ -45,40 +45,6 @@
     </div>
   </div>
 
-  <!-- Informações Adicionais -->
-  <div class="card">
-    <div class="card-lbl">Informações Adicionais</div>
-    <div class="frow">
-      <div class="fg">
-        <%= form.label :endereco, "Endereço", class: "flabel" %>
-        <%= form.text_field :endereco, class: "finput", placeholder: "Rua, número, bairro" %>
-      </div>
-      <div class="fg">
-        <%= form.label :cidade, "Cidade", class: "flabel" %>
-        <%= form.text_field :cidade, class: "finput", placeholder: "São Paulo" %>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg">
-        <%= form.label :estado, "Estado", class: "flabel" %>
-        <%= form.text_field :estado, class: "finput", placeholder: "SP" %>
-      </div>
-      <div class="fg">
-        <%= form.label :cep, "CEP", class: "flabel" %>
-        <%= form.text_field :cep, class: "finput", placeholder: "00000-000" %>
-      </div>
-    </div>
-  </div>
-
-  <!-- Observações -->
-  <div class="card">
-    <div class="card-lbl">Observações</div>
-    <div class="fg">
-      <%= form.label :observacoes, "Informações relevantes", class: "flabel" %>
-      <%= form.text_area :observacoes, class: "ftextarea", placeholder: "Informações adicionais sobre o sócio..." %>
-    </div>
-  </div>
-
   <!-- Botões -->
   <div class="btn-row">
     <%= link_to "Cancelar", socios_path, class: "btn btn-ghost" %>

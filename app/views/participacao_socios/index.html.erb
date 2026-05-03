@@ -46,6 +46,8 @@
 
 <div id="participacoes-list">
   <% @participacao_socios.each do |participacao| %>
+    <% valor_semanal = participacao.veiculo.valor_semanal || 0 %>
+    <% retorno_semanal = valor_semanal * participacao.percentual_participacao.to_f / 100 %>
     <div class="vcard" data-status="<%= participacao.veiculo.status %>" onclick="window.location.href='<%= participacao_socio_path(participacao) %>'">
       <div class="vc-head">
         <div class="vc-plate"><%= participacao.veiculo.placa %></div>
@@ -70,12 +72,12 @@
             <div class="vc-sl">investido</div>
           </div>
           <div class="vc-stat">
-            <div class="vc-sn" style="font-size:11px"><%= brl(participacao.veiculo.valor_semanal) %></div>
+            <div class="vc-sn" style="font-size:11px"><%= brl(valor_semanal) %></div>
             <div class="vc-sl">/semana</div>
           </div>
           <div class="vc-stat">
             <div class="vc-sn" style="color:var(--gold)">
-              <%= brl(participacao.veiculo.valor_semanal * participacao.percentual_participacao.to_f / 100) %>
+              <%= brl(retorno_semanal) %>
             </div>
             <div class="vc-sl">/semana</div>
           </div>
@@ -84,7 +86,7 @@
         <div class="vc-client">
           <span style="color:var(--text3)">Retorno mensal estimado</span>
           <span style="font-weight:600">
-            <%= brl(participacao.veiculo.valor_semanal * 4 * participacao.percentual_participacao.to_f / 100) %>
+            <%= brl(retorno_semanal * 4) %>
           </span>
         </div>
       </div>
