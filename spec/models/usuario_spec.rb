@@ -11,7 +11,13 @@ RSpec.describe Usuario, type: :model do
     it { should validate_presence_of(:cpf) }
     it { should validate_presence_of(:nome) }
     it { should validate_presence_of(:email) }
-    it { should validate_presence_of(:password) }
+    context 'for new password users' do
+      it 'requires password' do
+        usuario = build(:usuario, password: nil, password_confirmation: nil)
+        usuario.valid?
+        expect(usuario.errors[:password]).to include("can't be blank")
+      end
+    end
     it { should validate_presence_of(:perfil) }
 
     it { should validate_uniqueness_of(:cpf).case_insensitive }
