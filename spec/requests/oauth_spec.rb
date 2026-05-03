@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Google OAuth Authentication", type: :request do
-  describe "GET /auth/google/callback" do
+  describe "GET /auth/google_oauth2/callback" do
     context "when user exists and is active" do
       let!(:usuario) { create(:usuario, email: "user@example.com", ativo: true) }
 
@@ -10,22 +10,22 @@ RSpec.describe "Google OAuth Authentication", type: :request do
       end
 
       it "logs in the user" do
-        get "/auth/google/callback"
+        get "/auth/google_oauth2/callback"
         expect(session[:usuario_id]).to eq(usuario.id)
       end
 
       it "redirects to root path" do
-        get "/auth/google/callback"
+        get "/auth/google_oauth2/callback"
         expect(response).to redirect_to(root_path)
       end
 
       it "sets flash notice" do
-        get "/auth/google/callback"
+        get "/auth/google_oauth2/callback"
         expect(flash[:notice]).to eq("Login realizado com sucesso!")
       end
 
       it "updates google_uid" do
-        get "/auth/google/callback"
+        get "/auth/google_oauth2/callback"
         expect(usuario.reload.google_uid).to eq("123456789")
       end
     end
@@ -38,17 +38,17 @@ RSpec.describe "Google OAuth Authentication", type: :request do
       end
 
       it "does not log in the user" do
-        get "/auth/google/callback"
+        get "/auth/google_oauth2/callback"
         expect(session[:usuario_id]).to be_nil
       end
 
       it "redirects to login path" do
-        get "/auth/google/callback"
+        get "/auth/google_oauth2/callback"
         expect(response).to redirect_to(login_path)
       end
 
       it "sets flash alert about inactive user" do
-        get "/auth/google/callback"
+        get "/auth/google_oauth2/callback"
         expect(flash[:alert]).to include("inativo")
       end
     end
@@ -60,17 +60,17 @@ RSpec.describe "Google OAuth Authentication", type: :request do
 
       it "does not create a new user" do
         expect {
-          get "/auth/google/callback"
+          get "/auth/google_oauth2/callback"
         }.not_to change(Usuario, :count)
       end
 
       it "redirects to login path" do
-        get "/auth/google/callback"
+        get "/auth/google_oauth2/callback"
         expect(response).to redirect_to(login_path)
       end
 
       it "sets flash alert about user not found" do
-        get "/auth/google/callback"
+        get "/auth/google_oauth2/callback"
         expect(flash[:alert]).to include("não cadastrado")
       end
     end
@@ -81,14 +81,9 @@ RSpec.describe "Google OAuth Authentication", type: :request do
         Rails.application.env_config["omniauth.auth"] = nil
       end
 
-      it "redirects to login path" do
-        get "/auth/google/callback"
-        expect(response).to redirect_to(login_path)
-      end
-
-      it "sets flash alert about user not found" do
-        get "/auth/google/callback"
-        expect(flash[:alert]).to include("não cadastrado")
+      it "redirects to failure path" do
+        get "/auth/google_oauth2/callback"
+        expect(response).to redirect_to("/auth/failure?message=invalid_credentials&strategy=google_oauth2")
       end
     end
   end
@@ -142,7 +137,7 @@ RSpec.describe "Google OAuth Authentication", type: :request do
 
     it "can login with OAuth" do
       mock_google_auth(email: hybrid_user.email, uid: hybrid_user.google_uid)
-      get "/auth/google/callback"
+      get "/auth/google_oauth2/callback"
       expect(session[:usuario_id]).to eq(hybrid_user.id)
     end
   end
