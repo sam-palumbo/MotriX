@@ -1,5 +1,6 @@
 class UsuariosController < ApplicationController
   before_action :set_usuario, only: [ :show, :edit, :update, :destroy ]
+  include EnumParamsConverter
 
   def index
     @usuarios = Usuario.order(:nome)
@@ -56,7 +57,6 @@ class UsuariosController < ApplicationController
 
   def usuario_params
     permitted = params.require(:usuario).permit(:cpf, :nome, :email, :password, :password_confirmation, :perfil, :ativo, :created_by_id, :updated_by_id)
-    permitted[:perfil] = permitted[:perfil].to_i if permitted[:perfil].present?
-    permitted
+    convert_enum_params(permitted, :perfil)
   end
 end

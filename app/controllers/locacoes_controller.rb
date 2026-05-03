@@ -1,6 +1,7 @@
 class LocacoesController < ApplicationController
   before_action :set_locacao, only: [ :show, :edit, :update, :destroy ]
   include LoadAssociations
+  include EnumParamsConverter
 
   def index
     @locacoes = Locacao.includes(:cliente, :veiculo).order(data_inicio: :desc).page(params[:page]).per(25)
@@ -74,7 +75,6 @@ class LocacoesController < ApplicationController
 
   def locacao_params
     permitted = params.require(:locacao).permit(:numero_contrato, :cliente_id, :veiculo_id, :data_inicio, :data_prevista_fim, :data_fim, :valor_semanal, :caucao_valor, :caucao_recebida, :caucao_devolvida, :status, :observacoes)
-    permitted[:status] = permitted[:status].to_i if permitted[:status].present?
-    permitted
+    convert_enum_params(permitted, :status)
   end
 end

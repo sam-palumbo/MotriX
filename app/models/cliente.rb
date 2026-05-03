@@ -3,6 +3,17 @@ class Cliente < ApplicationRecord
 
   enum :status, { ativo: 0, bloqueado: 1, inativo: 2 }
 
+  # Scopes
+  scope :ativos, -> { where(status: :ativo) }
+  scope :bloqueados, -> { where(status: :bloqueado) }
+  scope :por_nome, -> { order(:nome) }
+  scope :sem_locacao_ativa, -> {
+    where.not(id: Locacao.where(status: :ativa).select(:cliente_id))
+  }
+  scope :com_locacao_ativa, -> {
+    where(id: Locacao.where(status: :ativa).select(:cliente_id))
+  }
+
   has_many :locacoes, dependent: :restrict_with_exception
   has_many :eventos, dependent: :nullify
 

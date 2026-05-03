@@ -65,14 +65,19 @@ class GoogleDriveService
   end
 
   def update_file(file_id, new_file)
-    old_file = @session.file_by_id(file_id)
-    folder = old_file.parents.first
+    file = @session.file_by_id(file_id)
 
-    # Delete old file
-    old_file.delete
+    # Use native update to preserve file metadata, permissions, and links
+    file.update_from_file(new_file.path)
 
-    # Upload new file
-    upload_file(new_file, folder_id: folder.id, file_name: new_file.original_filename)
+    {
+      file_id: file.id,
+      file_url: file.web_content_link,
+      view_url: file.web_view_link,
+      file_name: file.title,
+      mime_type: file.mime_type,
+      size: file.size
+    }
   rescue StandardError => e
     Rails.logger.error "Google Drive update failed: #{e.message}"
     raise e

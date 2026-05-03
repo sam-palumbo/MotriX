@@ -1,5 +1,6 @@
 class VeiculosController < ApplicationController
   before_action :set_veiculo, only: [ :show, :edit, :update, :destroy, :retirar_frota, :manutencao ]
+  include EnumParamsConverter
 
   def index
     @veiculos = Veiculo.includes(:locacoes, :eventos, :socios).order(:placa).page(params[:page]).per(25)
@@ -163,110 +164,21 @@ class VeiculosController < ApplicationController
 
   def veiculo_params
     permitted = params.require(:veiculo).permit(:placa, :renavam, :chassi, :marca, :modelo, :ano, :cor, :data_compra, :valor_compra, :valor_aquisicao, :valor_semanal, :valor_diaria, :km_aquisicao, :km_atual, :status, :primeira_locacao_em, :caucao_retida)
-    permitted[:status] = permitted[:status].to_i if permitted[:status].present?
-    permitted
+    convert_enum_params(permitted, :status)
   end
 
-  # Helper methods for maintenance tracking
+  # Helper methods for maintenance tracking - delegated to MaintenanceTracker service
   helper_method :get_maintenance_items, :get_maintenance_history, :get_vehicle_maintenance_alerts
 
   def get_vehicle_maintenance_alerts(veiculo)
-    maintenance_items = get_maintenance_items(veiculo)
-    overdue = maintenance_items.count { |item| item[:progress_percentage] >= 100 }
-    upcoming = maintenance_items.count { |item| item[:progress_percentage] >= 70 && item[:progress_percentage] < 100 }
-
-    {
-      overdue: overdue,
-      upcoming: upcoming
-    }
+    Veiculos::MaintenanceTracker.new(veiculo: veiculo).maintenance_alerts
   end
 
   def get_maintenance_items(veiculo)
-    # Define maintenance intervals (in km)
-    maintenance_intervals = {
-      "Troca de óleo" => 3000,
-      "Troca da relação" => 15000,
-      "Pastilhas de freio dianteira" => 12000,
-      "Disco de freio dianteiro" => 24000,
-      "Lona de freio traseira" => 18000,
-      "Pneu dianteiro" => 15000,
-      "Pneu traseiro" => 12000,
-      "Vela de ignição" => 6000
-    }
-
-    # Check if vehicle has drum brakes (simplified logic)
-    has_drum_brake = [ "SDL2H36", "ROM2A60", "SMD4E03" ].include?(veiculo.placa)
-
-    # Adjust for drum brakes
-    if has_drum_brake
-      maintenance_intervals["Lona de freio dianteira"] = 15000
-      maintenance_intervals.delete("Pastilhas de freio dianteira")
-      maintenance_intervals.delete("Disco de freio dianteiro")
-    end
-
-    current_km = veiculo.km_atual || 0
-    items = []
-
-    maintenance_intervals.each do |type, interval|
-      # Get last maintenance for this type
-      last_maintenance = Evento.where(
-        veiculo: veiculo,
-        tipo_evento: :manutencao,
-      tipo_manutencao: type.parameterize(separator: "_")
-      ).order(data_evento: :desc).first
-
-      last_km = last_maintenance&.km || veiculo.km_aquisicao || 0
-      next_km = last_km + interval
-      km_remaining = next_km - current_km
-
-      # Calculate progress percentage
-      progress = ((current_km - last_km).to_f / interval * 100).round(1)
-      progress = [ progress, 100 ].min
-      progress = [ progress, 0 ].max
-
-      # Determine status and colors
-      if current_km >= next_km
-        status_icon = "!"
-        status_text = "VENCIDO"
-        progress_color = "var(--red)"
-      elsif progress >= 70
-        status_icon = "!"
-        status_text = "+#{number_with_delimiter(km_remaining)}"
-        progress_color = "var(--orange)"
-      else
-        status_icon = "!"
-        status_text = "+#{number_with_delimiter(km_remaining)}"
-        progress_color = "var(--green)"
-      end
-
-      items << {
-        type: type,
-        last_km: last_km,
-        next_km: next_km,
-        current_km: current_km,
-        progress_percentage: progress,
-        progress_color: progress_color,
-        status_icon: status_icon,
-        status_text: status_text,
-        interval: interval
-      }
-    end
-
-    items.sort_by { |item| item[:progress_percentage] }.reverse
+    Veiculos::MaintenanceTracker.new(veiculo: veiculo).maintenance_items
   end
 
   def get_maintenance_history(veiculo)
-    Evento.where(
-      veiculo: veiculo,
-      tipo_evento: :manutencao
-    ).order(data_evento: :desc).limit(10).map do |event|
-      {
-        type: event.tipo_manutencao&.humanize || "Manutenção",
-        date: event.data_evento.strftime("%d/%m/%Y"),
-        km: event.km || 0,
-        cost: event.valor || 0,
-        description: event.descricao
-      }
-    end
+    Veiculos::MaintenanceTracker.new(veiculo: veiculo).maintenance_history
   end
 end

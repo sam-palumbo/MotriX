@@ -1,5 +1,6 @@
 class ClientesController < ApplicationController
   before_action :set_cliente, only: [ :show, :edit, :update, :destroy ]
+  include EnumParamsConverter
 
   def index
     @clientes = Cliente.includes(:locacoes, :eventos).order(:nome).page(params[:page]).per(25)
@@ -65,7 +66,6 @@ class ClientesController < ApplicationController
 
   def cliente_params
     permitted = params.require(:cliente).permit(:cpf, :nome, :telefone, :email, :endereco, :cidade, :estado, :cep, :cnh, :validade_cnh, :status, :observacoes)
-    permitted[:status] = permitted[:status].to_i if permitted[:status].present?
-    permitted
+    convert_enum_params(permitted, :status)
   end
 end

@@ -3,6 +3,14 @@ class Veiculo < ApplicationRecord
 
   enum :status, { disponivel: 0, locado: 1, manutencao: 2, inativo: 3 }
 
+  # Scopes
+  scope :disponivel, -> { where(status: :disponivel) }
+  scope :locado, -> { where(status: :locado) }
+  scope :ativos, -> { where.not(status: :inativo) }
+  scope :na_frota, -> { where.not(status: :inativo) }
+  scope :por_placa, -> { order(:placa) }
+  scope :por_marca, -> { order(:marca, :modelo) }
+
   has_many :locacoes, dependent: :restrict_with_exception
   has_many :eventos, dependent: :nullify
   has_many :participacao_socios, dependent: :destroy

@@ -3,6 +3,18 @@ class Locacao < ApplicationRecord
 
   enum :status, { ativa: 0, encerrada: 1, inadimplente: 2, cancelada: 3 }
 
+  # Scopes
+  scope :ativas, -> { where(status: :ativa) }
+  scope :encerradas, -> { where(status: :encerrada) }
+  scope :inadimplentes, -> { where(status: :inadimplente) }
+  scope :por_data_inicio, -> { order(data_inicio: :desc) }
+  scope :por_contrato, -> { order(:numero_contrato) }
+  scope :do_cliente, ->(cliente_id) { where(cliente_id: cliente_id) }
+  scope :do_veiculo, ->(veiculo_id) { where(veiculo_id: veiculo_id) }
+
+  # Callbacks for status transitions
+  before_update :encerrar_locacao, if: :status_changed_to_encerrada?
+
   belongs_to :cliente
   belongs_to :veiculo
 
@@ -33,5 +45,14 @@ class Locacao < ApplicationRecord
     return if data_inicio.blank? || data_fim.blank? || data_fim >= data_inicio
 
     errors.add(:data_fim, "deve ser maior ou igual a data de inicio")
+  end
+
+  def encerrar_locacao
+    self.data_fim ||= Date.current
+    veiculo&.update!(status: :disponivel)
+  end
+
+  def status_changed_to_encerrada?
+    status_changed? && status == 'encerrada'
   end
 end

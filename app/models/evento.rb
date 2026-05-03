@@ -25,6 +25,19 @@ class Evento < ApplicationRecord
   enum :fluxo, { entrada: 0, saida: 1 }
   enum :status, { pendente: 0, pago: 1, parcial: 2 }, prefix: true
 
+  # Scopes
+  scope :entradas, -> { where(fluxo: :entrada) }
+  scope :saidas, -> { where(fluxo: :saida) }
+  scope :pagamentos_semanais, -> { where(tipo_evento: :pagamento_semanal) }
+  scope :manutencoes, -> { where(tipo_evento: :manutencao) }
+  scope :retiradas, -> { where(tipo_evento: :retirada) }
+  scope :devolucoes, -> { where(tipo_evento: :devolucao) }
+  scope :por_data, -> { order(data_evento: :desc, created_at: :desc) }
+  scope :do_veiculo, ->(veiculo_id) { where(veiculo_id: veiculo_id) }
+  scope :do_cliente, ->(cliente_id) { where(cliente_id: cliente_id) }
+  scope :da_locacao, ->(locacao_id) { where(locacao_id: locacao_id) }
+  scope :no_periodo, ->(inicio, fim) { where(data_evento: inicio..fim) }
+
   belongs_to :cliente, optional: true
   belongs_to :veiculo, optional: true
   belongs_to :locacao, optional: true

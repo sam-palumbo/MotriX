@@ -36,6 +36,9 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 # Pagination
 gem "kaminari"
 
+# Rate limiting for security
+gem "rack-attack"
+
 # Load environment variables from .env file
 gem "dotenv-rails", group: :development
 
