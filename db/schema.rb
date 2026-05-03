@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_03_100209) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_03_160000) do
   create_schema "extensions"
 
   # These are extensions that must be enabled in order to support this database
@@ -163,14 +163,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_03_100209) do
     t.datetime "created_at", null: false
     t.uuid "created_by_id"
     t.string "email", null: false
+    t.string "google_uid"
     t.string "nome", null: false
-    t.string "password_digest", null: false
+    t.string "password_digest"
     t.integer "perfil", default: 1, null: false
     t.datetime "updated_at", null: false
     t.uuid "updated_by_id"
     t.index ["cpf"], name: "index_usuarios_on_cpf", unique: true
     t.index ["created_by_id"], name: "index_usuarios_on_created_by_id"
     t.index ["email"], name: "index_usuarios_on_email", unique: true
+    t.index ["google_uid"], name: "index_usuarios_on_google_uid", unique: true
     t.index ["updated_by_id"], name: "index_usuarios_on_updated_by_id"
   end
 

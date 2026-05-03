@@ -23,5 +23,26 @@ FactoryBot.define do
     trait :inativo do
       ativo { false }
     end
+
+    trait :oauth do
+      transient do
+        skip_password { true }
+      end
+      password { nil }
+      password_confirmation { nil }
+      google_uid { "google-#{SecureRandom.uuid}" }
+
+      after(:build) do |usuario, evaluator|
+        usuario.password_digest = nil if evaluator.skip_password
+      end
+
+      before(:create) do |usuario, evaluator|
+        usuario.password_digest = nil if evaluator.skip_password
+      end
+    end
+
+    trait :with_oauth_and_password do
+      google_uid { "google-#{SecureRandom.uuid}" }
+    end
   end
 end

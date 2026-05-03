@@ -10,6 +10,9 @@ require 'rspec/rails'
 # Set locale to English for tests
 I18n.locale = :en
 
+# Configure OmniAuth for testing
+OmniAuth.config.test_mode = true
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end

@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"
 
+  get "/auth/google_oauth2/callback", to: "sessions#oauth_callback"
+  get "/auth/failure", to: "sessions#oauth_failure"
+
   get "dashboard", to: "dashboard#index", as: :dashboard
 
   resources :clientes

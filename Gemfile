@@ -39,6 +39,11 @@ gem "kaminari"
 # Rate limiting for security
 gem "rack-attack"
 
+# Google OAuth authentication
+gem "omniauth"
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
+
 # Load environment variables from .env file
 gem "dotenv-rails", group: :development
 
