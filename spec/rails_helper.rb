@@ -82,4 +82,7 @@ RSpec.configure do |config|
       with.library :rails
     end
   end
+
+  # Configure example status persistence file for --only-failures option
+  config.example_status_persistence_file_path = "tmp/examples.txt"
 end

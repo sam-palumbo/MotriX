@@ -1,8 +1,9 @@
 class EventosController < ApplicationController
   before_action :set_evento, only: [ :show, :edit, :update, :destroy ]
+  include LoadAssociations
 
   def index
-    @eventos = Evento.includes(:cliente, :veiculo, :locacao).order(data_evento: :desc, created_at: :desc)
+    @eventos = Evento.includes(:cliente, :veiculo, :locacao).order(data_evento: :desc, created_at: :desc).page(params[:page]).per(25)
   end
 
   def show
@@ -77,9 +78,12 @@ class EventosController < ApplicationController
 
     respond_to do |format|
       if @evento.save
-        # Handle special cases for Retirada and Devolução
-        handle_retirada_logic if @evento.retirada?
-        handle_devolucao_logic if @evento.devolucao?
+        # Handle special cases for Retirada and Devolução using services
+        if @evento.retirada?
+          Locacoes::IniciarLocacao.new(evento: @evento, usuario: Current.usuario, params: params).call
+        elsif @evento.devolucao?
+          Locacoes::EncerrarLocacao.new(evento: @evento, usuario: Current.usuario, params: params).call
+        end
 
         # Handle file uploads to Google Drive
         begin
@@ -92,9 +96,9 @@ class EventosController < ApplicationController
         format.html { redirect_to @evento, notice: "Evento criado com sucesso.#{upload_notice}" }
         format.turbo_stream
       else
-        @clientes = Cliente.order(:nome)
-        @veiculos = Veiculo.order(:placa)
-        @locacoes = Locacao.order(:numero_contrato)
+        load_clientes
+        load_veiculos
+        load_locacoes
         format.html { render :new, status: :unprocessable_entity }
         format.turbo_stream
       end
@@ -102,9 +106,9 @@ class EventosController < ApplicationController
   end
 
   def edit
-    @clientes = Cliente.order(:nome)
-    @veiculos = Veiculo.order(:placa)
-    @locacoes = Locacao.order(:numero_contrato)
+    load_clientes
+    load_veiculos
+    load_locacoes
     respond_to do |format|
       format.html
       format.turbo_stream
@@ -118,9 +122,9 @@ class EventosController < ApplicationController
         format.html { redirect_to @evento, notice: "Evento was successfully updated." }
         format.turbo_stream
       else
-        @clientes = Cliente.order(:nome)
-        @veiculos = Veiculo.order(:placa)
-        @locacoes = Locacao.order(:numero_contrato)
+        load_clientes
+        load_veiculos
+        load_locacoes
         format.html { render :edit, status: :unprocessable_entity }
         format.turbo_stream
       end
@@ -145,59 +149,6 @@ class EventosController < ApplicationController
     permitted[:tipo_manutencao] = permitted[:tipo_manutencao].to_i if permitted[:tipo_manutencao].present?
     permitted[:fluxo] = permitted[:fluxo].to_i if permitted[:fluxo].present?
     permitted
-  end
-
-  def handle_retirada_logic
-    # Create a new Locacao record using form parameters
-    locacao = Locacao.create!(
-      cliente_id: @evento.cliente_id,
-      veiculo_id: @evento.veiculo_id,
-      numero_contrato: params[:numero_contrato] || "LOC-#{Time.current.to_i}",
-      data_inicio: params[:evento][:data_inicio],
-      data_prevista_fim: params[:evento][:data_prevista_fim],
-      valor_semanal: params[:evento][:valor_semanal],
-      caucao_valor: params[:caucao_valor],
-      caucao_recebida: params[:caucao_valor].present?,
-      status: :ativa,
-      created_by: Current.usuario,
-      updated_by: Current.usuario
-    )
-    
-    # Update the evento to reference the locacao
-    @evento.update!(locacao_id: locacao.id)
-    
-    # Update vehicle status to locado
-    @evento.veiculo.update!(status: :locado)
-    
-    # Update vehicle caucao_retida if provided
-    if params[:caucao_valor].present?
-      @evento.veiculo.update!(caucao_retida: params[:caucao_valor])
-    end
-  end
-
-  def handle_devolucao_logic
-    # Find the active locacao for this vehicle
-    locacao = @evento.veiculo.locacoes.ativa.first
-    
-    if locacao
-      # Update locacao with end date from form parameter
-      locacao.update!(
-        data_fim: params[:data_fim],
-        status: :encerrada,
-        updated_by: Current.usuario
-      )
-      
-      # Update evento to reference the locacao
-      @evento.update!(locacao_id: locacao.id)
-    end
-    
-    # Update vehicle status to disponivel
-    @evento.veiculo.update!(status: :disponivel)
-    
-    # Handle caução devolução
-    if params[:devolucao_caucao].present?
-      @evento.veiculo.update!(caucao_retida: 0) # Clear retained deposit
-    end
   end
 
   def upload_anexos_for_evento(evento)

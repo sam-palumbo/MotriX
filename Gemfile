@@ -33,6 +33,9 @@ gem "google_drive"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
+# Pagination
+gem "kaminari"
+
 # Load environment variables from .env file
 gem "dotenv-rails", group: :development
 

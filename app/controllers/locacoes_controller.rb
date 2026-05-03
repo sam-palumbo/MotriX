@@ -1,8 +1,9 @@
 class LocacoesController < ApplicationController
   before_action :set_locacao, only: [ :show, :edit, :update, :destroy ]
+  include LoadAssociations
 
   def index
-    @locacoes = Locacao.includes(:cliente, :veiculo).order(data_inicio: :desc)
+    @locacoes = Locacao.includes(:cliente, :veiculo).order(data_inicio: :desc).page(params[:page]).per(25)
   end
 
   def show
@@ -10,8 +11,8 @@ class LocacoesController < ApplicationController
 
   def new
     @locacao = Locacao.new
-    @clientes = Cliente.order(:nome)
-    @veiculos = Veiculo.order(:placa)
+    load_clientes
+    load_veiculos
     respond_to do |format|
       format.html
       format.turbo_stream
@@ -28,8 +29,8 @@ class LocacoesController < ApplicationController
         format.html { redirect_to @locacao, notice: "Locacao was successfully created." }
         format.turbo_stream
       else
-        @clientes = Cliente.order(:nome)
-        @veiculos = Veiculo.order(:placa)
+        load_clientes
+        load_veiculos
         format.html { render :new, status: :unprocessable_entity }
         format.turbo_stream
       end
@@ -37,8 +38,8 @@ class LocacoesController < ApplicationController
   end
 
   def edit
-    @clientes = Cliente.order(:nome)
-    @veiculos = Veiculo.order(:placa)
+    load_clientes
+    load_veiculos
     respond_to do |format|
       format.html
       format.turbo_stream
@@ -52,8 +53,8 @@ class LocacoesController < ApplicationController
         format.html { redirect_to @locacao, notice: "Locacao was successfully updated." }
         format.turbo_stream
       else
-        @clientes = Cliente.order(:nome)
-        @veiculos = Veiculo.order(:placa)
+        load_clientes
+        load_veiculos
         format.html { render :edit, status: :unprocessable_entity }
         format.turbo_stream
       end

@@ -2,7 +2,7 @@ class VeiculosController < ApplicationController
   before_action :set_veiculo, only: [ :show, :edit, :update, :destroy, :retirar_frota, :manutencao ]
 
   def index
-    @veiculos = Veiculo.order(:placa)
+    @veiculos = Veiculo.includes(:locacoes, :eventos, :socios).order(:placa).page(params[:page]).per(25)
   end
 
   def show
@@ -117,13 +117,6 @@ class VeiculosController < ApplicationController
     responsavel = params[:responsavel] || Current.usuario&.nome || "Sistema"
     descricao = params[:descricao] || "Manutenção registrada"
     veiculo_id = params[:veiculo_id]
-
-    # Debug logging
-    Rails.logger.debug "Manutenção params: #{params.inspect}"
-    Rails.logger.debug "tipo_manutencao: #{tipo_manutencao.inspect}"
-    Rails.logger.debug "valor: #{valor.inspect}"
-    Rails.logger.debug "data_evento: #{data_evento.inspect}"
-    Rails.logger.debug "responsavel: #{responsavel.inspect}"
 
     ActiveRecord::Base.transaction do
       # Update vehicle mileage if provided

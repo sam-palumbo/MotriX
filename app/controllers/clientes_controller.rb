@@ -2,7 +2,7 @@ class ClientesController < ApplicationController
   before_action :set_cliente, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @clientes = Cliente.order(:nome)
+    @clientes = Cliente.includes(:locacoes, :eventos).order(:nome).page(params[:page]).per(25)
   end
 
   def show
