@@ -5,7 +5,7 @@ class GoogleDriveUploadJob < ApplicationJob
 
   def perform(file_path, folder_id, file_name, anexo_attributes, usuario_id)
     drive_service = GoogleDriveService.new
-    
+
     File.open(file_path, "rb") do |file|
       result = drive_service.upload_file(
         file,

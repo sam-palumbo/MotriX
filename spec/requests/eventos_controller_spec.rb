@@ -60,7 +60,7 @@ RSpec.describe "EventosControllers", type: :request do
         expect {
           post eventos_path, params: valid_params
         }.to change(Evento, :count).by(1)
-        
+
         expect(response).to redirect_to(evento_path(assigns(:evento)))
       end
     end

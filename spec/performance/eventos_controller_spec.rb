@@ -10,13 +10,13 @@ RSpec.describe "EventosController Performance", type: :request do
   describe "GET /index" do
     it "loads index page efficiently with many records" do
       create_list(:evento, 50, :manutencao)
-      
+
       start_time = Time.current
       get eventos_path
       end_time = Time.current
-      
+
       response_time = (end_time - start_time) * 1000 # in ms
-      
+
       expect(response).to have_http_status(:success)
       expect(response_time).to be < 2000 # Should load in under 2s (environment may vary)
     end
@@ -24,7 +24,7 @@ RSpec.describe "EventosController Performance", type: :request do
     it "does not produce N+1 queries with includes" do
       clientes = create_list(:cliente, 10)
       veiculos = create_list(:veiculo, 10)
-      
+
       10.times do |i|
         create(:evento, :pagamento_semanal, cliente: clientes[i], veiculo: veiculos[i])
       end
