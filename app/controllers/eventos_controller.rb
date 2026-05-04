@@ -156,11 +156,13 @@ class EventosController < ApplicationController
     drive_service = GoogleDriveService.new
     folder_id = ENV["GOOGLE_DRIVE_VEICULOS_FOLDER_ID"] || ENV["GOOGLE_DRIVE_DEFAULT_FOLDER_ID"]
 
-    # Handle multiple files - Rails creates an array for nested file fields
-    anexos_to_process = if anexos_param.is_a?(Array)
-      anexos_param.map.with_index { |arquivo, index| [ index.to_s, { arquivo: arquivo, categoria: "comprovante_pagamento" } ] }
+    anexos_to_process = if anexos_param.is_a?(Array) && anexos_param.first.respond_to?(:has_key?)
+      # New format: array of {arquivo:, categoria:} hashes from per-file dropdowns
+      anexos_param.map.with_index { |item, i| [ i.to_s, item ] }
+    elsif anexos_param.is_a?(Array)
+      # Legacy: plain array of files, default category
+      anexos_param.map.with_index { |arquivo, i| [ i.to_s, { "arquivo" => arquivo, "categoria" => "comprovante_pagamento" } ] }
     elsif anexos_param.respond_to?(:has_key?) && anexos_param.has_key?("arquivo")
-      # Single file format (backward compatibility)
       [ [ "0", anexos_param ] ]
     else
       []

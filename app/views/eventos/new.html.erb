@@ -369,26 +369,6 @@
       <!-- File List (will be populated by JavaScript) -->
       <div class="anexo-lista" id="evento-anexo-lista"></div>
 
-      <!-- Category Selection -->
-      <div class="fg" id="categoria-select-group" style="display: none;">
-        <label class="flabel">📂 Salvar em:</label>
-        <%= select_tag "anexos[categoria]",
-            options_for_select([
-              ["Comprovante de pagamento", "comprovante_pagamento"],
-              ["Hodômetro", "hodometro"],
-              ["Foto do veículo", "foto_veiculo"],
-              ["Nota fiscal", "nota_fiscal"],
-              ["Documento do cliente (CNH/RG)", "documento_cliente"],
-              ["Comprovante de caução", "comprovante_caucao"],
-              ["Contrato", "contrato"],
-              ["Registro de avaria", "registro_avaria"],
-              ["Comprovante de garantia", "comprovante_garantia"],
-              ["Outro", "outro"]
-            ]),
-            class: "fselect",
-            id: "anexo-categoria-select" %>
-        <div style="font-size: 10px; color: var(--text3); margin-top: 3px;" id="categoria-hint">Selecione a categoria do documento</div>
-      </div>
 
       <div style="font-size: 12px; color: var(--text3); margin-top: 12px; text-align: center;">
         <%= icon "cloud-upload", size: 12, style: "vertical-align: middle;" %>
@@ -527,15 +507,22 @@
       }
     })();
 
-    // Simple file upload preview without drag-and-drop for now
+    const CATEGORIA_OPTIONS = [
+      ["Comprovante de pagamento", "comprovante_pagamento"],
+      ["Hodômetro", "hodometro"],
+      ["Foto do veículo", "foto_veiculo"],
+      ["Nota fiscal", "nota_fiscal"],
+      ["Documento do cliente (CNH/RG)", "documento_cliente"],
+      ["Comprovante de caução", "comprovante_caucao"],
+      ["Contrato", "contrato"],
+      ["Registro de avaria", "registro_avaria"],
+      ["Comprovante de garantia", "comprovante_garantia"],
+      ["Outro", "outro"]
+    ];
+
     document.getElementById('evento-file-input').addEventListener('change', function(e) {
       const files = Array.from(e.target.files);
       const lista = document.getElementById('evento-anexo-lista');
-      const categoriaGroup = document.getElementById('categoria-select-group');
-
-      if (files.length > 0) {
-        categoriaGroup.style.display = 'block';
-      }
 
       files.forEach(file => {
         if (file.size > 10 * 1024 * 1024) {
@@ -543,22 +530,55 @@
           return;
         }
 
-        const icon = file.type.startsWith('image/') ? '🖼️' :
-                    file.type.includes('pdf') ? '📋' :
-                    file.type.includes('word') ? '📝' : '📄';
+        const fileIcon = file.type.startsWith('image/') ? '🖼️' :
+                         file.type.includes('pdf') ? '📋' :
+                         file.type.includes('word') ? '📝' : '📄';
+
+        // Hidden file input carrying just this one file
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.name = 'evento[anexos][][arquivo]';
+        fileInput.style.display = 'none';
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
+
+        // Category select for this file
+        const select = document.createElement('select');
+        select.name = 'evento[anexos][][categoria]';
+        select.className = 'fselect';
+        select.style.marginTop = '6px';
+        CATEGORIA_OPTIONS.forEach(([label, value]) => {
+          const opt = document.createElement('option');
+          opt.value = value;
+          opt.textContent = label;
+          select.appendChild(opt);
+        });
 
         const item = document.createElement('div');
         item.className = 'anexo-item';
-        item.innerHTML = `
-          <div class="anexo-item-ico">${icon}</div>
-          <div class="anexo-item-info">
+        item.style.flexDirection = 'column';
+        item.style.alignItems = 'stretch';
+
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:8px;';
+        row.innerHTML = `
+          <div class="anexo-item-ico">${fileIcon}</div>
+          <div class="anexo-item-info" style="flex:1;">
             <div class="anexo-item-nome">${file.name}</div>
             <div class="anexo-item-status">${(file.size / 1024 / 1024).toFixed(1)} MB</div>
           </div>
-          <button type="button" class="anexo-item-rem" onclick="this.parentElement.remove()">✕</button>
+          <button type="button" class="anexo-item-rem" onclick="this.closest('.anexo-item').remove()">✕</button>
         `;
+
+        item.appendChild(row);
+        item.appendChild(select);
+        item.appendChild(fileInput);
         lista.appendChild(item);
       });
+
+      // Reset so the same file can be re-selected if removed
+      this.value = '';
     });
 
     // Functions for maintenance form
