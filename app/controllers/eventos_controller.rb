@@ -209,4 +209,45 @@ class EventosController < ApplicationController
     return "" if @uploaded_anexos_count.nil? || @uploaded_anexos_count == 0
     " #{@uploaded_anexos_count} arquivo(s) anexado(s) ao Google Drive."
   end
+
+  def upload
+    begin
+      # Extract parameters
+      evento_params = params.require(:evento)
+      uploads = evento_params[:uploads]
+      veiculo_id = evento_params[:veiculo_id]
+      cliente_id = evento_params[:cliente_id]
+      evento_date = Date.parse(evento_params[:data_evento])
+
+      # Get veiculo and cliente objects
+      veiculo = veiculo_id.present? ? Veiculo.find(veiculo_id) : nil
+      cliente = cliente_id.present? ? Cliente.find(cliente_id) : nil
+
+      # Process uploads
+      result = EventoUploadProcessor.process_uploads(
+        uploads: uploads,
+        veiculo: veiculo,
+        cliente: cliente,
+        evento_date: evento_date
+      )
+
+      render json: {
+        success: true,
+        message: "Files uploaded successfully",
+        processed_files: result.processed_files.map { |f| 
+          {
+            original_filename: f[:original_filename],
+            generated_filename: f[:generated_filename],
+            document_type: f[:document_type]
+          }
+        }
+      }
+
+    rescue StandardError => e
+      render json: {
+        success: false,
+        error: e.message
+      }, status: :unprocessable_entity
+    end
+  end
 end

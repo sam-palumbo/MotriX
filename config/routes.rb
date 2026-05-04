@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   resources :locacoes
   resources :eventos do
     resources :anexos, only: [ :destroy ]
+    post :upload, on: :collection
   end
   resources :socios
   resources :usuarios
