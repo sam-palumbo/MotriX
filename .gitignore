@@ -30,6 +30,9 @@
 
 /public/assets
 
+# Claude Code local configuration
+/.claude
+
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
