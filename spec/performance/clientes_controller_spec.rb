@@ -10,13 +10,13 @@ RSpec.describe "ClientesController Performance", type: :request do
   describe "GET /index" do
     it "loads index page efficiently with many records" do
       create_list(:cliente, 50, :ativo)
-      
+
       start_time = Time.current
       get clientes_path
       end_time = Time.current
-      
+
       response_time = (end_time - start_time) * 1000 # in ms
-      
+
       expect(response).to have_http_status(:success)
       expect(response_time).to be < 2000 # Should load in under 2s (environment may vary)
     end
@@ -24,7 +24,7 @@ RSpec.describe "ClientesController Performance", type: :request do
     it "does not produce N+1 queries" do
       clientes = create_list(:cliente, 15, :ativo)
       veiculos = create_list(:veiculo, 15)
-      
+
       10.times do |i|
         create(:locacao, cliente: clientes[i], veiculo: veiculos[i])
         create_list(:evento, 2, :pagamento_semanal, cliente: clientes[i])

@@ -53,6 +53,6 @@ class Locacao < ApplicationRecord
   end
 
   def status_changed_to_encerrada?
-    status_changed? && status == 'encerrada'
+    status_changed? && status == "encerrada"
   end
 end

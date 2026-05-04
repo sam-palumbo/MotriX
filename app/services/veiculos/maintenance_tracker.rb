@@ -99,7 +99,7 @@ module Veiculos
 
     def calculate_progress(current_km, last_km, interval)
       progress = ((current_km - last_km).to_f / interval * 100).round(1)
-      [[progress, 100].min, 0].max
+      [ [ progress, 100 ].min, 0 ].max
     end
 
     def determine_status(progress, current_km, next_km, km_remaining)
