@@ -175,19 +175,26 @@ class EventosController < ApplicationController
       categoria = anexo_params[:categoria] || key.to_s
 
       begin
-        # Upload to Google Drive
+        extension = File.extname(arquivo.original_filename)
+        generated_name = EventoFilenameGenerator.generate_filename(
+          veiculo: evento.veiculo,
+          cliente: evento.cliente,
+          document_type: categoria,
+          evento_date: evento.data_evento
+        )
+        file_name = "#{generated_name}#{extension}"
+
         upload_result = drive_service.upload_file(
           arquivo,
           folder_id: folder_id,
-          file_name: arquivo.original_filename
+          file_name: file_name
         )
 
-        # Create anexo record associated with evento and veiculo
         Anexo.create!(
           veiculo: evento.veiculo,
           evento: evento,
           categoria: categoria,
-          nome_arquivo: arquivo.original_filename,
+          nome_arquivo: file_name,
           arquivo_url: upload_result[:view_url],
           mime_type: arquivo.content_type,
           created_by: Current.usuario,
@@ -195,7 +202,7 @@ class EventosController < ApplicationController
         )
 
         uploaded_count += 1
-        Rails.logger.info "Successfully uploaded #{arquivo.original_filename}"
+        Rails.logger.info "Successfully uploaded #{arquivo.original_filename} as #{file_name}"
 
       rescue StandardError => e
         Rails.logger.error "Erro ao fazer upload de anexo para evento #{evento.id}: #{e.message}"

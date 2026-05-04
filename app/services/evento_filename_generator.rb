@@ -81,7 +81,7 @@ class EventoFilenameGenerator
     end
 
     def trim_underscores(text)
-      text.gsub(/^_|_$/, '').strip # Remove leading/trailing underscores
+      text.gsub(/^_+|_+$/, '').strip
     end
 
     def format_date(date)
